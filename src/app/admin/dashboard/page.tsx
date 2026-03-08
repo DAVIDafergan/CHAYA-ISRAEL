@@ -144,7 +144,7 @@ export default function AdminDashboard() {
                 <TrendingUp className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Total revenue</p>
+                <p className="text-xs font-bold text-muted-foreground mb-1">Total revenue</p>
                 <h2 className="text-3xl font-bold text-primary">${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               </div>
             </CardContent>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
                 <Users className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Total donations</p>
+                <p className="text-xs font-bold text-muted-foreground mb-1">Total donations</p>
                 <h2 className="text-3xl font-bold text-slate-900">{stats.count}</h2>
               </div>
             </CardContent>
@@ -219,11 +219,11 @@ export default function AdminDashboard() {
                 <Table>
                   <TableHeader className="bg-slate-50/30">
                     <TableRow className="border-slate-100 hover:bg-transparent">
-                      <TableHead className="font-bold text-xs uppercase text-muted-foreground py-6 pl-8">Date</TableHead>
-                      <TableHead className="font-bold text-xs uppercase text-muted-foreground">Donor</TableHead>
-                      <TableHead className="font-bold text-xs uppercase text-muted-foreground">Amount</TableHead>
-                      <TableHead className="font-bold text-xs uppercase text-muted-foreground">Cause</TableHead>
-                      <TableHead className="font-bold text-xs uppercase text-muted-foreground pr-8">Status</TableHead>
+                      <TableHead className="font-bold text-xs text-muted-foreground py-6 pl-8">Date</TableHead>
+                      <TableHead className="font-bold text-xs text-muted-foreground">Donor</TableHead>
+                      <TableHead className="font-bold text-xs text-muted-foreground">Amount</TableHead>
+                      <TableHead className="font-bold text-xs text-muted-foreground">Cause</TableHead>
+                      <TableHead className="font-bold text-xs text-muted-foreground pr-8">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

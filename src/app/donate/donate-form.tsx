@@ -238,6 +238,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                                   placeholder="0.00" 
                                   {...field} 
                                   className="pl-14 h-20 text-4xl font-bold bg-slate-50/50 rounded-3xl text-left focus:ring-4 focus:ring-primary/10 border-2 border-transparent focus:border-primary/20 transition-all"
+                                  required
                                 />
                               </FormControl>
                           </div>

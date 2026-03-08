@@ -82,18 +82,18 @@ export default function MyAccountPage() {
                <div className="bg-primary p-8 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                   <div className="relative z-10">
-                     <p className="text-[10px] font-bold tracking-widest uppercase opacity-70 mb-1">Donor information</p>
+                     <p className="text-[10px] font-bold tracking-widest opacity-70 mb-1">Donor information</p>
                      <h2 className="text-xl font-bold truncate">{user.displayName || user.email?.split('@')[0]}</h2>
                      <p className="text-sm opacity-60 truncate">{user.email}</p>
                   </div>
                </div>
                <CardContent className="p-8 space-y-6">
                   <div className="space-y-1">
-                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-60">Member since</p>
+                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest opacity-60">Member since</p>
                      <p className="text-sm font-bold">{user.metadata.creationTime ? format(new Date(user.metadata.creationTime), 'MMMM yyyy') : 'Recently'}</p>
                   </div>
                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-60 mb-4">Quick links</p>
+                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest opacity-60 mb-4">Quick links</p>
                      <div className="space-y-2">
                         <Link href="/contact" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
                            <span className="text-xs font-bold">Contact support</span>
@@ -128,10 +128,10 @@ export default function MyAccountPage() {
                     <Table>
                       <TableHeader className="bg-slate-50/30">
                         <TableRow className="border-slate-100 hover:bg-transparent">
-                          <TableHead className="font-bold text-[10px] uppercase text-muted-foreground py-6 pl-8">Date</TableHead>
-                          <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Amount</TableHead>
-                          <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Cause</TableHead>
-                          <TableHead className="font-bold text-[10px] uppercase text-muted-foreground pr-8 text-right">Receipt</TableHead>
+                          <TableHead className="font-bold text-[10px] text-muted-foreground py-6 pl-8">Date</TableHead>
+                          <TableHead className="font-bold text-[10px] text-muted-foreground">Amount</TableHead>
+                          <TableHead className="font-bold text-[10px] text-muted-foreground">Cause</TableHead>
+                          <TableHead className="font-bold text-[10px] text-muted-foreground pr-8 text-right">Receipt</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>

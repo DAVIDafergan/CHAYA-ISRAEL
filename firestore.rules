@@ -7,25 +7,23 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function getUserEmail() {
+      return isSignedIn() && request.auth.token.email != null 
+        ? request.auth.token.email.lower() 
+        : "";
+    }
+
     function isAdmin() {
-      return isSignedIn() && (
-        request.auth.token.email.lower() == "chaya123@chayaisrael.com"
-      );
+      return getUserEmail() == "chaya123@chayaisrael.com";
     }
 
     match /donations/{donationId} {
       // Anyone can create a donation (guest checkout)
       allow create: if true;
       
-      // Admin can read all
-      allow read: if isAdmin();
-      
-      // Users can read their own donations based on email match.
-      // Firestore filters queries based on rules, so the query must strictly 
-      // filter by payerEmail for this rule to allow a 'list' operation.
-      allow read: if isSignedIn() && (
-        resource.data.payerEmail == request.auth.token.email.lower()
-      );
+      // Admin can read/list all
+      // Users can read/list their own donations based on email match
+      allow read: if isAdmin() || (isSignedIn() && resource.data.payerEmail == getUserEmail());
       
       allow update, delete: if isAdmin();
     }
