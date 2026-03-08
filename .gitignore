@@ -1,0 +1,26 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+
+# Firebase - זה החלק שחסר לך וגורם לשגיאה!
+.firebase/
+*-debug.log
+firebase-debug-*.log
+.firebaserc
+
+# Next.js
+.next/
+out/
+build/
+
+# Environment Variables
+.env*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel

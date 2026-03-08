@@ -1,0 +1,40 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "Main Hero image for Chaya Israel.",
+      "imageUrl": "/HERO1.png",
+      "imageHint": "charity hero"
+    },
+    {
+      "id": "featured-image",
+      "description": "Featured impact image.",
+      "imageUrl": "/featured-image-7.jpg",
+      "imageHint": "community impact"
+    },
+    {
+      "id": "shilo-kramer",
+      "description": "Founder Shilo Kramer.",
+      "imageUrl": "/SHILO.jpg",
+      "imageHint": "founder portrait"
+    },
+    {
+      "id": "sderot-red-alert",
+      "description": "Sderot Red Alert situation.",
+      "imageUrl": "/-צבע-אדום-e1633425858580.jpg",
+      "imageHint": "sderot alert"
+    },
+    {
+      "id": "sderot-destruction",
+      "description": "Destruction in Sderot.",
+      "imageUrl": "/הרס-מקסאם-בשכונת-הרכבות.jpg",
+      "imageHint": "sderot destruction"
+    },
+    {
+      "id": "hachnasat-kalah-img",
+      "description": "Hachnasat Kalah Bridal support.",
+      "imageUrl": "/hachnasat-kalah.png",
+      "imageHint": "jewish wedding"
+    }
+  ]
+}

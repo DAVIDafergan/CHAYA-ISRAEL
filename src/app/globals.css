@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 24 95% 53%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
+    --radius: 2rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    font-style: normal !important;
+    outline: none;
+  }
+  
+  *:focus-visible {
+    @apply ring-2 ring-primary ring-offset-2;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary overflow-x-hidden;
+    opacity: 1;
+    visibility: visible;
+    font-style: normal !important;
+  }
+  
+  i, em, span, p, h1, h2, h3, h4, h5, h6, .italic, button, a, div, label, input, textarea {
+    font-style: normal !important;
+  }
+}
+
+.glass-card {
+  @apply bg-white/70 backdrop-blur-2xl border border-white/40 shadow-[0_15px_40px_rgba(0,0,0,0.04)] transition-all duration-500;
+}
+
+.luxury-gradient-text {
+  @apply bg-gradient-to-r from-primary via-primary/80 to-accent bg-clip-text text-transparent;
+}
+
+.shadow-glow-blue {
+  box-shadow: 0 0 25px rgba(0, 112, 243, 0.25);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-slate-50;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors border-2 border-slate-50;
+}
+
+/* Accessibility Modes */
+.acc-grayscale {
+  filter: grayscale(100%) !important;
+}
+
+.acc-high-contrast {
+  filter: contrast(150%) brightness(110%) !important;
+}
+
+.acc-large-text {
+  font-size: 1.15rem !important;
+}
+
+.acc-large-text h1 { font-size: 4.5rem !important; }
+.acc-large-text h2 { font-size: 3.5rem !important; }
+.acc-large-text p { font-size: 1.5rem !important; }
+
+@media (max-width: 768px) {
+  .acc-large-text h1 { font-size: 2.5rem !important; }
+  .acc-large-text p { font-size: 1.1rem !important; }
+}
+
+.acc-highlight-links a {
+  text-decoration: underline !important;
+  font-weight: 800 !important;
+  background-color: rgba(255, 255, 0, 0.2) !important;
+}
+
+.acc-stop-animations * {
+  animation: none !important;
+  transition: none !important;
+}
+
+.acc-readable-font {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
