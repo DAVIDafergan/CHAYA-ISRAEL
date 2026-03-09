@@ -77,16 +77,17 @@ export default function DonateForm({ cause }: { cause?: string }) {
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
       const details = await actions.order.capture();
+      // נרמול המייל לאותיות קטנות לטובת זיהוי עקבי
       const payerEmail = form.getValues('email').trim().toLowerCase();
       
-      // Save record to Firestore immediately for instant feedback
+      // שמירת התרומה ב-Firestore באופן מיידי לזיהוי מהיר באזור האישי
       if (firestore) {
         addDoc(collection(firestore, 'donations'), {
           transactionId: details.id,
           amount: parseFloat(donationTotal),
           currency: 'USD',
           userId: user?.uid || 'guest',
-          payerEmail: payerEmail,
+          payerEmail: payerEmail, // שימוש בשדה זה לחיפוש באזור האישי
           payerName: `${form.getValues('firstName')} ${form.getValues('lastName')}`,
           status: 'COMPLETED',
           timestamp: new Date().toISOString(),

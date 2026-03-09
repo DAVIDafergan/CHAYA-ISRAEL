@@ -61,7 +61,7 @@ export default function AdminDashboard() {
     }
   }, [user, isUserLoading, router, isAdmin]);
 
-  // שאילתה בסיסית לכל התרומות - ללא סינונים מורכבים למניעת שגיאות אינדקס/הרשאות
+  // שאילתה בסיסית לכל התרומות
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return query(collection(firestore, 'donations'));

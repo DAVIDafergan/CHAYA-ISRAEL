@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -42,6 +42,7 @@ export default function MyAccountPage() {
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const cleanEmail = user.email.trim().toLowerCase();
+    // וודא ששם האוסף donations הוא באותיות קטנות ושם השדה payerEmail תואם בדיוק
     return query(
       collection(firestore, 'donations'),
       where('payerEmail', '==', cleanEmail)
@@ -50,12 +51,15 @@ export default function MyAccountPage() {
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
-  // מיון התרומות צד-לקוח למניעת צורך באינדקסים מורכבים ב-Firestore
-  const donations = rawDonations ? [...rawDonations].sort((a, b) => {
-    const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
-    const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-    return timeB - timeA;
-  }) : null;
+  // מיון התרומות צד-לקוח למניעת צורך באינדקסים מורכבים ב-Firestore בשלב זה
+  const donations = useMemo(() => {
+    if (!rawDonations) return null;
+    return [...rawDonations].sort((a, b) => {
+      const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return timeB - timeA;
+    });
+  }, [rawDonations]);
 
   if (isUserLoading) {
     return (
