@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DollarSign, Heart, MessageSquare, Info, User, Mail, MapPin, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
+import { DollarSign, Heart, MessageSquare, Info, User, Mail, MapPin, Loader2, CheckCircle2, ArrowRight, Calendar } from "lucide-react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { type OnApproveData, type CreateOrderData } from "@paypal/paypal-js";
 import { useState, useEffect } from 'react';
@@ -20,11 +20,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser, useFirestore } from "@/firebase";
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   amount: z.string().min(1, { message: "Please enter a donation amount" }),
@@ -36,6 +38,7 @@ const formSchema = z.object({
   state: z.string().min(2, { message: "State is required" }),
   zip: z.string().min(4, { message: "Zip code is required" }),
   note: z.string().optional(),
+  isRecurring: z.boolean().default(false),
 });
 
 export default function DonateForm({ cause }: { cause?: string }) {
@@ -62,6 +65,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
       state: "",
       zip: "",
       note: "",
+      isRecurring: false,
     },
   });
 
@@ -72,29 +76,30 @@ export default function DonateForm({ cause }: { cause?: string }) {
   }, [user, form]);
 
   const watchAmount = form.watch("amount");
+  const watchIsRecurring = form.watch("isRecurring");
   const donationTotal = watchAmount || "0";
   const isOtherCause = cause === 'Other';
 
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
-      const details = await actions.order.capture();
-      // נרמול המייל לאותיות קטנות לטובת זיהוי עקבי
+      // For subscriptions, 'actions.order' is not available. We use 'data.subscriptionID'
+      const transactionId = data.orderID || data.subscriptionID || 'unknown';
       const payerEmail = form.getValues('email').trim().toLowerCase();
       
-      // שמירת התרומה ב-Firestore באופן מיידי לזיהוי מהיר באזור האישי
       if (firestore) {
-        addDoc(collection(firestore, 'donations'), {
-          transactionId: details.id,
+        await addDoc(collection(firestore, 'donations'), {
+          transactionId: transactionId,
           amount: parseFloat(donationTotal),
           currency: 'USD',
           userId: user?.uid || 'guest',
-          payerEmail: payerEmail, // שימוש בשדה זה לחיפוש באזור האישי
+          payerEmail: payerEmail,
           payerName: `${form.getValues('firstName')} ${form.getValues('lastName')}`,
           status: 'COMPLETED',
           timestamp: new Date().toISOString(),
           cause: cause || 'General',
           note: form.getValues('note') || '',
           createdAt: serverTimestamp(),
+          paymentType: watchIsRecurring ? 'RECURRING_START' : 'ONE_TIME'
         });
       }
 
@@ -106,7 +111,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
       });
       form.reset();
     } catch (error) {
-      console.error("PayPal Capture Error:", error);
+      console.error("PayPal Approval Error:", error);
       toast({
         variant: "destructive",
         title: "Transaction failed",
@@ -115,7 +120,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
     }
   }
 
-  const createOrder = async (data: CreateOrderData, actions: any) => {
+  const createOrder = async (data: any, actions: any) => {
     const isValid = await form.trigger();
     if (!isValid) {
         toast({
@@ -140,6 +145,25 @@ export default function DonateForm({ cause }: { cause?: string }) {
       application_context: {
         shipping_preference: 'NO_SHIPPING'
       }
+    });
+  };
+
+  const createSubscription = async (data: any, actions: any) => {
+    const isValid = await form.trigger();
+    if (!isValid) {
+        toast({
+            variant: "destructive",
+            title: "Information missing",
+            description: "Please fill out all required fields.",
+        });
+        return Promise.reject(new Error("Form is invalid"));
+    }
+
+    // IMPORTANT: You must create a Plan in your PayPal Dashboard and use its ID here.
+    // For production, you might want to dynamically select a plan based on the amount.
+    return actions.subscription.create({
+      plan_id: 'P-5ML4271244454362MC6277SA', // Replace with your actual PayPal Plan ID
+      custom_id: user?.uid || 'guest',
     });
   };
 
@@ -195,7 +219,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
     <PayPalScriptProvider options={{ 
       clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
       currency: "USD",
-      intent: "capture"
+      intent: watchIsRecurring ? "subscription" : "capture",
+      vault: watchIsRecurring ? true : undefined
     }}>
       <div className="pt-32 pb-24 px-4 bg-slate-50 min-h-screen">
         <div className="container mx-auto max-w-2xl">
@@ -218,10 +243,28 @@ export default function DonateForm({ cause }: { cause?: string }) {
               <div className="space-y-6">
                 
                 <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 flex flex-row items-center justify-between">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
                       <DollarSign className="h-5 w-5" /> Donation amount
                     </CardTitle>
+                    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm">
+                       <Calendar className={cn("h-4 w-4 transition-colors", watchIsRecurring ? "text-primary" : "text-slate-300")} />
+                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Monthly</span>
+                       <FormField
+                        control={form.control}
+                        name="isRecurring"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Switch 
+                                checked={field.value} 
+                                onCheckedChange={field.onChange} 
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </CardHeader>
                   <CardContent className="p-8">
                     <FormField
@@ -240,6 +283,9 @@ export default function DonateForm({ cause }: { cause?: string }) {
                                   required
                                 />
                               </FormControl>
+                              {watchIsRecurring && (
+                                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">/ month</span>
+                              )}
                           </div>
                           <FormMessage />
                         </FormItem>
@@ -387,10 +433,11 @@ export default function DonateForm({ cause }: { cause?: string }) {
                           layout: "vertical", 
                           color: 'blue', 
                           shape: 'pill', 
-                          label: 'donate',
+                          label: watchIsRecurring ? 'subscribe' : 'donate',
                           height: 55
                         }}
-                        createOrder={createOrder}
+                        createOrder={!watchIsRecurring ? createOrder : undefined}
+                        createSubscription={watchIsRecurring ? createSubscription : undefined}
                         onApprove={handleOnApprove}
                       />
                     </div>
