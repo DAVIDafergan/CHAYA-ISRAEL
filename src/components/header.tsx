@@ -10,7 +10,8 @@ import {
   ChevronRight, 
   LayoutDashboard,
   Heart,
-  CreditCard
+  CreditCard,
+  UserCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -121,26 +122,26 @@ export function Header() {
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator className="bg-slate-50" />
                       <DropdownMenuItem onClick={() => navigate('/account')} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold hover:bg-slate-50">
-                        <CreditCard className="h-4 w-4 text-primary" /> Donation history
+                        <CreditCard className="h-4 w-4 text-primary" /> My Account
                       </DropdownMenuItem>
                       {isAdmin && (
                         <DropdownMenuItem onClick={() => navigate('/admin/dashboard')} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold text-accent hover:bg-accent/5">
-                          <LayoutDashboard className="h-4 w-4" /> Manager dashboard
+                          <LayoutDashboard className="h-4 w-4" /> Manager Dashboard
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator className="bg-slate-50" />
                       <DropdownMenuItem onClick={handleLogout} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold text-destructive hover:bg-destructive/5">
-                        <LogOut className="h-4 w-4" /> Sign out
+                        <LogOut className="h-4 w-4" /> Sign Out
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" asChild className="rounded-full h-10 px-5 font-bold text-foreground/70 hover:text-primary">
-                      <Link href="/login">Sign in</Link>
+                      <Link href="/login">Sign In</Link>
                     </Button>
                     <Button variant="outline" asChild className="rounded-full h-10 px-5 font-bold border-primary/20 text-primary hover:bg-primary/5">
-                      <Link href="/signup">Join us</Link>
+                      <Link href="/signup">Join Us</Link>
                     </Button>
                   </div>
                 )}
@@ -209,34 +210,34 @@ export function Header() {
                       onClick={() => navigate('/account')} 
                       className="text-left text-foreground flex items-center gap-4 font-bold py-2"
                     >
-                      <UserIcon className="h-6 w-6 text-primary" /> Account details
+                      <UserCircle className="h-6 w-6 text-primary" /> My Account
                     </button>
                     {isAdmin && (
                       <button 
                         onClick={() => navigate('/admin/dashboard')} 
                         className="text-left text-accent flex items-center gap-4 font-bold py-2"
                       >
-                        <LayoutDashboard className="h-6 w-6" /> Manager dashboard
+                        <LayoutDashboard className="h-6 w-6" /> Manager Dashboard
                       </button>
                     )}
                     <button onClick={handleLogout} className="text-left text-destructive font-bold flex items-center gap-4 py-2">
-                      <LogOut className="h-6 w-6" /> Sign out
+                      <LogOut className="h-6 w-6" /> Sign Out
                     </button>
                   </>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     <Button onClick={() => navigate('/login')} variant="outline" className="rounded-full h-14 font-bold">
-                      Sign in
+                      Sign In
                     </Button>
                     <Button onClick={() => navigate('/signup')} className="rounded-full h-14 font-bold bg-primary">
-                      Join now
+                      Join Now
                     </Button>
                   </div>
                 )}
               </div>
 
               <Button onClick={() => navigate('/donate')} size="lg" className="rounded-full h-16 text-xl font-bold mt-8 bg-primary text-white shadow-xl">
-                Donate now
+                Donate Now
               </Button>
             </nav>
           </motion.div>

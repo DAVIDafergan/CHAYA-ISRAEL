@@ -2,6 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Open access for development build phase to prevent permission errors
+    // Note: Re-applying rules to ensure they are active
     match /{document=**} {
       allow read, write: if true;
     }

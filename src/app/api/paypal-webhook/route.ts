@@ -15,15 +15,29 @@ export async function POST(request: Request) {
     }
 
     const body = JSON.parse(rawBody);
-
-    // Event handling for PayPal payment completion
     const eventType = body.event_type;
     
-    if (eventType === 'PAYMENT.CAPTURE.COMPLETED' || eventType === 'CHECKOUT.ORDER.APPROVED') {
+    // Log the event type for debugging
+    console.log(`Processing PayPal Webhook Event: ${eventType}`);
+
+    // Supported events for successful payments
+    const successfulEvents = [
+      'PAYMENT.CAPTURE.COMPLETED',
+      'CHECKOUT.ORDER.APPROVED',
+      'CHECKOUT.ORDER.COMPLETED'
+    ];
+
+    if (successfulEvents.includes(eventType)) {
       const resource = body.resource;
-      const payerEmail = (resource.payer?.email_address || "unknown@paypal.com").toLowerCase();
       
-      // Smart Logic: Search for a registered user with this email
+      // PayPal payload structure varies slightly between event types
+      const purchaseUnit = resource.purchase_units?.[0] || {};
+      const amountData = resource.amount || purchaseUnit.amount || {};
+      const payerData = resource.payer || body.resource.payer || {};
+      
+      const payerEmail = (payerData.email_address || payerData.email || "unknown@paypal.com").toLowerCase();
+      
+      // Search for user by email to associate the donation
       let userId = 'guest';
       try {
         const usersQuery = query(
@@ -40,21 +54,34 @@ export async function POST(request: Request) {
       }
 
       const donationData = {
-        transactionId: resource.id || 'unknown',
-        amount: parseFloat(resource.amount?.value || resource.purchase_units?.[0]?.amount?.value || "0"),
-        currency: resource.amount?.currency_code || resource.purchase_units?.[0]?.amount?.currency_code || "USD",
+        transactionId: resource.id || 'webhook-' + Date.now(),
+        amount: parseFloat(amountData.value || "0"),
+        currency: amountData.currency_code || "USD",
         userId: userId,
         payerEmail: payerEmail,
-        payerName: `${resource.payer?.name?.given_name || ""} ${resource.payer?.name?.surname || ""}`.trim() || "PayPal Donor",
-        status: resource.status || "COMPLETED",
-        timestamp: resource.create_time || new Date().toISOString(),
-        note: resource.purchase_units?.[0]?.description || "",
-        cause: resource.purchase_units?.[0]?.description?.split('Donation for ')[1]?.split(' - ')[0] || "General",
+        payerName: `${payerData.name?.given_name || ""} ${payerData.name?.surname || ""}`.trim() || "PayPal Donor",
+        status: 'COMPLETED',
+        timestamp: resource.create_time || resource.update_time || new Date().toISOString(),
+        note: purchaseUnit.description || "",
+        cause: purchaseUnit.description?.split('Donation for ')[1]?.split(' - ')[0] || "General",
         createdAt: serverTimestamp(),
+        source: 'webhook'
       };
 
-      // Add the donation record to Firestore
-      await addDoc(collection(db, 'donations'), donationData);
+      // Check if this transaction already exists to avoid duplicates
+      const existingQuery = query(
+        collection(db, 'donations'),
+        where('transactionId', '==', donationData.transactionId),
+        limit(1)
+      );
+      const existingSnapshot = await getDocs(existingQuery);
+
+      if (existingSnapshot.empty) {
+        await addDoc(collection(db, 'donations'), donationData);
+        console.log(`Donation successfully saved from webhook: ${donationData.transactionId}`);
+      } else {
+        console.log(`Donation ${donationData.transactionId} already exists, skipping.`);
+      }
     }
 
     return new Response('OK', { status: 200 });
