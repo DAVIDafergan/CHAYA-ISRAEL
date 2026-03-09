@@ -30,12 +30,14 @@ export async function POST(request: Request) {
     if (successfulEvents.includes(eventType)) {
       const resource = body.resource;
       
-      // PayPal payload structure varies slightly between event types
+      // Extract data with fallback paths based on different PayPal event structures
       const purchaseUnit = resource.purchase_units?.[0] || {};
       const amountData = resource.amount || purchaseUnit.amount || {};
       const payerData = resource.payer || body.resource.payer || {};
       
-      const payerEmail = (payerData.email_address || payerData.email || "unknown@paypal.com").toLowerCase();
+      // Normalize email to lowercase for consistent searching
+      const rawEmail = payerData.email_address || payerData.email || "unknown@paypal.com";
+      const payerEmail = rawEmail.toLowerCase().trim();
       
       // Search for user by email to associate the donation
       let userId = 'guest';
@@ -54,7 +56,7 @@ export async function POST(request: Request) {
       }
 
       const donationData = {
-        transactionId: resource.id || 'webhook-' + Date.now(),
+        transactionId: resource.id || body.id || 'webhook-' + Date.now(),
         amount: parseFloat(amountData.value || "0"),
         currency: amountData.currency_code || "USD",
         userId: userId,
@@ -62,7 +64,7 @@ export async function POST(request: Request) {
         payerName: `${payerData.name?.given_name || ""} ${payerData.name?.surname || ""}`.trim() || "PayPal Donor",
         status: 'COMPLETED',
         timestamp: resource.create_time || resource.update_time || new Date().toISOString(),
-        note: purchaseUnit.description || "",
+        note: purchaseUnit.description || body.summary || "",
         cause: purchaseUnit.description?.split('Donation for ')[1]?.split(' - ')[0] || "General",
         createdAt: serverTimestamp(),
         source: 'webhook'

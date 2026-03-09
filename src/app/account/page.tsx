@@ -40,6 +40,7 @@ export default function MyAccountPage() {
   // Sync donations by email (normalized to lowercase) to catch guest donations
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
+    // CRITICAL: Normalize email to lowercase to match Webhook data
     const cleanEmail = user.email.trim().toLowerCase();
     return query(
       collection(firestore, 'donations'),
@@ -185,7 +186,7 @@ export default function MyAccountPage() {
                     <div className="space-y-2">
                       <h3 className="text-xl font-bold text-slate-800">No donations found</h3>
                       <p className="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">
-                        Your generosity will appear here once you make your first donation.
+                        Your generosity will appear here once you make your first donation using {user.email}.
                       </p>
                     </div>
                     <Button asChild className="rounded-full h-12 px-10 shadow-lg">
