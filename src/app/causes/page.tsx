@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { 
   Heart, Shield, Flame, Package, Utensils, Gift, 
-  Sparkles, ArrowRight, Info, CalendarDays, Star, Youtube
+  Sparkles, ArrowRight, Info, CalendarDays, Star, Youtube, ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -76,7 +76,7 @@ function DialogCard({ cause }: { cause: Cause }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="group cursor-pointer h-full">
+        <div className="group cursor-pointer h-full" id={cause.id}>
           <div className="glass-card h-full rounded-[24px] md:rounded-[32px] overflow-hidden flex flex-col border border-primary/5 bg-white shadow-xl transition-all duration-500 hover:-translate-y-1">
             <div className="relative h-28 md:h-48 overflow-hidden">
               <Image 
@@ -405,6 +405,36 @@ export default function CausesPage() {
             {regularCauses.map((cause) => (
               <DialogCard key={cause.id} cause={cause} />
             ))}
+            
+            {/* High Holidays Navigation Card */}
+            <div className="group h-full">
+              <div className="glass-card h-full rounded-[24px] md:rounded-[32px] p-5 md:p-8 flex flex-col border border-primary/10 bg-white shadow-xl">
+                 <div className="bg-primary/5 p-3 rounded-2xl w-fit mb-4">
+                    <CalendarDays className="h-6 w-6 text-primary" />
+                 </div>
+                 <h3 className="text-sm md:text-lg font-bold text-primary mb-4 leading-tight">High Holidays Donations</h3>
+                 <div className="flex flex-col gap-2 md:gap-3 flex-1">
+                    {[
+                      { label: "Rosh Hashanah", href: "#rosh-hashanah-sukkot" },
+                      { label: "Purim", href: "#purim" },
+                      { label: "Pesach", href: "#pesach" }
+                    ].map((link, idx) => (
+                      <Link 
+                        key={idx} 
+                        href={link.href} 
+                        className="flex items-center justify-between p-2 md:p-3 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          document.getElementById(link.href.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                      >
+                        <span className="text-[10px] md:text-xs font-bold">{link.label}</span>
+                        <ChevronRight className="h-3 w-3 opacity-30 group-hover/link:opacity-100 transition-opacity" />
+                      </Link>
+                    ))}
+                 </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
