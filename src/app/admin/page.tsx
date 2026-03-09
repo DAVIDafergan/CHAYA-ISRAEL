@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -74,7 +73,7 @@ export default function AdminLoginPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
         <Loader2 className="h-10 w-10 text-primary animate-spin" />
-        <p className="text-slate-500 font-bold tracking-widest text-xs">Loading security...</p>
+        <p className="text-slate-500 font-bold tracking-tight text-xs">Loading security...</p>
       </div>
     );
   }
@@ -93,7 +92,7 @@ export default function AdminLoginPage() {
         <CardContent className="p-10">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1">Manager id</label>
+              <label className="text-[10px] font-bold text-muted-foreground tracking-tight px-1">Manager id</label>
               <div className="relative group">
                 <User className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -107,7 +106,7 @@ export default function AdminLoginPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1">Password</label>
+              <label className="text-[10px] font-bold text-muted-foreground tracking-tight px-1">Password</label>
               <div className="relative group">
                 <Lock className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
@@ -129,7 +128,7 @@ export default function AdminLoginPage() {
             </Button>
           </form>
           <div className="mt-8 pt-8 border-t border-slate-100 text-center">
-             <p className="text-[10px] text-slate-400 font-bold tracking-widest leading-relaxed">
+             <p className="text-[10px] text-slate-400 font-bold tracking-tight leading-relaxed">
                Only authorized managers can access this dashboard. All login attempts are recorded for security purposes.
              </p>
           </div>

@@ -20,7 +20,7 @@ service cloud.firestore {
       
       // Admin can read all. 
       // Users can read only their own donations (filtered by payerEmail).
-      // The rule must allow 'list' for queries that filter by the user's email.
+      // We use a simplified rule that Firestore can easily evaluate for queries.
       allow read: if isAdmin() || (isSignedIn() && resource.data.payerEmail == getEmail());
       
       allow update, delete: if isAdmin();
