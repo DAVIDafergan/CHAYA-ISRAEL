@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { 
   Table, 
   TableBody, 
@@ -36,19 +36,18 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Query filtered by user ID to match security rules and efficiency
-  // Removed complex ordering that might require missing indexes during build
+  // שאילתה לפי אימייל היא הדרך הכי בטוחה למצוא תרומות שבוצעו גם כאורח
   const donationsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.uid) return null;
+    if (!firestore || !user?.email) return null;
     return query(
       collection(firestore, 'donations'),
-      where('userId', '==', user.uid)
+      where('payerEmail', '==', user.email.toLowerCase())
     );
-  }, [firestore, user?.uid]);
+  }, [firestore, user?.email]);
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
-  // Client-side sorting as a safety measure against missing composite indexes
+  // מיון בצד לקוח כדי להימנע משגיאות אינדקסים ב-Firestore
   const donations = rawDonations ? [...rawDonations].sort((a, b) => {
     const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
     const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
