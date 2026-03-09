@@ -508,9 +508,6 @@ export default function CausesPage() {
             <h2 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] drop-shadow-2xl">
               Please help us give life to <br className="hidden md:block" /> those who rely on <span className="text-primary luxury-gradient-text brightness-150">YOU</span>
             </h2>
-            <p className="text-base md:text-2xl text-white/60 max-w-3xl mx-auto font-medium leading-relaxed">
-              Every donation creates a ripple of hope. Join our mission and make a real impact today.
-            </p>
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
