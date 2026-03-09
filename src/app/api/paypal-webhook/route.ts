@@ -19,21 +19,27 @@ export async function POST(request: Request) {
     
     console.log(`Processing PayPal Webhook Event: ${eventType}`);
 
-    // Events that signify a successful payment (One-time or Subscription)
+    // Events that signify a successful payment or a valid subscription start
     const successfulEvents = [
       'PAYMENT.CAPTURE.COMPLETED',
       'CHECKOUT.ORDER.APPROVED',
       'CHECKOUT.ORDER.COMPLETED',
-      'PAYMENT.SALE.COMPLETED' // This is triggered for each recurring subscription payment
+      'PAYMENT.SALE.COMPLETED',
+      'BILLING.SUBSCRIPTION.CREATED',
+      'BILLING.SUBSCRIPTION.ACTIVATED'
     ];
 
     if (successfulEvents.includes(eventType)) {
       const resource = body.resource;
       
-      // Handle different resource structures (Order vs Sale)
-      const amountData = resource.amount || resource.seller_receivable_breakdown?.gross_amount || {};
-      const payerData = resource.payer || body.resource?.payer || {};
-      
+      // Extract amount - handle different structures for Sales vs Orders vs Subscriptions
+      const amountData = resource.amount || 
+                         resource.seller_receivable_breakdown?.gross_amount || 
+                         resource.billing_info?.last_payment?.amount || 
+                         { value: "0", currency_code: "USD" };
+
+      // Extract payer email - handle 'subscriber' field for subscriptions and 'payer' for orders
+      const payerData = resource.subscriber || resource.payer || body.resource?.payer || {};
       const rawEmail = payerData.email_address || payerData.email || "unknown@paypal.com";
       const payerEmail = rawEmail.toLowerCase().trim();
       
@@ -52,11 +58,15 @@ export async function POST(request: Request) {
         console.error("Error searching for user by email in webhook:", err);
       }
 
-      const transactionId = resource.id || body.id || 'webhook-' + Date.now();
+      // Use resource.id as transactionId, fallback to subscription ID or body ID
+      const transactionId = resource.id || resource.subscription_id || body.id || 'webhook-' + Date.now();
 
-      // For subscriptions, the description might be in different places
+      // Determine note and cause
       const note = resource.custom_description || resource.description || body.summary || "";
       const cause = note.includes('Donation for ') ? note.split('Donation for ')[1]?.split(' - ')[0] : "General";
+
+      const isSubscriptionEvent = eventType.startsWith('BILLING.SUBSCRIPTION');
+      const paymentType = isSubscriptionEvent || eventType === 'PAYMENT.SALE.COMPLETED' ? 'RECURRING' : 'ONE_TIME';
 
       const donationData = {
         transactionId: transactionId,
@@ -66,14 +76,16 @@ export async function POST(request: Request) {
         payerEmail: payerEmail,
         payerName: `${payerData.name?.given_name || ""} ${payerData.name?.surname || ""}`.trim() || "PayPal Donor",
         status: 'COMPLETED',
-        timestamp: resource.create_time || resource.update_time || new Date().toISOString(),
+        timestamp: resource.create_time || resource.update_time || resource.start_time || new Date().toISOString(),
         note: note,
         cause: cause,
         createdAt: serverTimestamp(),
         source: 'webhook',
-        paymentType: eventType === 'PAYMENT.SALE.COMPLETED' ? 'RECURRING' : 'ONE_TIME'
+        paymentType: paymentType,
+        webhookEventType: eventType
       };
 
+      // Check for existing transaction to prevent duplicates
       const existingQuery = query(
         collection(db, 'donations'),
         where('transactionId', '==', transactionId),
@@ -83,7 +95,7 @@ export async function POST(request: Request) {
 
       if (existingSnapshot.empty) {
         await addDoc(collection(db, 'donations'), donationData);
-        console.log(`Donation successfully saved from webhook: ${transactionId} (${donationData.paymentType})`);
+        console.log(`Donation successfully saved from webhook: ${transactionId} (${paymentType} - ${eventType})`);
       } else {
         console.log(`Donation ${transactionId} already exists, skipping.`);
       }
