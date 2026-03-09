@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection, useAuth, useMemoFirebase } from '@/firebase';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { 
   Table, 
@@ -32,8 +32,7 @@ import {
   ChevronLeft, 
   ChevronRight,
   TrendingUp,
-  Users,
-  RefreshCcw
+  Users
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -49,9 +48,8 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -155,7 +153,7 @@ export default function AdminDashboard() {
                 <TrendingUp className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 opacity-60">Total revenue</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total revenue</p>
                 <h2 className="text-3xl font-bold text-primary">${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               </div>
             </CardContent>
@@ -166,7 +164,7 @@ export default function AdminDashboard() {
                 <Users className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 opacity-60">Total donations</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total donations</p>
                 <h2 className="text-3xl font-bold text-slate-900">{stats.count}</h2>
               </div>
             </CardContent>

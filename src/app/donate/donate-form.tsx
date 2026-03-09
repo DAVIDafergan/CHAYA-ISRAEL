@@ -81,8 +81,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
       
       // Save record to Firestore immediately for instant feedback
       if (firestore) {
-        // We initiate the write and proceed. 
-        // We use addDoc which returns a promise, but we don't necessarily need to block UI on it.
         addDoc(collection(firestore, 'donations'), {
           transactionId: details.id,
           amount: parseFloat(donationTotal),

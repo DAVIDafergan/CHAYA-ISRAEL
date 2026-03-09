@@ -10,7 +10,6 @@ import {
   ChevronRight, 
   LayoutDashboard,
   Heart,
-  Settings,
   CreditCard
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -65,7 +64,7 @@ export function Header() {
   };
 
   const isLoggedWithAccount = user && !user.isAnonymous;
-  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
 
   return (
     <>
@@ -117,7 +116,7 @@ export function Header() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-64 rounded-[24px] p-2 border-slate-100 shadow-2xl mt-2" align="end">
-                      <DropdownMenuLabel className="px-4 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                      <DropdownMenuLabel className="px-4 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60">
                         Manage account
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator className="bg-slate-50" />
