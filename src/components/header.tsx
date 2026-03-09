@@ -45,7 +45,8 @@ export function Header() {
   };
 
   const isLoggedWithAccount = user && !user.isAnonymous;
-  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
+  // Exclusive admin access only for chaya123@chayaisrael.com
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
 
   return (
     <>

@@ -51,20 +51,20 @@ export default function AdminDashboard() {
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Define admin users
-  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
+  // Exclusive admin check
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
 
   useEffect(() => {
     if (!isUserLoading) {
       if (!user) {
         router.push('/admin');
       } else if (!isAdmin) {
+        // Strict redirection for unauthorized users
         router.push('/');
       }
     }
   }, [user, isUserLoading, router, isAdmin]);
 
-  // Basic query for all donations
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user || !isAdmin) return null;
     return query(collection(firestore, 'donations'));
@@ -77,7 +77,6 @@ export default function AdminDashboard() {
     
     let results = [...rawDonations];
 
-    // Client-side sort: newest first
     results.sort((a, b) => {
       const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
       const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -119,7 +118,7 @@ export default function AdminDashboard() {
 
   if (isUserLoading || !user || !isAdmin) {
     return (
-      <div className="p-8 pt-32 max-w-6xl mx-auto space-y-6">
+      <div className="p-8 pt-40 max-w-6xl mx-auto space-y-6">
         <Skeleton className="h-12 w-64 rounded-full" />
         <Skeleton className="h-[400px] w-full rounded-[32px]" />
       </div>

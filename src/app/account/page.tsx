@@ -44,6 +44,7 @@ export default function MyAccountPage() {
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const cleanEmail = user.email.trim().toLowerCase();
+    // Search strictly by the payer's email stored in Firestore
     return query(
       collection(firestore, 'donations'),
       where('payerEmail', '==', cleanEmail)
@@ -68,7 +69,7 @@ export default function MyAccountPage() {
     }
   };
 
-  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
 
   if (isUserLoading) {
     return (
