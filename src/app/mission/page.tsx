@@ -58,7 +58,7 @@ export default function MissionPage() {
               </div>
               <div className="space-y-0.5">
                 <h3 className="text-lg md:text-2xl font-black text-foreground tracking-tight">Rabbi Avraham Kramer</h3>
-                <p className="text-[9px] md:text-base font-bold tracking-[0.15em] text-primary">Executive Director</p>
+                <p className="text-[9px] md:text-base font-bold text-primary">Executive Director</p>
               </div>
             </div>
             
@@ -75,7 +75,7 @@ export default function MissionPage() {
               </div>
               <div className="space-y-0.5">
                 <h3 className="text-lg md:text-2xl font-black text-foreground tracking-tight">Dr. Shilo Kramer</h3>
-                <p className="text-[9px] md:text-base font-bold tracking-[0.15em] text-primary">Co-director</p>
+                <p className="text-[9px] md:text-base font-bold text-primary">Co-director</p>
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function MissionPage() {
                 </div>
                 <div>
                   <h4 className="text-base md:text-xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>
-                  <p className="text-primary font-bold text-[9px] md:text-xs tracking-widest">Director of the Or Hachaim Organization</p>
+                  <p className="text-primary font-bold text-[9px] md:text-xs">Director of the Or Hachaim Organization</p>
                 </div>
               </div>
               <div className="relative">
@@ -130,14 +130,14 @@ export default function MissionPage() {
                 </div>
                 <div>
                   <h4 className="text-base md:text-xl font-black text-foreground leading-tight tracking-tight">Avichai Amosi</h4>
-                  <p className="text-primary font-bold text-[9px] md:text-xs tracking-widest">Director of Merkaz Chesed Sderot</p>
+                  <p className="text-primary font-bold text-[9px] md:text-xs">Director of Merkaz Chesed Sderot</p>
                 </div>
               </div>
               <div className="relative">
                 <Quote className="absolute -top-2 -left-2 h-6 w-6 md:h-10 md:w-10 text-accent/10" />
                 <div className="space-y-3 text-foreground/80 text-[11px] md:text-base leading-relaxed relative z-10 font-medium">
                   <p>
-                    "Chaya Israel Foundation has been steadily providing meals for the Sderot community for over 2 decades. We can't thank them enough for their support! May G-d bless all those that have helped under-privileged communities with food & shelter and enable them to celebrate the Jewish Holidays as they were meant to be celebrated."
+                    "Chaya Israel Foundation has been steadily providing meals for the Sderot community for over two decades. We can't thank them enough for their support! May G-d bless all those that have helped under-privileged communities with food & shelter and enable them to celebrate the Jewish Holidays as they were meant to be celebrated."
                   </p>
                 </div>
               </div>

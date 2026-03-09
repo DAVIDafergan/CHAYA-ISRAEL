@@ -13,7 +13,7 @@ export function Footer() {
               <Image src="/Logo.png" alt="Chaya Israel logo" width={140} height={40} priority className="w-auto h-10 md:h-14 isolate bg-transparent"/>
             </Link>
             <div className="flex flex-col gap-2">
-              <p className="text-[10px] md:text-sm text-muted-foreground tracking-widest font-bold opacity-70">
+              <p className="text-[10px] md:text-sm text-muted-foreground font-bold opacity-70">
                 © {new Date().getFullYear()} Chaya Israel Foundation. All rights reserved.
               </p>
               <Link href="/admin" className="text-[8px] text-muted-foreground/30 hover:text-primary transition-colors font-medium w-fit mx-auto md:mx-0" aria-label="Manager login">
@@ -21,8 +21,8 @@ export function Footer() {
               </Link>
             </div>
             <nav className="flex gap-6 md:gap-10 justify-center md:justify-start" aria-label="Footer navigation">
-               <Link href="/contact" className="text-[10px] md:text-xs font-black tracking-widest text-primary hover:translate-y-[-2px] transition-all outline-none focus-visible:underline underline-offset-4">Contact us</Link>
-               <Link href="/mission" className="text-[10px] md:text-xs font-black tracking-widest text-primary hover:translate-y-[-2px] transition-all outline-none focus-visible:underline underline-offset-4">Our mission</Link>
+               <Link href="/contact" className="text-[10px] md:text-xs font-black text-primary hover:translate-y-[-2px] transition-all outline-none focus-visible:underline underline-offset-4">Contact us</Link>
+               <Link href="/mission" className="text-[10px] md:text-xs font-black text-primary hover:translate-y-[-2px] transition-all outline-none focus-visible:underline underline-offset-4">Our mission</Link>
             </nav>
             <p className="max-w-md text-[9px] md:text-[11px] text-muted-foreground leading-relaxed opacity-60 font-medium">
                The Chaya Israel Foundation is a 501(c)(3) Charitable Organization. All donations are tax deductible to US citizens. Tax-exempt donation receipts can be downloaded at any time.
@@ -45,7 +45,7 @@ export function Footer() {
               ))}
             </nav>
             <div className="text-center md:text-right">
-              <p className="text-[10px] md:text-[12px] font-black text-muted-foreground tracking-tighter opacity-50 mb-3">
+              <p className="text-[10px] md:text-[12px] font-black text-muted-foreground opacity-50 mb-3">
                 Designed for impact. Powered by hope.
               </p>
               <Link 

@@ -36,8 +36,7 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Stabilized query to ensure it only runs when the user email is available.
-  // Using where filter to match the payer's email.
+  // Query filtered by user email to show their specific history
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const userEmail = user.email.trim().toLowerCase();
