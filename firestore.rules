@@ -1,7 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Permissive rules for development as requested to unblock UI building
+    // Permissive rules for development as requested to unblock UI building.
+    // WARNING: These rules allow anyone with your database ID to read and write all data.
+    // In production, you MUST restrict access to authorized users only.
     match /{document=**} {
       allow read, write: if true;
     }
