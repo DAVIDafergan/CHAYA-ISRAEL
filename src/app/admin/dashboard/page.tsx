@@ -61,11 +61,11 @@ export default function AdminDashboard() {
     }
   }, [user, isUserLoading, router, isAdmin]);
 
-  // שאילתה בסיסית לכל התרומות
+  // שאילתה בסיסית לכל התרומות - ללא סינונים מורכבים למניעת שגיאות אינדקס/הרשאות
   const donationsQuery = useMemoFirebase(() => {
-    if (!firestore || !user || !isAdmin) return null;
+    if (!firestore || !user) return null;
     return query(collection(firestore, 'donations'));
-  }, [firestore, user, isAdmin]);
+  }, [firestore, user]);
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
     
     let results = [...rawDonations];
 
-    // מיון לפי תאריך - החדש ביותר למעלה
+    // מיון צד-לקוח - החדש ביותר למעלה
     results.sort((a, b) => {
       const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
       const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -132,8 +132,8 @@ export default function AdminDashboard() {
               <LayoutDashboard className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">Donations manager</h1>
-              <p className="text-muted-foreground text-sm font-medium opacity-70">Foundation impact dashboard</p>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">Donations Manager</h1>
+              <p className="text-muted-foreground text-sm font-medium opacity-70">Foundation Impact Dashboard</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
               onClick={handleLogout}
               className="rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold h-11 px-6 transition-all"
             >
-              <LogOut className="h-4 w-4 mr-2" /> Sign out
+              <LogOut className="h-4 w-4 mr-2" /> Sign Out
             </Button>
           </div>
         </header>
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
                 <TrendingUp className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total revenue</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total Revenue</p>
                 <h2 className="text-3xl font-bold text-primary">${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               </div>
             </CardContent>
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
                 <Users className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total donations</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total Donations</p>
                 <h2 className="text-3xl font-bold text-slate-900">{stats.count}</h2>
               </div>
             </CardContent>
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-0 shadow-xl">
-                  <SelectItem value="ALL">All statuses</SelectItem>
+                  <SelectItem value="ALL">All Statuses</SelectItem>
                   <SelectItem value="COMPLETED">Completed</SelectItem>
                   <SelectItem value="PENDING">Pending</SelectItem>
                 </SelectContent>
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
                   <SelectValue placeholder="Cause" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-0 shadow-xl">
-                  <SelectItem value="ALL">All causes</SelectItem>
+                  <SelectItem value="ALL">All Causes</SelectItem>
                   <SelectItem value="Widows and Orphans">Widows and Orphans</SelectItem>
                   <SelectItem value="Hachnasat Kalah">Hachnasat Kalah</SelectItem>
                   <SelectItem value="Sderot">Sderot</SelectItem>
@@ -214,7 +214,7 @@ export default function AdminDashboard() {
         <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white min-h-[400px]">
           <CardHeader className="bg-slate-50/50 py-8 border-b border-slate-100 px-8 flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
-              <CreditCard className="h-5 w-5" /> Recent transactions
+              <CreditCard className="h-5 w-5" /> Recent Transactions
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">

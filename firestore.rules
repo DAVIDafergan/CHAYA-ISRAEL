@@ -6,5 +6,10 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if true;
     }
+    
+    // חוק ספציפי לאוסף התרומות ליתר ביטחון
+    match /donations/{donationId} {
+      allow read, write: if true;
+    }
   }
 }

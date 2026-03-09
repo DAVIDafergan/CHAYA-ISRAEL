@@ -37,7 +37,8 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // חיפוש תרומות לפי אימייל (באותיות קטנות) כדי לאתר גם תרומות שבוצעו כאורח
+  // שאילתה המבוססת על כתובת האימייל של המשתמש (בצורה מנורמלת לאותיות קטנות)
+  // זה מבטיח שגם תרומות שבוצעו כ"אורח" עם אותו מייל יופיעו כאן
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const cleanEmail = user.email.trim().toLowerCase();
@@ -49,7 +50,7 @@ export default function MyAccountPage() {
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
-  // מיון התרומות לפי תאריך (החדש ביותר למעלה)
+  // מיון התרומות צד-לקוח למניעת צורך באינדקסים מורכבים ב-Firestore
   const donations = rawDonations ? [...rawDonations].sort((a, b) => {
     const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
     const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -76,12 +77,12 @@ export default function MyAccountPage() {
               <UserIcon className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900">My account</h1>
-              <p className="text-muted-foreground text-sm font-medium opacity-70">Personal impact journey</p>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">My Account</h1>
+              <p className="text-muted-foreground text-sm font-medium opacity-70">Personal Impact Journey</p>
             </div>
           </div>
           <Button asChild className="rounded-full h-12 px-8 font-bold shadow-xl">
-            <Link href="/donate">Donate again</Link>
+            <Link href="/donate">Donate Again</Link>
           </Button>
         </header>
 
@@ -91,25 +92,25 @@ export default function MyAccountPage() {
                <div className="bg-primary p-8 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                   <div className="relative z-10">
-                     <p className="text-[10px] font-bold uppercase tracking-wider opacity-70 mb-1">Donor profile</p>
+                     <p className="text-[10px] font-bold uppercase tracking-wider opacity-70 mb-1">Donor Profile</p>
                      <h2 className="text-xl font-bold truncate">{user.displayName || user.email?.split('@')[0]}</h2>
                      <p className="text-sm opacity-60 truncate">{user.email}</p>
                   </div>
                </div>
                <CardContent className="p-8 space-y-6">
                   <div className="space-y-1">
-                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60">Member since</p>
+                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60">Member Since</p>
                      <p className="text-sm font-bold">{user.metadata.creationTime ? format(new Date(user.metadata.creationTime), 'MMMM yyyy') : 'Recently'}</p>
                   </div>
                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60 mb-4">Quick links</p>
+                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60 mb-4">Quick Links</p>
                      <div className="space-y-2">
                         <Link href="/contact" className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                           <span className="text-xs font-bold">Get support</span>
+                           <span className="text-xs font-bold">Get Support</span>
                            <ChevronRight className="h-3 w-3 text-slate-400" />
                         </Link>
                         <Link href="/causes" className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                           <span className="text-xs font-bold">Explore causes</span>
+                           <span className="text-xs font-bold">Explore Causes</span>
                            <ChevronRight className="h-3 w-3 text-slate-400" />
                         </Link>
                      </div>
@@ -122,7 +123,7 @@ export default function MyAccountPage() {
             <Card className="rounded-[32px] overflow-hidden border-0 shadow-sm bg-white min-h-[500px]">
               <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
                 <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
-                  <CreditCard className="h-5 w-5" /> Donation history
+                  <CreditCard className="h-5 w-5" /> Donation History
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -183,13 +184,13 @@ export default function MyAccountPage() {
                       <Heart className="h-12 w-12 text-slate-200" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-slate-800">No donations found</h3>
+                      <h3 className="text-xl font-bold text-slate-800">No Donations Found</h3>
                       <p className="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">
                         Your generosity will appear here once you make your first donation using {user.email}.
                       </p>
                     </div>
                     <Button asChild className="rounded-full h-12 px-10 shadow-lg">
-                       <Link href="/donate">Donate now</Link>
+                       <Link href="/donate">Donate Now</Link>
                     </Button>
                   </div>
                 )}
