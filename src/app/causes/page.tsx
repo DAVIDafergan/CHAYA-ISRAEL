@@ -48,7 +48,7 @@ function SpecialImageSwitcher({ images }: { images: string[] }) {
           initial={{ x: "100%" }}
           animate={{ x: 0 }}
           exit={{ x: "-100%" }}
-          transition={{ duration: 0.8, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           className="absolute inset-0"
         >
           <Image 
@@ -411,7 +411,6 @@ export default function CausesPage() {
               <DialogCard key={cause.id} cause={cause} />
             ))}
             
-            {/* High Holidays Navigation Card */}
             <div className="group h-full">
               <div className="glass-card h-full rounded-[24px] md:rounded-[32px] p-5 md:p-8 flex flex-col border border-primary/10 bg-white shadow-xl">
                  <div className="bg-primary/5 p-3 rounded-2xl w-fit mb-4">
@@ -420,17 +419,17 @@ export default function CausesPage() {
                  <h3 className="text-sm md:text-lg font-bold text-primary mb-4 leading-tight">High Holidays Donations</h3>
                  <div className="flex flex-col gap-2 md:gap-3 flex-1">
                     {[
-                      { label: "Rosh Hashanah", href: "#rosh-hashanah-sukkot" },
-                      { label: "Purim", href: "#purim" },
-                      { label: "Pesach", href: "#pesach" }
+                      { label: "Rosh Hashanah", href: "rosh-hashanah-sukkot" },
+                      { label: "Purim", href: "purim" },
+                      { label: "Pesach", href: "pesach" }
                     ].map((link, idx) => (
                       <Link 
                         key={idx} 
-                        href={link.href} 
+                        href={`#${link.href}`} 
                         className="flex items-center justify-between p-2 md:p-3 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link"
                         onClick={(e) => {
                           e.preventDefault();
-                          document.getElementById(link.href.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+                          document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
                         }}
                       >
                         <span className="text-[10px] md:text-xs font-bold">{link.label}</span>
@@ -496,6 +495,28 @@ export default function CausesPage() {
                  </div>
               </div>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* NEW CTA SECTION */}
+      <section className="py-20 md:py-32 bg-foreground text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full -mr-64 -mt-64 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/10 rounded-full -ml-64 -mb-64 blur-[120px]" />
+        <div className="container mx-auto px-6 text-center relative z-10 space-y-10 md:space-y-14">
+          <div className="space-y-6">
+            <h2 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] drop-shadow-2xl">
+              Please help us give life to <br className="hidden md:block" /> those who rely on <span className="text-primary luxury-gradient-text brightness-150">YOU</span>
+            </h2>
+            <p className="text-base md:text-2xl text-white/60 max-w-3xl mx-auto font-medium leading-relaxed">
+              Every donation creates a ripple of hope. Join our mission and make a real impact today.
+            </p>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+            <Button size="lg" asChild className="rounded-full h-14 md:h-20 px-12 md:px-24 font-black bg-primary text-white shadow-2xl text-base md:text-2xl border-b-4 border-primary-foreground/20 hover:scale-110 transition-all">
+              <Link href="/donate">Donate Now</Link>
+            </Button>
           </div>
         </div>
       </section>
