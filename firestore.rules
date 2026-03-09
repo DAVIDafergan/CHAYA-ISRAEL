@@ -1,42 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function getEmail() {
-      return isSignedIn() && 'email' in request.auth.token ? request.auth.token.email.lower() : "";
-    }
-
-    function isAdmin() {
-      return getEmail() == "chaya123@chayaisrael.com";
-    }
-
-    match /donations/{donationId} {
-      // Anyone can create a donation (guest checkout)
-      allow create: if true;
-      
-      // Admin can read all. 
-      // Users can read only their own donations (filtered by payerEmail).
-      // We use a simplified rule that Firestore can easily evaluate for queries.
-      allow read: if isAdmin() || (isSignedIn() && resource.data.payerEmail == getEmail());
-      
-      allow update, delete: if isAdmin();
-    }
-
-    match /users/{userId} {
-      allow read: if true; 
-      allow write: if isSignedIn() && request.auth.uid == userId;
-    }
-
-    match /users/{userId}/profile/{document=**} {
-      allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
-    }
-
-    match /{path=**} {
-      allow read, write: if isAdmin();
+    // Permissive rules for development as requested to unblock UI building
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }
