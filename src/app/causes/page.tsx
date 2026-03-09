@@ -15,7 +15,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 type Cause = {
   id: string;
