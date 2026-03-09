@@ -1,30 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Rules for donations collection
-    match /donations/{donationId} {
-      // Allow any authenticated user to list donations
-      // This is crucial for the account page query even if email is not verified
-      allow list: if request.auth != null;
-      
-      // Allow reading a specific donation if authenticated
-      allow get: if request.auth != null;
-      
-      // Allow anyone to create a donation (for guest donations and webhook)
-      allow create: if true;
-      
-      // Prevent unauthorized updates or deletes
-      allow update, delete: if false;
-    }
-    
-    // Rules for user profiles
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-
-    // Default catch-all for development
+    // פתיחת הרשאות מלאה לשלב הפיתוח והבנייה כפי שמתבקש
+    // מאפשר לכל המשתמשים (מחוברים או לא) לראות ולכתוב נתונים כדי למנוע שגיאות Permissions
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if true;
     }
   }
 }

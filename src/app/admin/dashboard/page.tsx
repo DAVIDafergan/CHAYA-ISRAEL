@@ -49,6 +49,7 @@ export default function AdminDashboard() {
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
 
+  // הגדרת משתמשים בעלי הרשאות ניהול
   const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
 
   useEffect(() => {
@@ -60,7 +61,7 @@ export default function AdminDashboard() {
     }
   }, [user, isUserLoading, router, isAdmin]);
 
-  // Simplified query for admin to avoid index issues
+  // שאילתה בסיסית לכל התרומות
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user || !isAdmin) return null;
     return query(collection(firestore, 'donations'));
@@ -73,7 +74,7 @@ export default function AdminDashboard() {
     
     let results = [...rawDonations];
 
-    // Client-side sorting for latest first
+    // מיון לפי תאריך - החדש ביותר למעלה
     results.sort((a, b) => {
       const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
       const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -131,7 +132,7 @@ export default function AdminDashboard() {
               <LayoutDashboard className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight luxury-gradient-text">Donations manager</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">Donations manager</h1>
               <p className="text-muted-foreground text-sm font-medium opacity-70">Foundation impact dashboard</p>
             </div>
           </div>

@@ -37,10 +37,9 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Sync donations by email (normalized to lowercase) to catch guest donations
+  // חיפוש תרומות לפי אימייל (באותיות קטנות) כדי לאתר גם תרומות שבוצעו כאורח
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
-    // CRITICAL: Normalize email to lowercase to match Webhook data
     const cleanEmail = user.email.trim().toLowerCase();
     return query(
       collection(firestore, 'donations'),
@@ -50,7 +49,7 @@ export default function MyAccountPage() {
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
-  // Client-side sorting for latest first
+  // מיון התרומות לפי תאריך (החדש ביותר למעלה)
   const donations = rawDonations ? [...rawDonations].sort((a, b) => {
     const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
     const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
