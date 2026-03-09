@@ -7,8 +7,7 @@ import { ArrowRight, Menu, X, User as UserIcon, LogOut, ChevronRight, UserPlus, 
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useUser, useAuth } from "@/firebase";
-import { signOut } from "firebase/auth";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import LinkNext from "next/link";
 
@@ -22,8 +21,7 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, isUserLoading } = useUser();
-  const { auth } = useAuth();
+  const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -49,14 +47,12 @@ export function Header() {
   };
 
   const handleLogout = async () => {
-    if (auth) {
-      await signOut(auth);
-      router.push("/");
-    }
+    await signOut({ callbackUrl: '/' });
   };
 
-  const isLoggedWithAccount = user && !user.isAnonymous;
-  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
+  const isUserLoading = status === 'loading';
+  const isLoggedWithAccount = !!session?.user;
+  const isAdmin = session?.user?.role === 'admin';
 
   return (
     <>
