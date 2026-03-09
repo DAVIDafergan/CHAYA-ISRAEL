@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DollarSign, Heart, MessageSquare, Info, User, Mail, MapPin, Loader2, CheckCircle2, ArrowRight, LogIn } from "lucide-react";
+import { DollarSign, Heart, MessageSquare, Info, User, Mail, MapPin, Loader2, CheckCircle2, ArrowRight } from "lucide-react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { type OnApproveData, type CreateOrderData } from "@paypal/paypal-js";
 import { useState, useEffect } from 'react';
@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { useUser, useFirestore } from "@/firebase";
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Link from "next/link";
@@ -80,9 +79,11 @@ export default function DonateForm({ cause }: { cause?: string }) {
       const details = await actions.order.capture();
       const payerEmail = form.getValues('email').trim().toLowerCase();
       
-      // Save record to Firestore immediately for instant feedback in "My Account"
+      // Save record to Firestore immediately for instant feedback
       if (firestore) {
-        await addDoc(collection(firestore, 'donations'), {
+        // We initiate the write and proceed. 
+        // We use addDoc which returns a promise, but we don't necessarily need to block UI on it.
+        addDoc(collection(firestore, 'donations'), {
           transactionId: details.id,
           amount: parseFloat(donationTotal),
           currency: 'USD',

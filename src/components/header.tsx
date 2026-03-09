@@ -3,17 +3,15 @@
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from 'next/navigation';
 import { 
-  ArrowRight, 
   Menu, 
   X, 
   User as UserIcon, 
   LogOut, 
   ChevronRight, 
-  UserPlus, 
-  LogIn, 
   LayoutDashboard,
+  Heart,
   Settings,
-  Heart
+  CreditCard
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -29,7 +27,7 @@ import { cn } from "@/lib/utils";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import Image from "next/image";
-import LinkNext from "next/link";
+import Link from "next/link";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -53,14 +51,6 @@ export function Header() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-  }, [isOpen]);
 
   const navigate = (href: string) => {
     setIsOpen(false);
@@ -87,7 +77,7 @@ export function Header() {
             "container mx-auto flex h-20 md:h-24 items-center justify-between rounded-full border border-white/40 bg-white/95 px-6 md:px-10 shadow-2xl backdrop-blur-2xl transition-all duration-500 pointer-events-auto",
             isScrolled && "shadow-lg border-primary/10 h-18 md:h-20"
         )}>
-          <LinkNext href="/" className="flex items-center gap-2 flex-shrink-0 transition-transform duration-500 hover:scale-105">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0 transition-transform duration-500 hover:scale-105">
             <Image 
               src="/Logo.png" 
               alt="Chaya Israel" 
@@ -96,11 +86,11 @@ export function Header() {
               priority 
               className="h-10 md:h-12 w-auto"
             />
-          </LinkNext>
+          </Link>
           
-          <nav className="hidden items-center justify-center gap-6 text-sm font-bold md:flex">
+          <nav className="hidden items-center justify-center gap-8 text-sm font-bold md:flex">
             {navLinks.map(link => (
-              <LinkNext
+              <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
@@ -109,60 +99,62 @@ export function Header() {
                 )}
               >
                 {link.label}
-              </LinkNext>
+              </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {!isUserLoading && (
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="hidden lg:flex items-center gap-4">
                 {isLoggedWithAccount ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="rounded-full h-11 px-4 gap-2 border border-slate-100 bg-white hover:bg-slate-50 transition-all font-bold">
-                        <UserIcon className="h-4 w-4 text-primary" />
-                        <span className="max-w-[100px] truncate">{user.displayName || 'My Account'}</span>
+                      <Button variant="ghost" className="rounded-full h-12 px-6 gap-3 border border-slate-100 bg-white hover:bg-slate-50 transition-all font-bold shadow-sm">
+                        <div className="bg-primary/10 p-1.5 rounded-full">
+                          <UserIcon className="h-4 w-4 text-primary" />
+                        </div>
+                        <span className="max-w-[120px] truncate">{user.displayName || user.email?.split('@')[0]}</span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 rounded-2xl p-2 border-slate-100 shadow-xl" align="end">
-                      <DropdownMenuLabel className="px-3 py-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                        Donor Portal
+                    <DropdownMenuContent className="w-64 rounded-[24px] p-2 border-slate-100 shadow-2xl mt-2" align="end">
+                      <DropdownMenuLabel className="px-4 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                        Manage account
                       </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate('/account')} className="rounded-xl p-3 cursor-pointer gap-3 font-bold">
-                        <UserIcon className="h-4 w-4 text-primary" /> Account details
+                      <DropdownMenuSeparator className="bg-slate-50" />
+                      <DropdownMenuItem onClick={() => navigate('/account')} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold hover:bg-slate-50">
+                        <CreditCard className="h-4 w-4 text-primary" /> Donation history
                       </DropdownMenuItem>
                       {isAdmin && (
-                        <DropdownMenuItem onClick={() => navigate('/admin/dashboard')} className="rounded-xl p-3 cursor-pointer gap-3 font-bold text-accent">
+                        <DropdownMenuItem onClick={() => navigate('/admin/dashboard')} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold text-accent hover:bg-accent/5">
                           <LayoutDashboard className="h-4 w-4" /> Manager dashboard
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleLogout} className="rounded-xl p-3 cursor-pointer gap-3 font-bold text-destructive hover:bg-destructive/5 focus:bg-destructive/5">
-                        <LogOut className="h-4 w-4" /> Logout
+                      <DropdownMenuSeparator className="bg-slate-50" />
+                      <DropdownMenuItem onClick={handleLogout} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold text-destructive hover:bg-destructive/5">
+                        <LogOut className="h-4 w-4" /> Sign out
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" asChild className="rounded-full h-10 px-4 font-bold text-foreground/70 hover:text-primary">
-                      <LinkNext href="/login">Login</LinkNext>
+                    <Button variant="ghost" asChild className="rounded-full h-10 px-5 font-bold text-foreground/70 hover:text-primary">
+                      <Link href="/login">Sign in</Link>
                     </Button>
-                    <Button variant="outline" asChild className="rounded-full h-10 px-4 font-bold border-primary/20 text-primary hover:bg-primary/5">
-                      <LinkNext href="/signup">Sign up</LinkNext>
+                    <Button variant="outline" asChild className="rounded-full h-10 px-5 font-bold border-primary/20 text-primary hover:bg-primary/5">
+                      <Link href="/signup">Join us</Link>
                     </Button>
                   </div>
                 )}
               </div>
             )}
 
-            <Button asChild size="lg" className="hidden md:flex rounded-full h-11 md:h-12 px-8 font-bold shadow-md bg-primary text-white hover:bg-primary/90 transition-all">
-              <LinkNext href="/donate" className="flex items-center gap-2">
+            <Button asChild size="lg" className="rounded-full h-11 md:h-12 px-8 font-bold shadow-md bg-primary text-white hover:bg-primary/90 transition-all">
+              <Link href="/donate" className="flex items-center gap-2">
                 Donate <Heart className="h-4 w-4 fill-current" />
-              </LinkNext>
+              </Link>
             </Button>
             
-            <div className="md:hidden flex items-center gap-2">
+            <div className="md:hidden flex items-center">
               <button 
                 type="button"
                 className="rounded-full h-10 w-10 bg-black/5 flex items-center justify-center text-primary relative z-[101]"
@@ -196,13 +188,13 @@ export function Header() {
                   <X className="h-7 w-7" />
                </button>
             </div>
-            <nav className="flex flex-col gap-6 text-xl font-bold">
+            <nav className="flex flex-col gap-4 text-xl font-bold">
               {navLinks.map(link => (
                 <button 
                   key={link.href} 
                   onClick={() => navigate(link.href)} 
                   className={cn(
-                    "py-2 text-left flex items-center justify-between border-b border-slate-50",
+                    "py-3 text-left flex items-center justify-between border-b border-slate-50",
                     pathname === link.href ? "text-primary" : "text-foreground"
                   )}
                 >
@@ -211,34 +203,34 @@ export function Header() {
                 </button>
               ))}
               
-              <div className="pt-6 flex flex-col gap-5">
+              <div className="pt-6 flex flex-col gap-4">
                 {isLoggedWithAccount ? (
                   <>
                     <button 
                       onClick={() => navigate('/account')} 
-                      className="text-left text-foreground flex items-center gap-4 font-bold"
+                      className="text-left text-foreground flex items-center gap-4 font-bold py-2"
                     >
-                      <UserIcon className="h-6 w-6 text-primary" /> My account
+                      <UserIcon className="h-6 w-6 text-primary" /> Account details
                     </button>
                     {isAdmin && (
                       <button 
                         onClick={() => navigate('/admin/dashboard')} 
-                        className="text-left text-accent flex items-center gap-4 font-bold"
+                        className="text-left text-accent flex items-center gap-4 font-bold py-2"
                       >
-                        <LayoutDashboard className="h-6 w-6" /> Admin dashboard
+                        <LayoutDashboard className="h-6 w-6" /> Manager dashboard
                       </button>
                     )}
-                    <button onClick={handleLogout} className="text-left text-destructive font-bold flex items-center gap-4">
-                      <LogOut className="h-6 w-6" /> Logout
+                    <button onClick={handleLogout} className="text-left text-destructive font-bold flex items-center gap-4 py-2">
+                      <LogOut className="h-6 w-6" /> Sign out
                     </button>
                   </>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 pt-4">
                     <Button onClick={() => navigate('/login')} variant="outline" className="rounded-full h-14 font-bold">
-                      Login
+                      Sign in
                     </Button>
                     <Button onClick={() => navigate('/signup')} className="rounded-full h-14 font-bold bg-primary">
-                      Sign up
+                      Join now
                     </Button>
                   </div>
                 )}

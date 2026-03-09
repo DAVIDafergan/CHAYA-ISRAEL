@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     default: 'Chaya Israel | Charity & Support for Families in Israel',
     template: '%s | Chaya Israel'
   },
-  description: 'Chaya Israel Foundation provides essential support for widows, orphans, IDF soldiers, and families in need across Israel. Established by Shilo Kramer in 2004.',
+  description: 'Chaya Israel Foundation provides essential support for widows, orphans, IDF soldiers, and families in need across Israel. Established by Rabbi Avraham Kramer in 2004.',
 };
 
 export default function RootLayout({

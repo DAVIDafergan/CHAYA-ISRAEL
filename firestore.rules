@@ -1,7 +1,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // הרשאות פתוחות לחלוטין לצורך שלב הבנייה
+    // הרשאות פתוחות לחלוטין לצורך שלב הבנייה ופתרון שגיאת Permissions
     match /{document=**} {
       allow read, write: if true;
     }

@@ -21,7 +21,7 @@ import {
   Calendar, 
   ChevronRight,
   User as UserIcon,
-  ShoppingBag
+  CreditCard
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -37,7 +37,7 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Search by email is the most reliable way to link guest donations
+  // Use email for more reliable guest donation linking
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const cleanEmail = user.email.trim().toLowerCase();
@@ -49,7 +49,7 @@ export default function MyAccountPage() {
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
-  // Client-side sorting
+  // Client-side sorting for robust display without complex index requirements
   const donations = rawDonations ? [...rawDonations].sort((a, b) => {
     const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
     const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -77,7 +77,7 @@ export default function MyAccountPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-slate-900">My account</h1>
-              <p className="text-muted-foreground text-sm font-medium opacity-70">Your personal impact journey</p>
+              <p className="text-muted-foreground text-sm font-medium opacity-70">Personal impact journey</p>
             </div>
           </div>
           <Button asChild className="rounded-full h-12 px-8 font-bold shadow-xl">
@@ -91,7 +91,7 @@ export default function MyAccountPage() {
                <div className="bg-primary p-8 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                   <div className="relative z-10">
-                     <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-1">Donor Profile</p>
+                     <p className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-1">Donor profile</p>
                      <h2 className="text-xl font-bold truncate">{user.displayName || user.email?.split('@')[0]}</h2>
                      <p className="text-sm opacity-60 truncate">{user.email}</p>
                   </div>
@@ -104,11 +104,11 @@ export default function MyAccountPage() {
                   <div className="pt-4 border-t border-slate-100">
                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 mb-4">Quick links</p>
                      <div className="space-y-2">
-                        <Link href="/contact" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                           <span className="text-xs font-bold">Support</span>
+                        <Link href="/contact" className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                           <span className="text-xs font-bold">Get support</span>
                            <ChevronRight className="h-3 w-3 text-slate-400" />
                         </Link>
-                        <Link href="/causes" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
+                        <Link href="/causes" className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
                            <span className="text-xs font-bold">Explore causes</span>
                            <ChevronRight className="h-3 w-3 text-slate-400" />
                         </Link>
@@ -122,7 +122,7 @@ export default function MyAccountPage() {
             <Card className="rounded-[32px] overflow-hidden border-0 shadow-sm bg-white min-h-[500px]">
               <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
                 <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
-                  <ShoppingBag className="h-5 w-5" /> Donation history
+                  <CreditCard className="h-5 w-5" /> Donation history
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -178,13 +178,17 @@ export default function MyAccountPage() {
                     </Table>
                   </div>
                 ) : (
-                  <div className="p-20 text-center flex flex-col items-center gap-4">
-                    <Heart className="h-12 w-12 text-slate-200" />
-                    <h3 className="text-xl font-bold text-slate-400">No donations yet</h3>
-                    <p className="text-slate-400 max-w-xs mx-auto text-sm leading-relaxed">
-                      Your generosity will appear here once you make your first donation.
-                    </p>
-                    <Button asChild className="rounded-full mt-4 h-11 px-8">
+                  <div className="p-20 text-center flex flex-col items-center gap-6">
+                    <div className="bg-slate-50 p-6 rounded-full">
+                      <Heart className="h-12 w-12 text-slate-200" />
+                    </div>
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-bold text-slate-800">No donations found</h3>
+                      <p className="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">
+                        Your generosity will appear here once you make your first donation.
+                      </p>
+                    </div>
+                    <Button asChild className="rounded-full h-12 px-10 shadow-lg">
                        <Link href="/donate">Donate now</Link>
                     </Button>
                   </div>

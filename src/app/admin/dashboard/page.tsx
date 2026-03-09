@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useFirestore, useCollection, useAuth, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import { 
   Table, 
@@ -32,7 +32,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   TrendingUp,
-  Users
+  Users,
+  RefreshCcw
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -48,6 +49,7 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
 
@@ -63,9 +65,7 @@ export default function AdminDashboard() {
   // Simplified query for admin to avoid index issues
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user || !isAdmin) return null;
-    return query(
-      collection(firestore, 'donations')
-    );
+    return query(collection(firestore, 'donations'));
   }, [firestore, user, isAdmin]);
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
@@ -75,7 +75,7 @@ export default function AdminDashboard() {
     
     let results = [...rawDonations];
 
-    // Client-side sorting
+    // Client-side sorting for latest first
     results.sort((a, b) => {
       const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
       const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -83,10 +83,11 @@ export default function AdminDashboard() {
     });
 
     return results.filter(donation => {
+      const searchTerms = searchQuery.toLowerCase();
       const matchesSearch = 
-        donation.payerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        donation.payerEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        donation.transactionId?.toLowerCase().includes(searchQuery.toLowerCase());
+        donation.payerName?.toLowerCase().includes(searchTerms) ||
+        donation.payerEmail?.toLowerCase().includes(searchTerms) ||
+        donation.transactionId?.toLowerCase().includes(searchTerms);
       
       const matchesStatus = statusFilter === 'ALL' || donation.status === statusFilter;
       const matchesCause = causeFilter === 'ALL' || donation.cause === causeFilter;
@@ -136,13 +137,15 @@ export default function AdminDashboard() {
               <p className="text-muted-foreground text-sm font-medium opacity-70">Foundation impact dashboard</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={handleLogout}
-            className="rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold h-11 px-6 transition-all"
-          >
-            <LogOut className="h-4 w-4 mr-2" /> Logout
-          </Button>
+          <div className="flex items-center gap-3">
+             <Button 
+              variant="outline" 
+              onClick={handleLogout}
+              className="rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold h-11 px-6 transition-all"
+            >
+              <LogOut className="h-4 w-4 mr-2" /> Sign out
+            </Button>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -152,7 +155,7 @@ export default function AdminDashboard() {
                 <TrendingUp className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <p className="text-xs font-bold text-muted-foreground mb-1">Total revenue</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 opacity-60">Total revenue</p>
                 <h2 className="text-3xl font-bold text-primary">${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               </div>
             </CardContent>
@@ -163,7 +166,7 @@ export default function AdminDashboard() {
                 <Users className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <p className="text-xs font-bold text-muted-foreground mb-1">Total donations</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 opacity-60">Total donations</p>
                 <h2 className="text-3xl font-bold text-slate-900">{stats.count}</h2>
               </div>
             </CardContent>
@@ -179,11 +182,11 @@ export default function AdminDashboard() {
                   placeholder="Search donors or email..." 
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-                  className="pl-11 h-12 rounded-2xl bg-slate-50 border-0 focus:ring-2 focus:ring-primary/20"
+                  className="pl-11 h-12 rounded-2xl bg-slate-50 border-0 focus:ring-2 focus:ring-primary/20 font-medium"
                 />
               </div>
               <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-0">
+                <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-0 font-medium">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-0 shadow-xl">
@@ -193,7 +196,7 @@ export default function AdminDashboard() {
                 </SelectContent>
               </Select>
               <Select value={causeFilter} onValueChange={(v) => { setCauseFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-0">
+                <SelectTrigger className="h-12 rounded-2xl bg-slate-50 border-0 font-medium">
                   <SelectValue placeholder="Cause" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-0 shadow-xl">
@@ -209,8 +212,8 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-          <CardHeader className="bg-slate-50/50 py-8 border-b border-slate-100 px-8">
+        <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white min-h-[400px]">
+          <CardHeader className="bg-slate-50/50 py-8 border-b border-slate-100 px-8 flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
               <CreditCard className="h-5 w-5" /> Recent transactions
             </CardTitle>
@@ -227,11 +230,11 @@ export default function AdminDashboard() {
                 <Table>
                   <TableHeader className="bg-slate-50/30">
                     <TableRow className="border-slate-100 hover:bg-transparent">
-                      <TableHead className="font-bold text-xs text-muted-foreground py-6 pl-8">Date</TableHead>
-                      <TableHead className="font-bold text-xs text-muted-foreground">Donor</TableHead>
-                      <TableHead className="font-bold text-xs text-muted-foreground">Amount</TableHead>
-                      <TableHead className="font-bold text-xs text-muted-foreground">Cause</TableHead>
-                      <TableHead className="font-bold text-xs text-muted-foreground pr-8">Status</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground py-6 pl-8">Date</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Donor</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Amount</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Cause</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground pr-8">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -297,12 +300,16 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ) : (
-              <div className="p-20 text-center flex flex-col items-center gap-4">
-                <Search className="h-10 w-10 text-slate-300" />
-                <h3 className="text-xl font-bold text-slate-400">No donations found</h3>
-                <p className="text-slate-400 max-w-xs mx-auto text-sm">
-                  Try adjusting your search query or filters.
-                </p>
+              <div className="p-20 text-center flex flex-col items-center gap-6">
+                <div className="bg-slate-50 p-6 rounded-full">
+                  <Search className="h-12 w-12 text-slate-200" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-slate-800">No donations found</h3>
+                  <p className="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">
+                    Try adjusting your search terms or filters to find specific transactions.
+                  </p>
+                </div>
               </div>
             )}
           </CardContent>
