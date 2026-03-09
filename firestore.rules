@@ -7,7 +7,7 @@ service cloud.firestore {
     }
 
     function getEmail() {
-      return request.auth.token.email != null ? request.auth.token.email.lower() : "";
+      return isSignedIn() && 'email' in request.auth.token ? request.auth.token.email.lower() : "";
     }
 
     function isAdmin() {
@@ -20,6 +20,7 @@ service cloud.firestore {
       
       // Admin can read all. 
       // Users can read only their own donations (filtered by payerEmail).
+      // The rule must allow 'list' for queries that filter by the user's email.
       allow read: if isAdmin() || (isSignedIn() && resource.data.payerEmail == getEmail());
       
       allow update, delete: if isAdmin();

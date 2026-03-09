@@ -39,6 +39,7 @@ export default function MyAccountPage() {
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     // The query MUST match the security rules exactly for 'list' to work.
+    // We ensure the email is lowercase to match the stored data.
     return query(
       collection(firestore, 'donations'),
       where('payerEmail', '==', user.email.toLowerCase()),
