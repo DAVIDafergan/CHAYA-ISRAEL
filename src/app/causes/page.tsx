@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from "react";
@@ -14,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 type Cause = {
   id: string;
@@ -129,6 +131,9 @@ function DialogCard({ cause }: { cause: Cause }) {
 }
 
 export default function CausesPage() {
+  const tacticalGearImg = PlaceHolderImages.find(img => img.id === 'idf-tactical-gear')?.imageUrl || "https://picsum.photos/seed/idf-gear-1/800/600";
+  const tacticalGearHint = PlaceHolderImages.find(img => img.id === 'idf-tactical-gear')?.imageHint || "military helmet vest";
+
   const causes: Cause[] = [
     {
       id: "widows",
@@ -286,7 +291,13 @@ export default function CausesPage() {
 
              <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Tactical Equipment</h3>
              <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-100 max-w-2xl mx-auto">
-                <Image src="/תמונה מלחמה.jpg" fill alt="IDF Tactical Gear" className="object-cover" />
+                <Image 
+                  src={tacticalGearImg} 
+                  fill 
+                  alt="IDF Tactical Gear" 
+                  className="object-cover" 
+                  data-ai-hint={tacticalGearHint}
+                />
              </div>
 
              <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">We Are One</h3>

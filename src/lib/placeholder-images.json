@@ -35,6 +35,12 @@
       "description": "Hachnasat Kalah Bridal support.",
       "imageUrl": "/hachnasat-kalah.png",
       "imageHint": "jewish wedding"
+    },
+    {
+      "id": "idf-tactical-gear",
+      "description": "Tactical gear for IDF: Helmets and vests.",
+      "imageUrl": "https://picsum.photos/seed/idf-gear-1/800/600",
+      "imageHint": "military helmet vest"
     }
   ]
 }
