@@ -3,7 +3,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { useAuth } from '@/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,40 +16,28 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { auth } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    if (!auth) return;
 
     setIsLoading(true);
     try {
-      const result = await signIn('credentials', {
-        email: email.trim(),
-        password,
-        redirect: false,
+      await signInWithEmailAndPassword(auth, email.trim(), password);
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged into your account.",
       });
-
-      if (result?.error) {
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: "Please check your email and password.",
-        });
-      } else {
-        toast({
-          title: "Welcome back!",
-          description: "Successfully logged into your account.",
-        });
-        router.push('/account');
-        router.refresh();
-      }
-    } catch (error) {
+      router.push('/account');
+    } catch (error: any) {
       console.error(error);
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An unexpected error occurred.",
+        description: "Please check your email and password.",
       });
     } finally {
       setIsLoading(false);
@@ -105,7 +94,7 @@ export default function LoginPage() {
           </form>
           <div className="mt-8 pt-8 border-t border-slate-100 text-center">
              <p className="text-sm text-slate-500 font-medium">
-               Don&apos;t have an account? <Link href="/signup" className="text-primary font-black hover:underline">Create account</Link>
+               Don't have an account? <Link href="/signup" className="text-primary font-black hover:underline">Create account</Link>
              </p>
           </div>
         </CardContent>

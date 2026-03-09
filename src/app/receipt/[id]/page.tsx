@@ -2,45 +2,25 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Printer, CheckCircle2, ShieldCheck, Heart } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 
-interface Donation {
-  id: string;
-  amount: number;
-  currency: string;
-  donorName: string;
-  donorEmail: string;
-  cause: string;
-  status: string;
-  paypalTransactionId?: string;
-  note?: string;
-  createdAt: string;
-}
-
 export default function ReceiptPage() {
   const params = useParams();
   const id = params.id as string;
-  const [donation, setDonation] = useState<Donation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const firestore = useFirestore();
 
-  useEffect(() => {
-    if (id) {
-      fetch(`/api/receipt/${id}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && !data.error) {
-            setDonation(data);
-          }
-          setIsLoading(false);
-        })
-        .catch(() => setIsLoading(false));
-    }
-  }, [id]);
+  const docRef = useMemoFirebase(() => {
+    if (!firestore || !id) return null;
+    return doc(firestore, 'donations', id);
+  }, [firestore, id]);
+
+  const { data: donation, isLoading } = useDoc(docRef);
 
   if (isLoading) {
     return (
@@ -102,7 +82,7 @@ export default function ReceiptPage() {
                   <div className="space-y-1">
                      <p className="text-[10px] font-black text-muted-foreground tracking-widest uppercase">Date of donation</p>
                      <p className="text-sm font-bold text-slate-700">
-                        {donation.createdAt ? format(new Date(donation.createdAt), 'MMMM dd, yyyy') : 'N/A'}
+                        {donation.timestamp ? format(new Date(donation.timestamp), 'MMMM dd, yyyy') : 'N/A'}
                      </p>
                   </div>
                   <div className="space-y-1">
@@ -114,7 +94,7 @@ export default function ReceiptPage() {
                <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-1">
                      <p className="text-[10px] font-black text-muted-foreground tracking-widest uppercase">Donor name</p>
-                     <p className="text-sm font-bold text-slate-700">{donation.donorName}</p>
+                     <p className="text-sm font-bold text-slate-700">{donation.payerName}</p>
                   </div>
                   <div className="space-y-1">
                      <p className="text-[10px] font-black text-muted-foreground tracking-widest uppercase">Donation cause</p>
@@ -124,7 +104,7 @@ export default function ReceiptPage() {
 
                <div className="space-y-1 pt-4">
                   <p className="text-[10px] font-black text-muted-foreground tracking-widest uppercase">Transaction ID</p>
-                  <p className="text-[10px] font-medium text-slate-400 font-mono">{donation.paypalTransactionId}</p>
+                  <p className="text-[10px] font-medium text-slate-400 font-mono">{donation.transactionId}</p>
                </div>
             </div>
 
