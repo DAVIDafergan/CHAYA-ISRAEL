@@ -62,7 +62,7 @@ export default function Home() {
               </div>
               <div className="space-y-1">
                 <h3 className="text-xl md:text-3xl font-black text-foreground tracking-tight">Rabbi Avraham Kramer</h3>
-                <p className="text-xs md:text-base font-bold tracking-widest text-primary uppercase">Executive director</p>
+                <p className="text-xs md:text-base font-bold tracking-tight text-primary uppercase">Executive director</p>
               </div>
             </div>
             
@@ -78,7 +78,7 @@ export default function Home() {
               </div>
               <div className="space-y-1">
                 <h3 className="text-xl md:text-3xl font-black text-foreground tracking-tight">Dr. Shilo Kramer</h3>
-                <p className="text-xs md:text-base font-bold tracking-widest text-primary uppercase">Co-director</p>
+                <p className="text-xs md:text-base font-bold tracking-tight text-primary uppercase">Co-director</p>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-lg md:text-2xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>
-                  <p className="text-primary font-bold text-xs md:text-sm tracking-wider">Director of the Or Hachaim organization</p>
+                  <p className="text-primary font-bold text-xs md:text-sm tracking-tight">Director of the Or Hachaim organization</p>
                 </div>
               </div>
               <div className="relative">
@@ -137,7 +137,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-lg md:text-2xl font-black text-foreground leading-tight tracking-tight">Avichai Amosi</h4>
-                  <p className="text-primary font-bold text-xs md:text-sm tracking-wider">Director of Merkaz Chesed Sderot</p>
+                  <p className="text-primary font-bold text-xs md:text-sm tracking-tight">Director of Merkaz Chesed Sderot</p>
                 </div>
               </div>
               <div className="relative">

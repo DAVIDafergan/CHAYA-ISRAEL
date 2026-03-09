@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -40,7 +39,6 @@ export default function MyAccountPage() {
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     // The query MUST match the security rules exactly for 'list' to work.
-    // We use the lowercased email to ensure perfect matching with the rule.
     return query(
       collection(firestore, 'donations'),
       where('payerEmail', '==', user.email.toLowerCase()),
@@ -83,18 +81,18 @@ export default function MyAccountPage() {
                <div className="bg-primary p-8 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                   <div className="relative z-10">
-                     <p className="text-[10px] font-bold tracking-widest opacity-70 mb-1">Donor information</p>
+                     <p className="text-[10px] font-bold tracking-tight opacity-70 mb-1">Donor information</p>
                      <h2 className="text-xl font-bold truncate">{user.displayName || user.email?.split('@')[0]}</h2>
                      <p className="text-sm opacity-60 truncate">{user.email}</p>
                   </div>
                </div>
                <CardContent className="p-8 space-y-6">
                   <div className="space-y-1">
-                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest opacity-60">Member since</p>
+                     <p className="text-[10px] font-bold text-muted-foreground tracking-tight opacity-60">Member since</p>
                      <p className="text-sm font-bold">{user.metadata.creationTime ? format(new Date(user.metadata.creationTime), 'MMMM yyyy') : 'Recently'}</p>
                   </div>
                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest opacity-60 mb-4">Quick links</p>
+                     <p className="text-[10px] font-bold text-muted-foreground tracking-tight opacity-60 mb-4">Quick links</p>
                      <div className="space-y-2">
                         <Link href="/contact" className="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
                            <span className="text-xs font-bold">Contact support</span>
