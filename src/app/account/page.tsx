@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect } from 'react';
@@ -37,17 +36,24 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // שאילתה מסוננת לפי userId של המשתמש המחובר
+  // Query filtered by user ID to match security rules and efficiency
+  // Removed complex ordering that might require missing indexes during build
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.uid) return null;
     return query(
       collection(firestore, 'donations'),
-      where('userId', '==', user.uid),
-      orderBy('timestamp', 'desc')
+      where('userId', '==', user.uid)
     );
   }, [firestore, user?.uid]);
   
-  const { data: donations, isLoading: donationsLoading } = useCollection(donationsQuery);
+  const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
+
+  // Client-side sorting as a safety measure against missing composite indexes
+  const donations = rawDonations ? [...rawDonations].sort((a, b) => {
+    const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+    const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+    return timeB - timeA;
+  }) : null;
 
   if (isUserLoading || !user) {
     return (

@@ -60,11 +60,11 @@ export default function AdminDashboard() {
     }
   }, [user, isUserLoading, router, isAdmin]);
 
+  // Simplified query for admin to avoid index issues
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user || !isAdmin) return null;
     return query(
-      collection(firestore, 'donations'),
-      orderBy('timestamp', 'desc')
+      collection(firestore, 'donations')
     );
   }, [firestore, user, isAdmin]);
   
@@ -73,7 +73,16 @@ export default function AdminDashboard() {
   const filteredDonations = useMemo(() => {
     if (!rawDonations) return [];
     
-    return rawDonations.filter(donation => {
+    let results = [...rawDonations];
+
+    // Client-side sorting
+    results.sort((a, b) => {
+      const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+      const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      return timeB - timeA;
+    });
+
+    return results.filter(donation => {
       const matchesSearch = 
         donation.payerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         donation.payerEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
