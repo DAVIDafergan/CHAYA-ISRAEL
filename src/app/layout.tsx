@@ -6,7 +6,7 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { AccessibilityWidget } from '@/components/AccessibilityWidget';
 import { cn } from '@/lib/utils';
-import { FirebaseClientProvider } from '@/firebase';
+import { AuthProvider } from '@/providers/auth-provider';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr" className={cn(poppins.variable)}>
       <body className={cn('font-sans antialiased bg-white')}>
-        <FirebaseClientProvider>
+        <AuthProvider>
           <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[200] focus:bg-primary focus:text-white focus:px-6 focus:py-3 focus:rounded-full focus:shadow-2xl">
             Skip to main content
           </a>
@@ -51,7 +51,7 @@ export default function RootLayout({
           </div>
           <AccessibilityWidget />
           <Toaster />
-        </FirebaseClientProvider>
+        </AuthProvider>
       </body>
     </html>
   );

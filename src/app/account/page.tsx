@@ -1,10 +1,9 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { useSession } from 'next-auth/react';
 import { 
   Table, 
   TableBody, 
@@ -26,30 +25,43 @@ import {
 import { format } from 'date-fns';
 import Link from 'next/link';
 
+interface Donation {
+  id: string;
+  amount: number;
+  currency: string;
+  cause: string;
+  status: string;
+  createdAt: string;
+}
+
 export default function MyAccountPage() {
-  const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const [donations, setDonations] = useState<Donation[]>([]);
+  const [donationsLoading, setDonationsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
+    if (status === 'unauthenticated') {
       router.push('/login');
     }
-  }, [user, isUserLoading, router]);
+  }, [status, router]);
 
-  const donationsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.email) return null;
-    // The query MUST match the security rules exactly for 'list' to work
-    return query(
-      collection(firestore, 'donations'),
-      where('payerEmail', '==', user.email.toLowerCase()),
-      orderBy('timestamp', 'desc')
-    );
-  }, [firestore, user?.email]);
-  
-  const { data: donations, isLoading: donationsLoading } = useCollection(donationsQuery);
+  useEffect(() => {
+    if (status === 'authenticated') {
+      fetch('/api/donations')
+        .then(res => res.json())
+        .then(data => {
+          setDonations(Array.isArray(data) ? data : []);
+          setDonationsLoading(false);
+        })
+        .catch(err => {
+          console.error('Error fetching donations:', err);
+          setDonationsLoading(false);
+        });
+    }
+  }, [status]);
 
-  if (isUserLoading || !user) {
+  if (status === 'loading' || !session) {
     return (
       <div className="p-8 pt-40 max-w-4xl mx-auto space-y-6">
         <Skeleton className="h-12 w-64 rounded-full" />
@@ -83,15 +95,11 @@ export default function MyAccountPage() {
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                   <div className="relative z-10">
                      <p className="text-[10px] font-bold tracking-widest uppercase opacity-70 mb-1">Donor information</p>
-                     <h2 className="text-xl font-bold truncate">{user.displayName || user.email?.split('@')[0]}</h2>
-                     <p className="text-sm opacity-60 truncate">{user.email}</p>
+                     <h2 className="text-xl font-bold truncate">{session.user?.name || session.user?.email?.split('@')[0]}</h2>
+                     <p className="text-sm opacity-60 truncate">{session.user?.email}</p>
                   </div>
                </div>
                <CardContent className="p-8 space-y-6">
-                  <div className="space-y-1">
-                     <p className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-60">Member since</p>
-                     <p className="text-sm font-bold">{user.metadata.creationTime ? format(new Date(user.metadata.creationTime), 'MMMM yyyy') : 'Recently'}</p>
-                  </div>
                   <div className="pt-4 border-t border-slate-100">
                      <p className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-60 mb-4">Quick links</p>
                      <div className="space-y-2">
@@ -141,7 +149,7 @@ export default function MyAccountPage() {
                               <div className="flex items-center gap-3">
                                  <Calendar className="h-4 w-4 text-slate-300" />
                                  <span className="font-medium text-sm text-slate-600">
-                                    {donation.timestamp ? format(new Date(donation.timestamp), 'MMM dd, yyyy') : 'N/A'}
+                                    {donation.createdAt ? format(new Date(donation.createdAt), 'MMM dd, yyyy') : 'N/A'}
                                  </span>
                               </div>
                             </TableCell>

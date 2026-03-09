@@ -4,19 +4,15 @@ node_modules/
 .pnp.*
 .yarn/*
 
-# Firebase - זה החלק שחסר לך וגורם לשגיאה!
-.firebase/
-*-debug.log
-firebase-debug-*.log
-.firebaserc
-
 # Next.js
 .next/
 out/
 build/
 
 # Environment Variables
-.env*
+.env
+.env.local
+.env.*.local
 
 # OS Files
 .DS_Store
@@ -24,3 +20,9 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Prisma
+/src/generated/prisma
+
+# TypeScript build info
+tsconfig.tsbuildinfo

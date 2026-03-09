@@ -3,9 +3,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth, useFirestore } from '@/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,8 +17,6 @@ function SignupForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { auth } = useAuth();
-  const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -33,33 +29,59 @@ function SignupForm() {
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
-    if (!auth || !firestore) return;
 
     setIsLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), password);
-      
-      await setDoc(doc(firestore, 'users', userCredential.user.uid), {
-        fullName: fullName.trim(),
-        email: email.trim().toLowerCase(),
-        createdAt: new Date().toISOString(),
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: fullName.trim(), email: email.trim(), password }),
       });
 
-      toast({
-        title: "Account created",
-        description: "Welcome to the Chaya Israel family.",
-      });
-      router.push('/account');
-    } catch (error: any) {
-      console.error(error);
-      let message = "Could not create account. Please try again.";
-      if (error.code === 'auth/email-already-in-use') {
-        message = "This email is already registered.";
+      const data = await response.json();
+
+      if (!response.ok) {
+        let message = "Could not create account. Please try again.";
+        if (response.status === 409) {
+          message = "This email is already registered.";
+        } else if (data.error) {
+          message = data.error;
+        }
+        toast({
+          variant: "destructive",
+          title: "Signup failed",
+          description: message,
+        });
+        return;
       }
+
+      // Auto sign in after successful registration
+      const result = await signIn('credentials', {
+        email: email.trim(),
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        toast({
+          title: "Account created",
+          description: "Please log in with your new credentials.",
+        });
+        router.push('/login');
+      } else {
+        toast({
+          title: "Account created",
+          description: "Welcome to the Chaya Israel family.",
+        });
+        router.push('/account');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error(error);
       toast({
         variant: "destructive",
         title: "Signup failed",
-        description: message,
+        description: "An unexpected error occurred.",
       });
     } finally {
       setIsLoading(false);
