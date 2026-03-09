@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/firebase";
 import Link from "next/link";
 
 const formSchema = z.object({
@@ -40,9 +40,7 @@ const formSchema = z.object({
 
 export default function DonateForm({ cause }: { cause?: string }) {
   const { toast } = useToast();
-  const { data: session, status } = useSession();
-  const user = session?.user;
-  const isUserLoading = status === 'loading';
+  const { user, isUserLoading } = useUser();
   const [isClient, setIsClient] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastEmail, setLastEmail] = useState("");
@@ -109,7 +107,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
     return actions.order.create({
       purchase_units: [
         {
-          custom_id: user?.email || 'guest',
+          custom_id: user?.uid || 'guest',
           description: `Donation for ${cause || 'Chaya Israel'} - Note: ${form.getValues('note')}`,
           amount: {
             value: parseFloat(donationTotal).toFixed(2),
@@ -182,7 +180,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
   return (
     <PayPalScriptProvider options={{ 
-      clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!, 
+      clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
       currency: "USD",
       intent: "capture"
     }}>

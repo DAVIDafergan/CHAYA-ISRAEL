@@ -3,7 +3,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';import { 
+import { useUser, useFirestore, useCollection, useAuth, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import { 
   Table, 
   TableBody, 
   TableCell, 
@@ -36,68 +39,53 @@ import { format } from 'date-fns';
 
 const ITEMS_PER_PAGE = 25;
 
-interface Donation {
-  id: string;
-  donorName: string;
-  donorEmail: string;
-  amount: number;
-  currency: string;
-  cause: string;
-  status: string;
-  paypalTransactionId?: string;
-  createdAt: string;
-}
-
 export default function AdminDashboard() {
-  const { data: session, status } = useSession();
+  const { user, isUserLoading } = useUser();
+  const { auth } = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
 
-  const [donations, setDonations] = useState<Donation[]>([]);
-  const [donationsLoading, setDonationsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
+    if (!isUserLoading && !user) {
       router.push('/admin');
     }
-    if (status === 'authenticated' && !isAdmin) {
+    if (!isUserLoading && user && !isAdmin) {
       router.push('/');
     }
-  }, [status, isAdmin, router]);
+  }, [user, isUserLoading, router, isAdmin]);
 
-  useEffect(() => {
-    if (status === 'authenticated' && isAdmin) {
-      fetch('/api/admin/donations')
-        .then(res => res.json())
-        .then(data => {
-          setDonations(Array.isArray(data) ? data : []);
-          setDonationsLoading(false);
-        })
-        .catch(err => {
-          console.error('Error fetching donations:', err);
-          setDonationsLoading(false);
-        });
-    }
-  }, [status, isAdmin]);
+  const donationsQuery = useMemoFirebase(() => {
+    if (!firestore || !user || !isAdmin) return null;
+    return query(
+      collection(firestore, 'donations'),
+      orderBy('timestamp', 'desc')
+    );
+  }, [firestore, user, isAdmin]);
+  
+  const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
   const filteredDonations = useMemo(() => {
-    return donations.filter(donation => {
+    if (!rawDonations) return [];
+    
+    return rawDonations.filter(donation => {
       const matchesSearch = 
-        donation.donorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        donation.donorEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        donation.paypalTransactionId?.toLowerCase().includes(searchQuery.toLowerCase());
+        donation.payerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        donation.payerEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        donation.transactionId?.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesStatus = statusFilter === 'ALL' || donation.status === statusFilter;
       const matchesCause = causeFilter === 'ALL' || donation.cause === causeFilter;
       
       return matchesSearch && matchesStatus && matchesCause;
     });
-  }, [donations, searchQuery, statusFilter, causeFilter]);
+  }, [rawDonations, searchQuery, statusFilter, causeFilter]);
 
   const totalPages = Math.ceil(filteredDonations.length / ITEMS_PER_PAGE);
   const paginatedDonations = useMemo(() => {
@@ -112,10 +100,13 @@ export default function AdminDashboard() {
   }, [filteredDonations]);
 
   async function handleLogout() {
-    await signOut({ callbackUrl: '/' });
+    if (auth) {
+      await signOut(auth);
+      router.push('/');
+    }
   }
 
-  if (status === 'loading' || !session || !isAdmin) {
+  if (isUserLoading || !user || !isAdmin) {
     return (
       <div className="p-8 pt-32 max-w-6xl mx-auto space-y-6">
         <Skeleton className="h-12 w-64 rounded-full" />
@@ -236,15 +227,15 @@ export default function AdminDashboard() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedDonations.map((donation) => (
+                    {paginatedDonations.map((donation: any) => (
                       <TableRow key={donation.id} className="border-slate-50 hover:bg-slate-50/50 transition-colors">
                         <TableCell className="py-6 pl-8 font-medium text-sm text-slate-500">
-                          {donation.createdAt ? format(new Date(donation.createdAt), 'MMM dd, HH:mm') : 'N/A'}
+                          {donation.timestamp ? format(new Date(donation.timestamp), 'MMM dd, HH:mm') : 'N/A'}
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="font-bold text-slate-900">{donation.donorName}</span>
-                            <span className="text-[10px] text-muted-foreground font-medium">{donation.donorEmail}</span>
+                            <span className="font-bold text-slate-900">{donation.payerName}</span>
+                            <span className="text-[10px] text-muted-foreground font-medium">{donation.payerEmail}</span>
                           </div>
                         </TableCell>
                         <TableCell className="font-bold text-primary">

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
-import { useSession } from 'next-auth/react';
+import { useAuth, useUser } from '@/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,18 +14,28 @@ export default function AdminLoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const { data: session, status } = useSession();
+  const { auth } = useAuth();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    if (status === 'authenticated' && session?.user) {
+    if (!isUserLoading && user) {
       router.push('/admin/dashboard');
     }
-  }, [session, status, router]);
+  }, [user, isUserLoading, router]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    
+    if (!auth) {
+      toast({
+        variant: "destructive",
+        title: "Connection error",
+        description: "The security system is not ready. Please refresh the page.",
+      });
+      return;
+    }
 
     setIsAuthenticating(true);
     try {
@@ -34,39 +44,32 @@ export default function AdminLoginPage() {
         ? 'chaya123@chayaisrael.com' 
         : (username.trim().includes('@') ? username.trim() : `${username.trim()}@chayaisrael.com`);
         
-      const result = await signIn('credentials', {
-        email: loginEmail,
-        password,
-        redirect: false,
+      await signInWithEmailAndPassword(auth, loginEmail, password);
+      
+      toast({
+        title: "Login successful",
+        description: "Welcome back, manager.",
       });
-
-      if (result?.error) {
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: "Invalid credentials. Please check your manager id and password.",
-        });
-      } else {
-        toast({
-          title: "Login successful",
-          description: "Welcome back, manager.",
-        });
-        router.push('/admin/dashboard');
-        router.refresh();
-      }
-    } catch (error) {
+      router.push('/admin/dashboard');
+    } catch (error: any) {
       console.error("Login error:", error);
+      let errorMessage = "Invalid credentials. Please check your manager id and password.";
+      
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        errorMessage = "Invalid credentials. Please make sure the account chaya123@chayaisrael.com is created in the Firebase console.";
+      }
+
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An unexpected error occurred.",
+        description: errorMessage,
       });
     } finally {
       setIsAuthenticating(false);
     }
   }
 
-  if (status === 'loading') {
+  if (isUserLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
         <Loader2 className="h-10 w-10 text-primary animate-spin" />
