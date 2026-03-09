@@ -32,9 +32,11 @@ import {
   ChevronLeft, 
   ChevronRight,
   TrendingUp,
-  Users
+  Users,
+  Home
 } from 'lucide-react';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 25;
 
@@ -49,23 +51,24 @@ export default function AdminDashboard() {
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // הגדרת משתמשים בעלי הרשאות ניהול
+  // Define admin users
   const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push('/admin');
-    }
-    if (!isUserLoading && user && !isAdmin) {
-      router.push('/');
+    if (!isUserLoading) {
+      if (!user) {
+        router.push('/admin');
+      } else if (!isAdmin) {
+        router.push('/');
+      }
     }
   }, [user, isUserLoading, router, isAdmin]);
 
-  // שאילתה בסיסית לכל התרומות
+  // Basic query for all donations
   const donationsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
+    if (!firestore || !user || !isAdmin) return null;
     return query(collection(firestore, 'donations'));
-  }, [firestore, user]);
+  }, [firestore, user, isAdmin]);
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
@@ -74,7 +77,7 @@ export default function AdminDashboard() {
     
     let results = [...rawDonations];
 
-    // מיון צד-לקוח - החדש ביותר למעלה
+    // Client-side sort: newest first
     results.sort((a, b) => {
       const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
       const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
@@ -124,7 +127,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-32 pb-24 px-4">
+    <div className="min-h-screen bg-slate-50 pt-36 pb-24 px-4">
       <div className="container mx-auto max-w-6xl">
         <header className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
           <div className="flex items-center gap-4">
@@ -133,16 +136,19 @@ export default function AdminDashboard() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-slate-900">Donations Manager</h1>
-              <p className="text-muted-foreground text-sm font-medium opacity-70">Foundation Impact Dashboard</p>
+              <p className="text-muted-foreground text-sm font-medium opacity-70">Foundation impact dashboard</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
+             <Button variant="outline" asChild className="rounded-full h-11 px-6 font-bold">
+               <Link href="/"><Home className="h-4 w-4 mr-2" /> View Site</Link>
+             </Button>
              <Button 
-              variant="outline" 
+              variant="destructive" 
               onClick={handleLogout}
-              className="rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold h-11 px-6 transition-all"
+              className="rounded-full font-bold h-11 px-6 shadow-sm"
             >
-              <LogOut className="h-4 w-4 mr-2" /> Sign Out
+              <LogOut className="h-4 w-4 mr-2" /> Sign out
             </Button>
           </div>
         </header>
@@ -154,7 +160,7 @@ export default function AdminDashboard() {
                 <TrendingUp className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total Revenue</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total revenue</p>
                 <h2 className="text-3xl font-bold text-primary">${stats.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
               </div>
             </CardContent>
@@ -165,7 +171,7 @@ export default function AdminDashboard() {
                 <Users className="h-8 w-8 text-accent" />
               </div>
               <div>
-                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total Donations</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 opacity-60">Total donations</p>
                 <h2 className="text-3xl font-bold text-slate-900">{stats.count}</h2>
               </div>
             </CardContent>
@@ -189,7 +195,7 @@ export default function AdminDashboard() {
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-0 shadow-xl">
-                  <SelectItem value="ALL">All Statuses</SelectItem>
+                  <SelectItem value="ALL">All statuses</SelectItem>
                   <SelectItem value="COMPLETED">Completed</SelectItem>
                   <SelectItem value="PENDING">Pending</SelectItem>
                 </SelectContent>
@@ -199,7 +205,7 @@ export default function AdminDashboard() {
                   <SelectValue placeholder="Cause" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-0 shadow-xl">
-                  <SelectItem value="ALL">All Causes</SelectItem>
+                  <SelectItem value="ALL">All causes</SelectItem>
                   <SelectItem value="Widows and Orphans">Widows and Orphans</SelectItem>
                   <SelectItem value="Hachnasat Kalah">Hachnasat Kalah</SelectItem>
                   <SelectItem value="Sderot">Sderot</SelectItem>
@@ -214,7 +220,7 @@ export default function AdminDashboard() {
         <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white min-h-[400px]">
           <CardHeader className="bg-slate-50/50 py-8 border-b border-slate-100 px-8 flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
-              <CreditCard className="h-5 w-5" /> Recent Transactions
+              <CreditCard className="h-5 w-5" /> Recent transactions
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">

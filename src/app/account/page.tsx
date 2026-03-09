@@ -1,10 +1,10 @@
-
 'use client';
 
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, useAuth, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
 import { 
   Table, 
   TableBody, 
@@ -22,13 +22,16 @@ import {
   Calendar, 
   ChevronRight,
   User as UserIcon,
-  CreditCard
+  CreditCard,
+  LogOut,
+  LayoutDashboard
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
 export default function MyAccountPage() {
   const { user, isUserLoading } = useUser();
+  const { auth } = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
 
@@ -58,6 +61,15 @@ export default function MyAccountPage() {
     });
   }, [rawDonations]);
 
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+      router.push('/');
+    }
+  };
+
+  const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com' || user?.email?.toLowerCase() === 'davidafergan999@gmail.com';
+
   if (isUserLoading) {
     return (
       <div className="p-8 pt-40 max-w-4xl mx-auto space-y-6">
@@ -70,7 +82,7 @@ export default function MyAccountPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-32 pb-24 px-4">
+    <div className="min-h-screen bg-slate-50 pt-36 pb-24 px-4">
       <div className="container mx-auto max-w-5xl">
         <header className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6 text-center md:text-left">
           <div className="flex flex-col md:flex-row items-center gap-4">
@@ -79,12 +91,21 @@ export default function MyAccountPage() {
             </div>
             <div>
               <h1 className="text-3xl font-bold tracking-tight text-slate-900">My Account</h1>
-              <p className="text-muted-foreground text-sm font-medium opacity-70">Personal Impact Journey</p>
+              <p className="text-muted-foreground text-sm font-medium opacity-70">Personal impact journey</p>
             </div>
           </div>
-          <Button asChild className="rounded-full h-12 px-8 font-bold shadow-xl">
-            <Link href="/donate">Donate Again</Link>
-          </Button>
+          <div className="flex items-center gap-3">
+             {isAdmin && (
+               <Button variant="outline" asChild className="rounded-full h-12 px-6 font-bold border-accent/20 text-accent hover:bg-accent/5">
+                 <Link href="/admin/dashboard" className="flex items-center gap-2">
+                   <LayoutDashboard className="h-4 w-4" /> Admin Dashboard
+                 </Link>
+               </Button>
+             )}
+             <Button asChild className="rounded-full h-12 px-8 font-bold shadow-xl">
+               <Link href="/donate">Donate again</Link>
+             </Button>
+          </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -93,28 +114,39 @@ export default function MyAccountPage() {
                <div className="bg-primary p-8 text-white relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
                   <div className="relative z-10">
-                     <p className="text-[10px] font-bold uppercase tracking-wider opacity-70 mb-1">Donor Profile</p>
+                     <p className="text-[10px] font-bold uppercase tracking-wider opacity-70 mb-1">Donor profile</p>
                      <h2 className="text-xl font-bold truncate">{user.displayName || user.email?.split('@')[0]}</h2>
                      <p className="text-sm opacity-60 truncate">{user.email}</p>
                   </div>
                </div>
                <CardContent className="p-8 space-y-6">
                   <div className="space-y-1">
-                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60">Member Since</p>
+                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60">Member since</p>
                      <p className="text-sm font-bold">{user.metadata.creationTime ? format(new Date(user.metadata.creationTime), 'MMMM yyyy') : 'Recently'}</p>
                   </div>
+                  
                   <div className="pt-4 border-t border-slate-100">
-                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60 mb-4">Quick Links</p>
+                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60 mb-4">Quick links</p>
                      <div className="space-y-2">
                         <Link href="/contact" className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                           <span className="text-xs font-bold">Get Support</span>
+                           <span className="text-xs font-bold">Get support</span>
                            <ChevronRight className="h-3 w-3 text-slate-400" />
                         </Link>
                         <Link href="/causes" className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors">
-                           <span className="text-xs font-bold">Explore Causes</span>
+                           <span className="text-xs font-bold">Explore causes</span>
                            <ChevronRight className="h-3 w-3 text-slate-400" />
                         </Link>
                      </div>
+                  </div>
+
+                  <div className="pt-6 border-t border-slate-100">
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleLogout}
+                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/5 rounded-xl font-bold gap-3"
+                    >
+                      <LogOut className="h-4 w-4" /> Sign out
+                    </Button>
                   </div>
                </CardContent>
             </Card>
@@ -124,7 +156,7 @@ export default function MyAccountPage() {
             <Card className="rounded-[32px] overflow-hidden border-0 shadow-sm bg-white min-h-[500px]">
               <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
                 <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
-                  <CreditCard className="h-5 w-5" /> Donation History
+                  <CreditCard className="h-5 w-5" /> Donation history
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
@@ -185,13 +217,13 @@ export default function MyAccountPage() {
                       <Heart className="h-12 w-12 text-slate-200" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-xl font-bold text-slate-800">No Donations Found</h3>
+                      <h3 className="text-xl font-bold text-slate-800">No donations found</h3>
                       <p className="text-slate-500 max-w-xs mx-auto text-sm leading-relaxed">
                         Your generosity will appear here once you make your first donation using {user.email}.
                       </p>
                     </div>
                     <Button asChild className="rounded-full h-12 px-10 shadow-lg">
-                       <Link href="/donate">Donate Now</Link>
+                       <Link href="/donate">Donate now</Link>
                     </Button>
                   </div>
                 )}

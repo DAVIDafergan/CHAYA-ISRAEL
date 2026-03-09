@@ -6,27 +6,14 @@ import {
   Menu, 
   X, 
   User as UserIcon, 
-  LogOut, 
-  ChevronRight, 
   LayoutDashboard,
   Heart,
-  CreditCard,
-  UserCircle,
-  Settings
+  ChevronRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { useUser, useAuth } from "@/firebase";
-import { signOut } from "firebase/auth";
+import { useUser } from "@/firebase";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -41,7 +28,6 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isUserLoading } = useUser();
-  const { auth } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -56,13 +42,6 @@ export function Header() {
   const navigate = (href: string) => {
     setIsOpen(false);
     router.push(href);
-  };
-
-  const handleLogout = async () => {
-    if (auth) {
-      await signOut(auth);
-      router.push("/");
-    }
   };
 
   const isLoggedWithAccount = user && !user.isAnonymous;
@@ -104,45 +83,28 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {!isUserLoading && (
-              <div className="hidden lg:flex items-center gap-4">
+              <div className="hidden lg:flex items-center gap-3">
                 {isLoggedWithAccount ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="rounded-full h-12 px-6 gap-3 border border-slate-100 bg-white hover:bg-slate-50 transition-all font-bold shadow-sm">
-                        <div className="bg-primary/10 p-1.5 rounded-full">
-                          <UserIcon className="h-4 w-4 text-primary" />
-                        </div>
-                        <span className="max-w-[120px] truncate">{user.displayName || user.email?.split('@')[0]}</span>
+                  <>
+                    {isAdmin && (
+                      <Button variant="ghost" asChild className="rounded-full h-10 px-5 font-bold text-accent hover:bg-accent/5">
+                        <Link href="/admin/dashboard" className="flex items-center gap-2">
+                          <LayoutDashboard className="h-4 w-4" /> Admin
+                        </Link>
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-64 rounded-[24px] p-2 border-slate-100 shadow-2xl mt-2" align="end">
-                      <DropdownMenuLabel className="px-4 py-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider opacity-60">
-                        Manage account
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-slate-50" />
-                      <DropdownMenuItem onClick={() => navigate('/account')} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold hover:bg-slate-50">
-                        <CreditCard className="h-4 w-4 text-primary" /> My Account
-                      </DropdownMenuItem>
-                      {isAdmin && (
-                        <DropdownMenuItem onClick={() => navigate('/admin/dashboard')} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold text-accent hover:bg-accent/5">
-                          <LayoutDashboard className="h-4 w-4" /> Manager Dashboard
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuSeparator className="bg-slate-50" />
-                      <DropdownMenuItem onClick={handleLogout} className="rounded-xl p-3.5 cursor-pointer gap-3 font-bold text-destructive hover:bg-destructive/5">
-                        <LogOut className="h-4 w-4" /> Sign Out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                    )}
+                    <Button variant="outline" asChild className="rounded-full h-12 px-6 gap-3 border-slate-100 bg-white hover:bg-slate-50 transition-all font-bold shadow-sm">
+                      <Link href="/account" className="flex items-center gap-2">
+                        <UserIcon className="h-4 w-4 text-primary" /> My Account
+                      </Link>
+                    </Button>
+                  </>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Button variant="ghost" asChild className="rounded-full h-10 px-5 font-bold text-foreground/70 hover:text-primary">
                       <Link href="/login">Sign In</Link>
-                    </Button>
-                    <Button variant="outline" asChild className="rounded-full h-10 px-5 font-bold border-primary/20 text-primary hover:bg-primary/5">
-                      <Link href="/signup">Join Us</Link>
                     </Button>
                   </div>
                 )}
@@ -211,29 +173,21 @@ export function Header() {
                       onClick={() => navigate('/account')} 
                       className="text-left text-foreground flex items-center gap-4 font-bold py-2"
                     >
-                      <UserCircle className="h-6 w-6 text-primary" /> My Account
+                      <UserIcon className="h-6 w-6 text-primary" /> My Account
                     </button>
                     {isAdmin && (
                       <button 
                         onClick={() => navigate('/admin/dashboard')} 
                         className="text-left text-accent flex items-center gap-4 font-bold py-2"
                       >
-                        <LayoutDashboard className="h-6 w-6" /> Manager Dashboard
+                        <LayoutDashboard className="h-6 w-6" /> Admin Dashboard
                       </button>
                     )}
-                    <button onClick={handleLogout} className="text-left text-destructive font-bold flex items-center gap-4 py-2">
-                      <LogOut className="h-6 w-6" /> Sign Out
-                    </button>
                   </>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4 pt-4">
-                    <Button onClick={() => navigate('/login')} variant="outline" className="rounded-full h-14 font-bold">
-                      Sign In
-                    </Button>
-                    <Button onClick={() => navigate('/signup')} className="rounded-full h-14 font-bold bg-primary">
-                      Join Now
-                    </Button>
-                  </div>
+                  <Button onClick={() => navigate('/login')} variant="outline" className="rounded-full h-14 font-bold w-full">
+                    Sign In
+                  </Button>
                 )}
               </div>
 
