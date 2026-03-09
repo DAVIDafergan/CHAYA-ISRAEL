@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -36,16 +37,15 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Query filtered by user email to show their specific history
+  // שאילתה מסוננת לפי userId של המשתמש המחובר
   const donationsQuery = useMemoFirebase(() => {
-    if (!firestore || !user?.email) return null;
-    const userEmail = user.email.trim().toLowerCase();
+    if (!firestore || !user?.uid) return null;
     return query(
       collection(firestore, 'donations'),
-      where('payerEmail', '==', userEmail),
+      where('userId', '==', user.uid),
       orderBy('timestamp', 'desc')
     );
-  }, [firestore, user?.email]);
+  }, [firestore, user?.uid]);
   
   const { data: donations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
