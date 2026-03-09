@@ -131,9 +131,6 @@ function DialogCard({ cause }: { cause: Cause }) {
 }
 
 export default function CausesPage() {
-  const tacticalGearImg = PlaceHolderImages.find(img => img.id === 'idf-tactical-gear')?.imageUrl || "https://picsum.photos/seed/idf-gear-1/800/600";
-  const tacticalGearHint = PlaceHolderImages.find(img => img.id === 'idf-tactical-gear')?.imageHint || "military helmet vest";
-
   const causes: Cause[] = [
     {
       id: "widows",
@@ -290,14 +287,23 @@ export default function CausesPage() {
              </div>
 
              <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Tactical Equipment</h3>
-             <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-100 max-w-2xl mx-auto">
-                <Image 
-                  src={tacticalGearImg} 
-                  fill 
-                  alt="IDF Tactical Gear" 
-                  className="object-cover" 
-                  data-ai-hint={tacticalGearHint}
-                />
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
+                    <Image 
+                      src="/IDF1.png" 
+                      fill 
+                      alt="IDF Tactical Gear 1" 
+                      className="object-cover" 
+                    />
+                </div>
+                <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
+                    <Image 
+                      src="/SOLIDER.png" 
+                      fill 
+                      alt="IDF Tactical Gear 2" 
+                      className="object-cover" 
+                    />
+                </div>
              </div>
 
              <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">We Are One</h3>
