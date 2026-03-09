@@ -412,30 +412,41 @@ export default function CausesPage() {
             ))}
             
             <div className="group h-full">
-              <div className="glass-card h-full rounded-[24px] md:rounded-[32px] p-5 md:p-8 flex flex-col border border-primary/10 bg-white shadow-xl">
-                 <div className="bg-primary/5 p-3 rounded-2xl w-fit mb-4">
-                    <CalendarDays className="h-6 w-6 text-primary" />
+              <div className="glass-card h-full rounded-[24px] md:rounded-[32px] overflow-hidden flex flex-col border border-primary/10 bg-white shadow-xl transition-all duration-500 hover:-translate-y-1">
+                 <div className="relative h-28 md:h-40 overflow-hidden">
+                    <Image 
+                      src="/HOLIDAYS.png" 
+                      fill 
+                      alt="High Holidays Donations" 
+                      className="object-cover transition-transform duration-700 group-hover:scale-110" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute top-2 right-2 md:top-3 md:right-3 bg-white/95 backdrop-blur-md p-1.5 md:p-2 rounded-full shadow-lg z-10">
+                       <CalendarDays className="h-3 w-3 md:h-5 md:w-5 text-primary" />
+                    </div>
                  </div>
-                 <h3 className="text-sm md:text-lg font-bold text-primary mb-4 leading-tight">High Holidays Donations</h3>
-                 <div className="flex flex-col gap-2 md:gap-3 flex-1">
-                    {[
-                      { label: "Rosh Hashanah", href: "rosh-hashanah-sukkot" },
-                      { label: "Purim", href: "purim" },
-                      { label: "Pesach", href: "pesach" }
-                    ].map((link, idx) => (
-                      <Link 
-                        key={idx} 
-                        href={`#${link.href}`} 
-                        className="flex items-center justify-between p-2 md:p-3 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                      >
-                        <span className="text-[10px] md:text-xs font-bold">{link.label}</span>
-                        <ChevronRight className="h-3 w-3 opacity-30 group-hover/link:opacity-100 transition-opacity" />
-                      </Link>
-                    ))}
+                 <div className="p-4 md:p-6 flex flex-col flex-1">
+                    <h3 className="text-[12px] md:text-lg font-bold text-primary mb-3 leading-tight">High Holidays Donations</h3>
+                    <div className="flex flex-col gap-2 md:gap-3 flex-1">
+                      {[
+                        { label: "Rosh Hashanah", href: "rosh-hashanah-sukkot" },
+                        { label: "Purim", href: "purim" },
+                        { label: "Pesach", href: "pesach" }
+                      ].map((link, idx) => (
+                        <Link 
+                          key={idx} 
+                          href={`#${link.href}`} 
+                          className="flex items-center justify-between p-2 md:p-2.5 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link border border-transparent hover:border-primary/10"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
+                          }}
+                        >
+                          <span className="text-[10px] md:text-xs font-bold">{link.label}</span>
+                          <ChevronRight className="h-3 w-3 opacity-30 group-hover/link:opacity-100 transition-opacity" />
+                        </Link>
+                      ))}
+                    </div>
                  </div>
               </div>
             </div>
