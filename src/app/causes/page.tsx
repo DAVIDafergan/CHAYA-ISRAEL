@@ -48,7 +48,7 @@ function SpecialImageSwitcher({ images }: { images: string[] }) {
           initial={{ x: "100%" }}
           animate={{ x: 0 }}
           exit={{ x: "-100%" }}
-          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.8, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           className="absolute inset-0"
         >
           <Image 
@@ -477,14 +477,17 @@ export default function CausesPage() {
             
             <Link href="/donate?cause=Other" className="group h-full">
               <div className="glass-card h-full rounded-[24px] md:rounded-[32px] overflow-hidden flex flex-col border border-dashed border-primary/30 bg-white hover:bg-primary/5 transition-all shadow-xl">
-                 <div className="flex-1 flex flex-col items-center justify-center p-5 text-center space-y-3">
+                 <div className="flex-1 flex flex-col items-center justify-center p-5 text-center space-y-4">
                     <div className="h-10 w-10 md:h-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                        <Info className="h-5 w-5 md:h-6 md:w-6" />
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       <h3 className="text-[11px] md:text-lg font-bold tracking-tight">Other Causes</h3>
                       <p className="text-[7px] md:text-xs text-muted-foreground font-medium tracking-tight leading-tight opacity-70 max-w-[150px] md:max-w-xs mx-auto">
                         Providing Basic Necessities Enables Us to Enliven Disadvantaged Communities All Year Long.
+                      </p>
+                      <p className="text-[9px] md:text-sm font-black text-primary tracking-tight mt-2 italic">
+                        Please help us give life to those who rely on YOU
                       </p>
                     </div>
                     <div className="pt-1">

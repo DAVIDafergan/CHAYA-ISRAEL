@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from "react";
@@ -164,7 +165,7 @@ export default function Home() {
         <div className="container mx-auto px-6 text-center relative z-10 space-y-8 md:space-y-12">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-6xl font-black tracking-tight leading-tight drop-shadow-2xl">
-              Please help us give life to those who rely on you
+              Please help us give life to those who rely on YOU
             </h2>
             <p className="text-base md:text-2xl text-white/70 max-w-3xl mx-auto font-medium leading-relaxed">
               Allow us to serve as your messenger by distributing charity to those in Israel who are most in need.
