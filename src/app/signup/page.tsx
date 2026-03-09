@@ -78,7 +78,7 @@ function SignupForm() {
       <CardContent className="p-10 pt-6">
         <form onSubmit={handleSignup} className="space-y-5">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1 uppercase">Full name</label>
+            <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1">Full name</label>
             <div className="relative group">
               <User className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input 
@@ -92,7 +92,7 @@ function SignupForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1 uppercase">Email address</label>
+            <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1">Email address</label>
             <div className="relative group">
               <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input 
@@ -106,7 +106,7 @@ function SignupForm() {
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1 uppercase">Password</label>
+            <label className="text-[10px] font-black text-muted-foreground tracking-widest px-1">Password</label>
             <div className="relative group">
               <Lock className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
               <Input 

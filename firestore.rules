@@ -21,8 +21,9 @@ service cloud.firestore {
       // Anyone can create a donation (guest checkout)
       allow create: if true;
       
-      // Admin can read/list all
-      // Users can read/list their own donations based on email match
+      // Admin can read all. 
+      // Users can read only their own donations.
+      // Important: For queries (list), the query must include a filter on payerEmail.
       allow read: if isAdmin() || (isSignedIn() && resource.data.payerEmail == getUserEmail());
       
       allow update, delete: if isAdmin();
