@@ -39,14 +39,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Leadership Section */}
+      {/* About Us Section */}
       <section className="py-20 md:py-32 bg-slate-50/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight luxury-gradient-text mb-4">Our leadership</h2>
-            <p className="text-muted-foreground text-sm md:text-base font-medium max-w-xl mx-auto">
-              Guided by legacy and compassion, our directors lead the mission to support the needy.
-            </p>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight luxury-gradient-text mb-6">About Us</h2>
+            <h3 className="text-xl md:text-4xl font-bold tracking-tight text-slate-800 max-w-3xl mx-auto leading-tight">
+              24 Years of Broad Chesed Activity
+            </h3>
           </div>
           
           <div className="grid md:grid-cols-2 gap-12 md:gap-24 max-w-5xl mx-auto">
