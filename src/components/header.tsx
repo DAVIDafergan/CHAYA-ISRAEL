@@ -2,9 +2,29 @@
 
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowRight, Menu, X, User as UserIcon, LogOut, ChevronRight, UserPlus, LogIn, LayoutDashboard } from "lucide-react";
+import { 
+  ArrowRight, 
+  Menu, 
+  X, 
+  User as UserIcon, 
+  LogOut, 
+  ChevronRight, 
+  UserPlus, 
+  LogIn, 
+  LayoutDashboard,
+  Settings,
+  Heart
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
@@ -65,27 +85,27 @@ export function Header() {
       )}>
         <div className={cn(
             "container mx-auto flex h-20 md:h-24 items-center justify-between rounded-full border border-white/40 bg-white/95 px-6 md:px-10 shadow-2xl backdrop-blur-2xl transition-all duration-500 pointer-events-auto",
-            isScrolled && "shadow-glow-blue border-primary/10 h-18 md:h-20"
+            isScrolled && "shadow-lg border-primary/10 h-18 md:h-20"
         )}>
-          <LinkNext href="/" className="flex items-center gap-2 flex-shrink-0 transition-all duration-500 hover:scale-105">
+          <LinkNext href="/" className="flex items-center gap-2 flex-shrink-0 transition-transform duration-500 hover:scale-105">
             <Image 
               src="/Logo.png" 
               alt="Chaya Israel" 
-              width={280} 
-              height={90} 
+              width={220} 
+              height={70} 
               priority 
-              className="h-10 md:h-14 w-auto isolate bg-transparent"
+              className="h-10 md:h-12 w-auto"
             />
           </LinkNext>
           
-          <nav className="hidden items-center justify-center gap-6 text-sm md:text-base font-medium md:flex">
+          <nav className="hidden items-center justify-center gap-6 text-sm font-bold md:flex">
             {navLinks.map(link => (
               <LinkNext
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative rounded-full px-3 py-1.5 transition-all duration-300",
-                  pathname === link.href ? "text-primary font-bold" : "text-foreground/60 hover:text-primary"
+                  "relative transition-all duration-300",
+                  pathname === link.href ? "text-primary" : "text-foreground/60 hover:text-primary"
                 )}
               >
                 {link.label}
@@ -95,39 +115,50 @@ export function Header() {
 
           <div className="flex items-center gap-3">
             {!isUserLoading && (
-              isLoggedWithAccount ? (
-                <div className="hidden lg:flex items-center gap-3">
-                  {isAdmin && (
-                    <Button variant="ghost" asChild className="rounded-full h-10 px-4 font-bold text-accent hover:text-accent hover:bg-accent/5">
-                      <LinkNext href="/admin/dashboard" className="flex items-center gap-2">
-                        <LayoutDashboard className="h-4 w-4" /> Admin
-                      </LinkNext>
+              <div className="hidden lg:flex items-center gap-3">
+                {isLoggedWithAccount ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="rounded-full h-11 px-4 gap-2 border border-slate-100 bg-white hover:bg-slate-50 transition-all font-bold">
+                        <UserIcon className="h-4 w-4 text-primary" />
+                        <span className="max-w-[100px] truncate">{user.displayName || 'My Account'}</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56 rounded-2xl p-2 border-slate-100 shadow-xl" align="end">
+                      <DropdownMenuLabel className="px-3 py-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                        Donor Portal
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => navigate('/account')} className="rounded-xl p-3 cursor-pointer gap-3 font-bold">
+                        <UserIcon className="h-4 w-4 text-primary" /> Account details
+                      </DropdownMenuItem>
+                      {isAdmin && (
+                        <DropdownMenuItem onClick={() => navigate('/admin/dashboard')} className="rounded-xl p-3 cursor-pointer gap-3 font-bold text-accent">
+                          <LayoutDashboard className="h-4 w-4" /> Manager dashboard
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout} className="rounded-xl p-3 cursor-pointer gap-3 font-bold text-destructive hover:bg-destructive/5 focus:bg-destructive/5">
+                        <LogOut className="h-4 w-4" /> Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" asChild className="rounded-full h-10 px-4 font-bold text-foreground/70 hover:text-primary">
+                      <LinkNext href="/login">Login</LinkNext>
                     </Button>
-                  )}
-                  <Button variant="ghost" asChild className={cn("rounded-full h-10 px-4 font-bold", pathname === '/account' ? "text-primary" : "text-foreground/70 hover:text-primary hover:bg-primary/5")}>
-                    <LinkNext href="/account" className="flex items-center gap-2">
-                      <UserIcon className="h-4 w-4" /> My account
-                    </LinkNext>
-                  </Button>
-                  <button onClick={handleLogout} className="text-[10px] font-bold tracking-tight text-foreground/30 hover:text-destructive transition-colors ml-2">
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <div className="hidden lg:flex items-center gap-2">
-                  <Button variant="ghost" asChild className="rounded-full h-10 px-4 font-bold text-foreground/70 hover:text-primary hover:bg-primary/5">
-                    <LinkNext href="/login">Login</LinkNext>
-                  </Button>
-                  <Button variant="outline" asChild className="rounded-full h-10 px-4 font-bold border-primary/20 text-primary hover:bg-primary/5">
-                    <LinkNext href="/signup">Sign up</LinkNext>
-                  </Button>
-                </div>
-              )
+                    <Button variant="outline" asChild className="rounded-full h-10 px-4 font-bold border-primary/20 text-primary hover:bg-primary/5">
+                      <LinkNext href="/signup">Sign up</LinkNext>
+                    </Button>
+                  </div>
+                )}
+              </div>
             )}
 
-            <Button asChild size="lg" className="hidden md:flex rounded-full h-10 md:h-12 px-6 md:px-10 text-sm md:text-base font-bold shadow-glow-blue border-b-4 border-primary-foreground/20 bg-primary text-white hover:bg-primary/90">
+            <Button asChild size="lg" className="hidden md:flex rounded-full h-11 md:h-12 px-8 font-bold shadow-md bg-primary text-white hover:bg-primary/90 transition-all">
               <LinkNext href="/donate" className="flex items-center gap-2">
-                Donate <ArrowRight className="h-4 w-4" />
+                Donate <Heart className="h-4 w-4 fill-current" />
               </LinkNext>
             </Button>
             
@@ -156,7 +187,7 @@ export function Header() {
             className="fixed inset-0 z-[110] bg-white md:hidden flex flex-col p-8"
           >
             <div className="flex justify-between items-center mb-10">
-               <Image src="/Logo.png" alt="Logo" width={180} height={50} className="h-12 w-auto"/>
+               <Image src="/Logo.png" alt="Logo" width={180} height={50} className="h-10 w-auto"/>
                <button 
                  type="button"
                  className="h-10 w-10 flex items-center justify-center text-primary"
@@ -165,13 +196,13 @@ export function Header() {
                   <X className="h-7 w-7" />
                </button>
             </div>
-            <nav className="flex flex-col gap-5 text-xl font-bold">
+            <nav className="flex flex-col gap-6 text-xl font-bold">
               {navLinks.map(link => (
                 <button 
                   key={link.href} 
                   onClick={() => navigate(link.href)} 
                   className={cn(
-                    "py-1 text-left flex items-center justify-between",
+                    "py-2 text-left flex items-center justify-between border-b border-slate-50",
                     pathname === link.href ? "text-primary" : "text-foreground"
                   )}
                 >
@@ -180,40 +211,40 @@ export function Header() {
                 </button>
               ))}
               
-              <div className="pt-6 border-t border-slate-100 flex flex-col gap-4">
+              <div className="pt-6 flex flex-col gap-5">
                 {isLoggedWithAccount ? (
                   <>
                     <button 
                       onClick={() => navigate('/account')} 
-                      className="py-1 text-left text-foreground flex items-center gap-3"
+                      className="text-left text-foreground flex items-center gap-4 font-bold"
                     >
                       <UserIcon className="h-6 w-6 text-primary" /> My account
                     </button>
                     {isAdmin && (
                       <button 
                         onClick={() => navigate('/admin/dashboard')} 
-                        className="py-1 text-left text-accent flex items-center gap-3"
+                        className="text-left text-accent flex items-center gap-4 font-bold"
                       >
                         <LayoutDashboard className="h-6 w-6" /> Admin dashboard
                       </button>
                     )}
-                    <button onClick={handleLogout} className="text-base text-destructive/60 font-bold text-left flex items-center gap-3">
-                      <LogOut className="h-5 w-5" /> Logout
+                    <button onClick={handleLogout} className="text-left text-destructive font-bold flex items-center gap-4">
+                      <LogOut className="h-6 w-6" /> Logout
                     </button>
                   </>
                 ) : (
-                  <div className="flex flex-col gap-4">
-                    <button onClick={() => navigate('/login')} className="py-1 text-left text-foreground flex items-center gap-3">
-                      <LogIn className="h-6 w-6 text-primary" /> Login
-                    </button>
-                    <button onClick={() => navigate('/signup')} className="py-1 text-left text-foreground flex items-center gap-3">
-                      <UserPlus className="h-6 w-6 text-primary" /> Create account
-                    </button>
+                  <div className="grid grid-cols-2 gap-4 pt-4">
+                    <Button onClick={() => navigate('/login')} variant="outline" className="rounded-full h-14 font-bold">
+                      Login
+                    </Button>
+                    <Button onClick={() => navigate('/signup')} className="rounded-full h-14 font-bold bg-primary">
+                      Sign up
+                    </Button>
                   </div>
                 )}
               </div>
 
-              <Button onClick={() => navigate('/donate')} size="lg" className="rounded-full h-16 text-xl font-bold mt-6 bg-primary text-white shadow-xl border-b-4 border-primary-foreground/20">
+              <Button onClick={() => navigate('/donate')} size="lg" className="rounded-full h-16 text-xl font-bold mt-8 bg-primary text-white shadow-xl">
                 Donate now
               </Button>
             </nav>

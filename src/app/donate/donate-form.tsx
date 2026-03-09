@@ -22,7 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore } from "@/firebase";
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import Link from "next/link";
 
 const formSchema = z.object({
@@ -40,6 +41,7 @@ const formSchema = z.object({
 export default function DonateForm({ cause }: { cause?: string }) {
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const [isClient, setIsClient] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastEmail, setLastEmail] = useState("");
@@ -76,14 +78,34 @@ export default function DonateForm({ cause }: { cause?: string }) {
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
       const details = await actions.order.capture();
-      setLastEmail(form.getValues('email'));
+      const payerEmail = form.getValues('email').trim().toLowerCase();
+      
+      // Save record to Firestore immediately for instant feedback in "My Account"
+      if (firestore) {
+        await addDoc(collection(firestore, 'donations'), {
+          transactionId: details.id,
+          amount: parseFloat(donationTotal),
+          currency: 'USD',
+          userId: user?.uid || 'guest',
+          payerEmail: payerEmail,
+          payerName: `${form.getValues('firstName')} ${form.getValues('lastName')}`,
+          status: 'COMPLETED',
+          timestamp: new Date().toISOString(),
+          cause: cause || 'General',
+          note: form.getValues('note') || '',
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      setLastEmail(payerEmail);
       setIsSuccess(true);
       toast({
         title: "Donation successful",
-        description: `Thank you, ${details.payer.name.given_name}, for your generous support.`,
+        description: `Thank you, ${form.getValues('firstName')}, for your generous support.`,
       });
       form.reset();
     } catch (error) {
+      console.error("PayPal Capture Error:", error);
       toast({
         variant: "destructive",
         title: "Transaction failed",
@@ -98,7 +120,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         toast({
             variant: "destructive",
             title: "Information missing",
-            description: "Please fill out all required fields, including your complete billing address.",
+            description: "Please fill out all required fields.",
         });
         return Promise.reject(new Error("Form is invalid"));
     }
@@ -107,19 +129,10 @@ export default function DonateForm({ cause }: { cause?: string }) {
       purchase_units: [
         {
           custom_id: user?.uid || 'guest',
-          description: `Donation for ${cause || 'Chaya Israel'} - Note: ${form.getValues('note')}`,
+          description: `Donation for ${cause || 'Chaya Israel'}`,
           amount: {
             value: parseFloat(donationTotal).toFixed(2),
             currency_code: 'USD',
-          },
-          shipping: {
-            address: {
-              address_line_1: form.getValues('address'),
-              admin_area_2: form.getValues('city'),
-              admin_area_1: form.getValues('state'),
-              postal_code: form.getValues('zip'),
-              country_code: 'US'
-            }
           }
         },
       ],
@@ -154,8 +167,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
               <div className="bg-primary/5 p-8 rounded-[32px] space-y-6">
                 <div className="space-y-2">
                   <h3 className="text-xl font-bold text-primary">Track your impact</h3>
-                  <p className="text-sm text-slate-600 font-medium">
-                    Want to see your donation history and download receipts at any time? Create an account using your email <strong>{lastEmail}</strong>.
+                  <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                    Want to see your donation history and download receipts? Create an account using your email <strong>{lastEmail}</strong>.
                   </p>
                 </div>
                 <Button asChild className="rounded-full h-14 px-10 font-bold shadow-xl w-full">
@@ -189,27 +202,13 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
               <Heart className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight luxury-gradient-text leading-none mb-2">
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 leading-none mb-2">
               Donate to Chaya Israel
             </h1>
             {cause && !isOtherCause && (
               <p className="text-muted-foreground text-xs md:text-sm font-bold opacity-80 mb-4">
-                Support for: {cause}
+                Cause: {cause}
               </p>
-            )}
-            
-            {!user && (
-              <div className="mt-8 p-6 bg-white rounded-3xl border border-primary/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-                 <div className="text-left">
-                    <p className="text-sm font-bold text-slate-900">Already have an account?</p>
-                    <p className="text-xs text-muted-foreground">Sign in to track your donations automatically.</p>
-                 </div>
-                 <Button variant="outline" asChild className="rounded-full h-11 px-6 border-primary/20 text-primary hover:bg-primary/5 font-bold">
-                    <Link href="/login" className="flex items-center gap-2">
-                       <LogIn className="h-4 w-4" /> Sign in
-                    </Link>
-                 </Button>
-              </div>
             )}
           </header>
 
@@ -217,26 +216,26 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <form className="space-y-6">
               <div className="space-y-6">
                 
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white">
+                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
                   <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                      <DollarSign className="h-5 w-5" /> Enter amount
+                      <DollarSign className="h-5 w-5" /> Donation amount
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-8 space-y-6">
+                  <CardContent className="p-8">
                     <FormField
                       control={form.control}
                       name="amount"
                       render={({ field }) => (
                         <FormItem>
-                          <div className="relative group">
+                          <div className="relative">
                               <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-bold text-primary">$</span>
                               <FormControl>
                                 <Input 
                                   type="number" 
                                   placeholder="0.00" 
                                   {...field} 
-                                  className="pl-14 h-20 text-4xl font-bold bg-slate-50/50 rounded-3xl text-left focus:ring-4 focus:ring-primary/10 border-2 border-transparent focus:border-primary/20 transition-all"
+                                  className="pl-14 h-20 text-4xl font-bold bg-slate-50/50 rounded-3xl border-0 focus:ring-2 focus:ring-primary/20"
                                   required
                                 />
                               </FormControl>
@@ -248,28 +247,28 @@ export default function DonateForm({ cause }: { cause?: string }) {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white">
+                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
                   <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
                       <User className="h-5 w-5" /> Personal details
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-8 space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField control={form.control} name="firstName" render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">First name</FormLabel>
+                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">First name</FormLabel>
                           <FormControl>
-                            <Input placeholder="First name" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20" required />
+                            <Input placeholder="John" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}/>
                       <FormField control={form.control} name="lastName" render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">Last name</FormLabel>
+                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Last name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Last name" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20" required />
+                            <Input placeholder="Doe" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -277,17 +276,15 @@ export default function DonateForm({ cause }: { cause?: string }) {
                     </div>
                     <FormField control={form.control} name="email" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">Email address</FormLabel>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Email address</FormLabel>
                         <div className="relative">
                           <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                           <FormControl>
                             <Input 
                               type="email" 
-                              placeholder="Email address" 
+                              placeholder="email@example.com" 
                               {...field} 
-                              className={cn(
-                                "h-14 pl-14 bg-slate-50/50 rounded-2xl border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20"
-                              )}
+                              className="h-14 pl-14 bg-slate-50/50 rounded-2xl border-0"
                               required
                             />
                           </FormControl>
@@ -298,64 +295,59 @@ export default function DonateForm({ cause }: { cause?: string }) {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white">
+                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
                   <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
                       <MapPin className="h-5 w-5" /> Billing address
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-8 space-y-4">
-                    <div className="space-y-4">
-                      <FormField control={form.control} name="address" render={({ field }) => (
+                    <FormField control={form.control} name="address" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Street address</FormLabel>
+                        <FormControl>
+                          <Input placeholder="123 Charity Lane" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}/>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField control={form.control} name="city" render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">Street address</FormLabel>
+                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">City</FormLabel>
                           <FormControl>
-                            <Input placeholder="Street address" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20" required />
+                            <Input placeholder="City" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}/>
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField control={form.control} name="city" render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">City</FormLabel>
-                            <FormControl>
-                              <Input placeholder="City" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20" required />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}/>
-                        <FormField control={form.control} name="state" render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">State</FormLabel>
-                            <FormControl>
-                              <Input placeholder="State" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20" required />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}/>
-                      </div>
-                      <FormField control={form.control} name="zip" render={({ field }) => (
+                      <FormField control={form.control} name="state" render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground px-1 opacity-70">Zip code</FormLabel>
+                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">State</FormLabel>
                           <FormControl>
-                            <Input placeholder="Zip code" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0 text-sm font-medium focus:ring-2 focus:ring-primary/20" required />
+                            <Input placeholder="State" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}/>
                     </div>
+                    <FormField control={form.control} name="zip" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Zip code</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Zip" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}/>
                   </CardContent>
                 </Card>
 
-                <Card className={cn(
-                  "rounded-[40px] overflow-hidden border-0 shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white transition-all",
-                  isOtherCause && "ring-2 ring-primary/30"
-                )}>
-                  <CardHeader className={cn("py-6 border-b border-slate-100", isOtherCause ? "bg-primary/5" : "bg-slate-50/50")}>
+                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
                       <MessageSquare className="h-5 w-5" /> 
-                      {isOtherCause ? 'Please describe your donation' : 'Add a note (optional)'}
+                      {isOtherCause ? 'Description' : 'Add a note'}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-8">
@@ -366,8 +358,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
                         <FormItem>
                           <FormControl>
                             <Textarea 
-                              placeholder={isOtherCause ? "Tell us how you would like your donation to be used..." : "Your message here..."}
-                              className="bg-slate-50/50 rounded-3xl min-h-[120px] border-0 p-6 text-sm font-medium focus:ring-2 focus:ring-primary/20 resize-none"
+                              placeholder={isOtherCause ? "Tell us more about this donation..." : "Message (optional)"}
+                              className="bg-slate-50/50 rounded-3xl min-h-[120px] border-0 p-6"
                               {...field}
                             />
                           </FormControl>
@@ -378,17 +370,17 @@ export default function DonateForm({ cause }: { cause?: string }) {
                 </Card>
 
                 <div className="space-y-6">
-                  <div className="flex items-start gap-4 bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm">
-                     <div className="bg-primary/10 p-2 rounded-full shrink-0">
+                  <div className="bg-white p-6 rounded-[32px] border border-slate-100 flex items-start gap-4 shadow-sm">
+                     <div className="bg-primary/10 p-2 rounded-full">
                         <Info className="h-5 w-5 text-primary" />
                      </div>
                      <p className="text-[11px] font-medium text-muted-foreground leading-relaxed">
-                        A tax-exempt donation receipt will be sent to your email address automatically.
+                        A tax-exempt receipt will be sent to your email. Your data is protected.
                      </p>
                   </div>
 
                   {isClient && (
-                    <div className="bg-white p-2 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center">
+                    <div className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center">
                       <PayPalButtons 
                         style={{ 
                           layout: "vertical", 
