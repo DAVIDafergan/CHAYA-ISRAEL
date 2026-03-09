@@ -19,30 +19,57 @@ export async function POST(request: Request) {
     
     console.log(`Processing PayPal Webhook Event: ${eventType}`);
 
-    // Events that signify a successful payment or a valid subscription start
-    const successfulEvents = [
+    // Events that signify a valid donation or subscription
+    const handledEvents = [
       'PAYMENT.CAPTURE.COMPLETED',
       'CHECKOUT.ORDER.APPROVED',
       'CHECKOUT.ORDER.COMPLETED',
       'PAYMENT.SALE.COMPLETED',
       'BILLING.SUBSCRIPTION.CREATED',
-      'BILLING.SUBSCRIPTION.ACTIVATED'
+      'BILLING.SUBSCRIPTION.ACTIVATED',
+      'BILLING.SUBSCRIPTION.UPDATED'
     ];
 
-    if (successfulEvents.includes(eventType)) {
+    if (handledEvents.includes(eventType)) {
       const resource = body.resource;
       
-      // Extract amount - handle different structures for Sales vs Orders vs Subscriptions
-      const amountData = resource.amount || 
-                         resource.seller_receivable_breakdown?.gross_amount || 
-                         resource.billing_info?.last_payment?.amount || 
-                         { value: "0", currency_code: "USD" };
+      // 1. Extract Amount
+      // Subscriptions might not have a 'last_payment' yet on 'CREATED', 
+      // so we try to find any value or default to 0.
+      const amountValue = resource.amount?.value || 
+                         resource.seller_receivable_breakdown?.gross_amount?.value || 
+                         resource.billing_info?.last_payment?.amount?.value || 
+                         resource.plan_overide?.amount?.value || "0";
 
-      // Extract payer email - handle 'subscriber' field for subscriptions and 'payer' for orders
-      const payerData = resource.subscriber || resource.payer || body.resource?.payer || {};
-      const rawEmail = payerData.email_address || payerData.email || "unknown@paypal.com";
-      const payerEmail = rawEmail.toLowerCase().trim();
-      
+      const currencyCode = resource.amount?.currency_code || 
+                          resource.billing_info?.last_payment?.amount?.currency_code || "USD";
+
+      // 2. Extract Payer Email
+      // Subscriptions use 'subscriber', standard checkouts use 'payer'
+      const subscriberEmail = resource.subscriber?.email_address;
+      const payerEmailRaw = resource.payer?.email_address || resource.payer?.email || subscriberEmail || "unknown@paypal.com";
+      const payerEmail = payerEmailRaw.toLowerCase().trim();
+
+      // 3. Extract Payer Name
+      const nameData = resource.subscriber?.name || resource.payer?.name || {};
+      const payerName = `${nameData.given_name || ""} ${nameData.surname || ""}`.trim() || "PayPal Donor";
+
+      // 4. Transaction ID
+      // For subscriptions, the primary ID is the Subscription ID (starts with I-)
+      const transactionId = resource.id || resource.subscription_id || body.id || `tr-${Date.now()}`;
+
+      // 5. Metadata (Cause and Note)
+      const note = resource.custom_description || resource.description || body.summary || "";
+      let cause = "General";
+      if (note.toLowerCase().includes('donation for ')) {
+        const parts = note.split(/donation for /i);
+        if (parts[1]) cause = parts[1].split(' - ')[0].trim();
+      }
+
+      const isSubscriptionEvent = eventType.startsWith('BILLING.SUBSCRIPTION');
+      const paymentType = isSubscriptionEvent ? 'RECURRING' : 'ONE_TIME';
+
+      // Find internal userId if exists
       let userId = 'guest';
       try {
         const usersQuery = query(
@@ -55,37 +82,27 @@ export async function POST(request: Request) {
           userId = userSnapshot.docs[0].id;
         }
       } catch (err) {
-        console.error("Error searching for user by email in webhook:", err);
+        console.error("Error searching for user in webhook:", err);
       }
 
-      // Use resource.id as transactionId, fallback to subscription ID or body ID
-      const transactionId = resource.id || resource.subscription_id || body.id || 'webhook-' + Date.now();
-
-      // Determine note and cause
-      const note = resource.custom_description || resource.description || body.summary || "";
-      const cause = note.includes('Donation for ') ? note.split('Donation for ')[1]?.split(' - ')[0] : "General";
-
-      const isSubscriptionEvent = eventType.startsWith('BILLING.SUBSCRIPTION');
-      const paymentType = isSubscriptionEvent || eventType === 'PAYMENT.SALE.COMPLETED' ? 'RECURRING' : 'ONE_TIME';
-
       const donationData = {
-        transactionId: transactionId,
-        amount: parseFloat(amountData.value || "0"),
-        currency: amountData.currency_code || "USD",
-        userId: userId,
-        payerEmail: payerEmail,
-        payerName: `${payerData.name?.given_name || ""} ${payerData.name?.surname || ""}`.trim() || "PayPal Donor",
+        transactionId,
+        amount: parseFloat(amountValue),
+        currency: currencyCode,
+        userId,
+        payerEmail,
+        payerName,
         status: 'COMPLETED',
         timestamp: resource.create_time || resource.update_time || resource.start_time || new Date().toISOString(),
-        note: note,
-        cause: cause,
+        note,
+        cause,
         createdAt: serverTimestamp(),
         source: 'webhook',
-        paymentType: paymentType,
+        paymentType,
         webhookEventType: eventType
       };
 
-      // Check for existing transaction to prevent duplicates
+      // Prevent duplicates by checking transactionId
       const existingQuery = query(
         collection(db, 'donations'),
         where('transactionId', '==', transactionId),
@@ -95,15 +112,15 @@ export async function POST(request: Request) {
 
       if (existingSnapshot.empty) {
         await addDoc(collection(db, 'donations'), donationData);
-        console.log(`Donation successfully saved from webhook: ${transactionId} (${paymentType} - ${eventType})`);
+        console.log(`Donation SAVED: ${transactionId} for ${payerEmail} (${eventType})`);
       } else {
-        console.log(`Donation ${transactionId} already exists, skipping.`);
+        console.log(`Donation ALREADY EXISTS: ${transactionId}, skipping.`);
       }
     }
 
     return new Response('OK', { status: 200 });
   } catch (error: any) {
-    console.error('Webhook processing error:', error);
+    console.error('Webhook ERROR:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
