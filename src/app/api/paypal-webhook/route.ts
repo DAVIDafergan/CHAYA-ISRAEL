@@ -1,9 +1,9 @@
+
 import { NextResponse } from 'next/server';
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, limit } from 'firebase/firestore';
 import { firebaseConfig } from '@/firebase/config';
 
-// Initialize Firebase for the route handler
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getFirestore(app);
 
@@ -17,10 +17,8 @@ export async function POST(request: Request) {
     const body = JSON.parse(rawBody);
     const eventType = body.event_type;
     
-    // Log the event type for debugging
     console.log(`Processing PayPal Webhook Event: ${eventType}`);
 
-    // Supported events for successful payments
     const successfulEvents = [
       'PAYMENT.CAPTURE.COMPLETED',
       'CHECKOUT.ORDER.APPROVED',
@@ -29,17 +27,13 @@ export async function POST(request: Request) {
 
     if (successfulEvents.includes(eventType)) {
       const resource = body.resource;
-      
-      // Extract data with fallback paths based on different PayPal event structures
       const purchaseUnit = resource.purchase_units?.[0] || {};
-      const amountData = resource.amount || purchaseUnit.amount || {};
+      const amountData = resource.amount || purchaseUnit.amount || resource.seller_receivable_breakdown?.gross_amount || {};
       const payerData = resource.payer || body.resource.payer || {};
       
-      // Normalize email to lowercase for consistent searching
       const rawEmail = payerData.email_address || payerData.email || "unknown@paypal.com";
       const payerEmail = rawEmail.toLowerCase().trim();
       
-      // Search for user by email to associate the donation
       let userId = 'guest';
       try {
         const usersQuery = query(
@@ -52,11 +46,13 @@ export async function POST(request: Request) {
           userId = userSnapshot.docs[0].id;
         }
       } catch (err) {
-        console.error("Error searching for user by email:", err);
+        console.error("Error searching for user by email in webhook:", err);
       }
 
+      const transactionId = resource.id || body.id || 'webhook-' + Date.now();
+
       const donationData = {
-        transactionId: resource.id || body.id || 'webhook-' + Date.now(),
+        transactionId: transactionId,
         amount: parseFloat(amountData.value || "0"),
         currency: amountData.currency_code || "USD",
         userId: userId,
@@ -70,19 +66,18 @@ export async function POST(request: Request) {
         source: 'webhook'
       };
 
-      // Check if this transaction already exists to avoid duplicates
       const existingQuery = query(
         collection(db, 'donations'),
-        where('transactionId', '==', donationData.transactionId),
+        where('transactionId', '==', transactionId),
         limit(1)
       );
       const existingSnapshot = await getDocs(existingQuery);
 
       if (existingSnapshot.empty) {
         await addDoc(collection(db, 'donations'), donationData);
-        console.log(`Donation successfully saved from webhook: ${donationData.transactionId}`);
+        console.log(`Donation successfully saved from webhook: ${transactionId}`);
       } else {
-        console.log(`Donation ${donationData.transactionId} already exists, skipping.`);
+        console.log(`Donation ${transactionId} already exists, skipping.`);
       }
     }
 

@@ -1,19 +1,9 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // פתיחה מלאה של הרשאות לשלב הפיתוח והבנייה כדי למנוע שגיאות Permissions
-    // מאפשר קריאה וכתיבה לכל המשתמשים (כולל אורחים) עבור כל האוספים
+    // Open permissions for development to resolve Missing permissions errors.
     match /{document=**} {
-      allow read, write: if true;
-    }
-    
-    // חוק ספציפי לאוסף התרומות כדי לוודא שפעולות list ו-get יעבדו ללא חסימות
-    match /donations/{donationId} {
-      allow read, write: if true;
-    }
-    
-    // חוק לאוסף המשתמשים
-    match /users/{userId} {
       allow read, write: if true;
     }
   }

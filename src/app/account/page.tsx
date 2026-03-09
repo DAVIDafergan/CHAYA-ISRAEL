@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useMemo } from 'react';
@@ -37,12 +38,9 @@ export default function MyAccountPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // שאילתה המבוססת על כתובת האימייל של המשתמש (בצורה מנורמלת לאותיות קטנות)
-  // זה מבטיח שגם תרומות שבוצעו כ"אורח" עם אותו מייל יופיעו כאן
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const cleanEmail = user.email.trim().toLowerCase();
-    // וודא ששם האוסף donations הוא באותיות קטנות ושם השדה payerEmail תואם בדיוק
     return query(
       collection(firestore, 'donations'),
       where('payerEmail', '==', cleanEmail)
@@ -51,7 +49,6 @@ export default function MyAccountPage() {
   
   const { data: rawDonations, isLoading: donationsLoading } = useCollection(donationsQuery);
 
-  // מיון התרומות צד-לקוח למניעת צורך באינדקסים מורכבים ב-Firestore בשלב זה
   const donations = useMemo(() => {
     if (!rawDonations) return null;
     return [...rawDonations].sort((a, b) => {
