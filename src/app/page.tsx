@@ -109,7 +109,7 @@ export default function Home() {
             <div className="glass-card p-8 md:p-12 rounded-[32px] md:rounded-[48px] border border-primary/5 shadow-2xl bg-white space-y-6 flex flex-col group hover:border-accent/30 transition-all duration-700">
               <div className="flex items-center gap-6">
                 <div className="relative w-20 h-20 md:w-24 md:h-24 overflow-hidden rounded-full border-[3px] md:border-[5px] border-primary/10 shadow-xl shrink-0">
-                  <Image src="/ראובן אלבז.png" alt="Rabbi Reuven Elbaz" fill className="object-cover object-top" />
+                  <Image src="/reuven-elbaz.png" alt="Rabbi Reuven Elbaz" fill className="object-cover object-top" />
                 </div>
                 <div>
                   <h4 className="text-lg md:text-2xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>

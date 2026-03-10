@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from "react";
@@ -40,8 +41,9 @@ export default function MissionPage() {
       <section className="py-12 md:py-24 bg-slate-50/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-10 md:mb-16">
-            <h2 className="text-2xl md:text-4xl font-black tracking-tight luxury-gradient-text">Our Leadership</h2>
+            <h2 className="text-2xl md:text-4xl font-black tracking-tight luxury-gradient-text">About Us</h2>
             <div className="h-1 w-16 bg-accent mx-auto mt-3 rounded-full" />
+            <p className="text-xl md:text-3xl font-bold mt-4 tracking-tight text-slate-800">24 Years of Broad Chesed Activity</p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 max-w-4xl mx-auto">
@@ -99,7 +101,7 @@ export default function MissionPage() {
             <div className="glass-card p-6 md:p-10 rounded-[28px] md:rounded-[40px] border border-primary/5 shadow-xl bg-white space-y-5 flex flex-col group hover:border-accent/30">
               <div className="flex items-center gap-4 md:gap-6">
                 <div className="relative w-14 h-14 md:w-20 md:h-20 overflow-hidden rounded-full border-[2px] md:border-[4px] border-primary/10 shadow-lg shrink-0">
-                  <Image src="/ראובן אלבז.png" alt="Rabbi Reuven Elbaz" fill className="object-cover object-top" />
+                  <Image src="/reuven-elbaz.png" alt="Rabbi Reuven Elbaz" fill className="object-cover object-top" />
                 </div>
                 <div>
                   <h4 className="text-base md:text-xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>

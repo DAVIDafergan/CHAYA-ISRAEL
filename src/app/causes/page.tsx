@@ -138,7 +138,7 @@ export default function CausesPage() {
       icon: <Heart className="h-5 w-5" />,
       shortDesc: "When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward.",
       color: "bg-red-500",
-      image: "/יתומים ואלמנות .webp",
+      image: "/widows-support.webp",
       imageHint: "israel charity support",
       donateUrl: "/donate?cause=Widows%20and%20Orphans",
       fullContent: (
@@ -174,7 +174,7 @@ export default function CausesPage() {
                   images={[
                     "/hachnasat-kalah.png",
                     "/pexels-bride-1850126_1920.jpg",
-                    "/הכנסת כלה2.png"
+                    "/wedding.png"
                   ]} 
                 />
              </div>
@@ -346,7 +346,7 @@ export default function CausesPage() {
       fullContent: (
         <div className="space-y-3">
           <h3 className="font-bold text-indigo-600 text-lg md:text-xl tracking-tight">Teshuva, Tefila and Tzdakah</h3>
-          <p className="font-medium text-foreground leading-relaxed">We will soon be begging Hashem, pleading for a Shana Tovah for ourselves and for our families and I am sure that this Mitzva of tzedakah will stand for us all on the upcoming days of Judgement. Please open your heart generously and assist us in bringing joy and relief to our fellow Jews who rely on our help.</p>
+          <p className="font-medium text-foreground leadership-relaxed">We will soon be begging Hashem, pleading for a Shana Tovah for ourselves and for our families and I am sure that this Mitzva of tzedakah will stand for us all on the upcoming days of Judgement. Please open your heart generously and assist us in bringing joy and relief to our fellow Jews who rely on our help.</p>
         </div>
       )
     },
