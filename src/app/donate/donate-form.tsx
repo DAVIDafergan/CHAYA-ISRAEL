@@ -1,10 +1,9 @@
-
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DollarSign, Heart, MessageSquare, Info, User, Mail, MapPin, Loader2, CheckCircle2, ArrowRight, Calendar } from "lucide-react";
+import { DollarSign, Heart, MessageSquare, Info, User, Mail, MapPin, Loader2, CheckCircle2, ArrowRight, Calendar, CreditCard } from "lucide-react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { type OnApproveData, type CreateOrderData } from "@paypal/paypal-js";
 import { useState, useEffect } from 'react';
@@ -20,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser, useFirestore } from "@/firebase";
@@ -82,7 +81,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
-      // For subscriptions, 'actions.order' is not available. We use 'data.subscriptionID'
       const transactionId = data.orderID || data.subscriptionID || 'unknown';
       const payerEmail = form.getValues('email').trim().toLowerCase();
       
@@ -159,10 +157,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
         return Promise.reject(new Error("Form is invalid"));
     }
 
-    // IMPORTANT: You must create a Plan in your PayPal Dashboard and use its ID here.
-    // For production, you might want to dynamically select a plan based on the amount.
     return actions.subscription.create({
-      plan_id: 'P-5ML4271244454362MC6277SA', // Replace with your actual PayPal Plan ID
+      plan_id: 'P-5ML4271244454362MC6277SA',
       custom_id: user?.uid || 'guest',
     });
   };
@@ -242,29 +238,84 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <form className="space-y-6">
               <div className="space-y-6">
                 
+                {/* DONATION TYPE & FREQUENCY */}
                 <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 flex flex-row items-center justify-between">
+                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                    <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
+                      <CreditCard className="h-5 w-5" /> Donation Type
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <FormField
+                      control={form.control}
+                      name="isRecurring"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={(value) => field.onChange(value === 'monthly')}
+                              defaultValue={field.value ? 'monthly' : 'one-time'}
+                              className="grid grid-cols-1 gap-4"
+                            >
+                              <div className={cn(
+                                "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
+                                !field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
+                              )} onClick={() => field.onChange(false)}>
+                                <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
+                                <div className="flex items-center gap-4 w-full">
+                                  <div className={cn(
+                                    "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
+                                    !field.value ? "border-primary" : "border-slate-300"
+                                  )}>
+                                    {!field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
+                                  </div>
+                                  <div>
+                                    <p className={cn("text-base font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
+                                      One-Time Donation
+                                    </p>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Single support contribution</p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className={cn(
+                                "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
+                                field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
+                              )} onClick={() => field.onChange(true)}>
+                                <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
+                                <div className="flex items-center gap-4 w-full">
+                                  <div className={cn(
+                                    "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
+                                    field.value ? "border-primary" : "border-slate-300"
+                                  )}>
+                                    {field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
+                                  </div>
+                                  <div>
+                                    <p className={cn("text-base font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
+                                      Monthly Donation
+                                    </p>
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Continuous impact support</p>
+                                  </div>
+                                  <div className="ml-auto bg-primary/10 text-primary text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                    Highly Needed
+                                  </div>
+                                </div>
+                              </div>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* AMOUNT CARD */}
+                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
                       <DollarSign className="h-5 w-5" /> Donation amount
                     </CardTitle>
-                    <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full border border-slate-100 shadow-sm">
-                       <Calendar className={cn("h-4 w-4 transition-colors", watchIsRecurring ? "text-primary" : "text-slate-300")} />
-                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Monthly</span>
-                       <FormField
-                        control={form.control}
-                        name="isRecurring"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Switch 
-                                checked={field.value} 
-                                onCheckedChange={field.onChange} 
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
                   </CardHeader>
                   <CardContent className="p-8">
                     <FormField
@@ -273,18 +324,18 @@ export default function DonateForm({ cause }: { cause?: string }) {
                       render={({ field }) => (
                         <FormItem>
                           <div className="relative">
-                              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-3xl font-bold text-primary">$</span>
+                              <span className="absolute left-8 top-1/2 -translate-y-1/2 text-4xl font-black text-primary">$</span>
                               <FormControl>
                                 <Input 
                                   type="number" 
                                   placeholder="0.00" 
                                   {...field} 
-                                  className="pl-14 h-20 text-4xl font-bold bg-slate-50/50 rounded-3xl border-0 focus:ring-2 focus:ring-primary/20"
+                                  className="pl-16 h-24 text-5xl font-black bg-slate-50/50 rounded-3xl border-0 focus:ring-4 focus:ring-primary/10 transition-all"
                                   required
                                 />
                               </FormControl>
                               {watchIsRecurring && (
-                                <span className="absolute right-6 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">/ month</span>
+                                <span className="absolute right-8 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400 uppercase tracking-widest">/ Month</span>
                               )}
                           </div>
                           <FormMessage />
