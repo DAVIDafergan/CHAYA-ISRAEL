@@ -22,12 +22,12 @@ export default function Home() {
             className="object-cover object-center"
             priority
           />
-          {/* Subtle gradient to transition from the image to the white background */}
-          <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
+          {/* Removed the washed-out gradient to keep the image clear */}
+          <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
         </div>
         
         <div className="container mx-auto px-6 -mt-32 md:-mt-48 relative z-10 text-center flex flex-col items-center">
-          <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground leading-none mb-12 drop-shadow-sm">
+          <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground leading-none mb-12 drop-shadow-lg">
             Chaya <span className="text-primary">Israel</span>
           </h1>
           
@@ -47,14 +47,14 @@ export default function Home() {
               <Button 
                 variant="outline" 
                 asChild 
-                className="h-18 md:h-24 px-10 md:px-20 rounded-[2.5rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-glow-blue hover:border-primary/40 hover:scale-105 transition-all duration-500 group border-2"
+                className="h-18 md:h-20 px-8 md:px-12 rounded-[2.5rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-glow-blue hover:border-primary/40 hover:scale-105 transition-all duration-500 group border-2"
               >
                 <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-0.5">
                   <div className="flex items-center gap-2 text-slate-900 group-hover:text-primary transition-all duration-500">
-                    <User className="h-4 w-4 md:h-6 md:w-6 group-hover:scale-110 transition-transform" />
-                    <span className="text-base md:text-xl font-black tracking-tight uppercase">Donor Portal</span>
+                    <User className="h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform" />
+                    <span className="text-base md:text-lg font-black tracking-tight uppercase">Donor Portal</span>
                   </div>
-                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60 group-hover:text-primary/70 group-hover:opacity-100 transition-all">
+                  <span className="text-[9px] md:text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60 group-hover:text-primary/70 group-hover:opacity-100 transition-all">
                     (My Giving)
                   </span>
                 </Link>
