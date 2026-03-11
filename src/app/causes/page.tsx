@@ -157,8 +157,8 @@ export default function CausesPage() {
       icon: <Flame className="h-5 w-5" />,
       shortDesc: "Protecting The Homeland • Tactical Equipment • We Are One",
       color: "bg-blue-900",
-      image: "/חיילים.png",
-      imageHint: "idf soldiers israel",
+      image: "/SOLIDER.png",
+      imageHint: "idf soldier israel",
       donateUrl: "/donate?cause=IDF",
       fullContent: (
         <div className="space-y-8">
@@ -188,9 +188,9 @@ export default function CausesPage() {
                 </div>
                 <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
                     <Image 
-                      src="/SOLIDER.png" 
+                      src="/חיילים.png" 
                       fill 
-                      alt="IDF Tactical Gear 2" 
+                      alt="IDF Soldiers" 
                       className="object-cover" 
                     />
                 </div>
