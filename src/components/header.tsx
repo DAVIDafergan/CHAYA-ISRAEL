@@ -98,7 +98,7 @@ export function Header() {
                     )}
                     <Button variant="outline" asChild className="rounded-full h-12 px-6 gap-3 border-slate-100 bg-white hover:bg-slate-50 transition-all font-bold shadow-sm">
                       <Link href="/account" className="flex items-center gap-2">
-                        <UserIcon className="h-4 w-4 text-primary" /> My Account
+                        <UserIcon className="h-4 w-4 text-primary" /> Donor Portal
                       </Link>
                     </Button>
                   </>
@@ -174,7 +174,7 @@ export function Header() {
                       onClick={() => navigate('/account')} 
                       className="text-left text-foreground flex items-center gap-4 font-bold py-2"
                     >
-                      <UserIcon className="h-6 w-6 text-primary" /> My Account
+                      <UserIcon className="h-6 w-6 text-primary" /> Donor Portal
                     </button>
                     {isAdmin && (
                       <button 

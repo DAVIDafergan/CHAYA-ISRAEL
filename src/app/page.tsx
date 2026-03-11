@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from "react";
@@ -30,7 +29,7 @@ export default function Home() {
             Chaya <span className="text-primary">Israel</span>
           </h1>
           
-          <div className="space-y-12 w-full max-w-4xl">
+          <div className="space-y-8 md:space-y-10 w-full max-w-4xl">
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
               <Button size="lg" asChild className="h-14 md:h-20 px-8 md:px-16 rounded-full font-black bg-primary text-white shadow-2xl text-base md:text-xl border-b-4 border-primary-foreground/20 hover:scale-105 transition-all">
                 <Link href="/donate" className="flex items-center gap-2">
@@ -42,18 +41,18 @@ export default function Home() {
               </Button>
             </div>
 
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-2">
               <Button 
                 variant="outline" 
                 asChild 
-                className="h-20 md:h-32 px-12 md:px-28 rounded-[3rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-primary/10 hover:border-primary/40 hover:scale-[1.03] transition-all duration-300 group border-2"
+                className="h-18 md:h-24 px-10 md:px-20 rounded-[2.5rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-primary/10 hover:border-primary/40 hover:scale-[1.03] transition-all duration-300 group border-2"
               >
-                <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-1">
-                  <div className="flex items-center gap-3 text-slate-900 group-hover:text-primary transition-all duration-300">
-                    <User className="h-5 w-5 md:h-7 md:w-7 group-hover:scale-110 transition-transform" />
-                    <span className="text-lg md:text-3xl font-black tracking-tight">Donor Portal</span>
+                <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-0.5">
+                  <div className="flex items-center gap-2 text-slate-900 group-hover:text-primary transition-all duration-300">
+                    <User className="h-4 w-4 md:h-5 md:w-5 group-hover:scale-110 transition-transform" />
+                    <span className="text-base md:text-xl font-black tracking-tight">Donor Portal</span>
                   </div>
-                  <span className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest opacity-60 group-hover:text-primary/70 group-hover:opacity-100 transition-all">
+                  <span className="text-[9px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60 group-hover:text-primary/70 group-hover:opacity-100 transition-all">
                     (My Giving)
                   </span>
                 </Link>
@@ -136,7 +135,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-lg md:text-2xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>
-                  <p className="text-primary font-bold text-xs md:text-sm tracking-tight">Director of the Or Hachaim organization</p>
+                  <p className="text-primary font-bold text-xs md:sm tracking-tight">Director of the Or Hachaim organization</p>
                 </div>
               </div>
               <div className="relative">
@@ -161,7 +160,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h4 className="text-lg md:text-2xl font-black text-foreground leading-tight tracking-tight">Avichai Amosi</h4>
-                  <p className="text-primary font-bold text-xs md:text-sm tracking-tight">Director of Merkaz Chesed Sderot</p>
+                  <p className="text-primary font-bold text-xs md:sm tracking-tight">Director of Merkaz Chesed Sderot</p>
                 </div>
               </div>
               <div className="relative">
@@ -188,7 +187,7 @@ export default function Home() {
         <div className="container mx-auto px-6 text-center relative z-10 space-y-8 md:space-y-12">
           <div className="space-y-6">
             <h2 className="text-3xl md:text-6xl font-black tracking-tight leading-tight drop-shadow-2xl">
-              Please help us give life to those who rely on YOU
+              Please help us give life to those who rely on <span className="text-primary luxury-gradient-text brightness-150">YOU</span>
             </h2>
             <p className="text-base md:text-2xl text-white/70 max-w-3xl mx-auto font-medium leading-relaxed">
               Allow us to serve as your messenger by distributing charity to those in Israel who are most in need.
