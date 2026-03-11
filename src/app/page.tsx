@@ -4,10 +4,13 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Quote } from "lucide-react";
+import { ArrowRight, Quote, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/firebase";
 
 export default function Home() {
+  const { user } = useUser();
+
   return (
     <div className="overflow-x-hidden bg-white">
       {/* Hero Section - Image at the top, content below */}
@@ -27,15 +30,32 @@ export default function Home() {
             Chaya <span className="text-primary">Israel</span>
           </h1>
           
-          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-            <Button size="lg" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-full font-black bg-primary text-white shadow-2xl text-sm md:text-lg border-b-4 border-primary-foreground/20 hover:scale-105 transition-all">
-              <Link href="/donate" className="flex items-center gap-2">
-                Donate now <ArrowRight className="h-5 w-5" />
+          <div className="space-y-8">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+              <Button size="lg" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-full font-black bg-primary text-white shadow-2xl text-sm md:text-lg border-b-4 border-primary-foreground/20 hover:scale-105 transition-all">
+                <Link href="/donate" className="flex items-center gap-2">
+                  Donate now <ArrowRight className="h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" className="h-12 md:h-16 px-8 md:px-12 rounded-full font-black border-primary/20 text-primary text-sm md:text-lg hover:bg-primary/5 transition-all" asChild>
+                <Link href="/causes">Our causes</Link>
+              </Button>
+            </div>
+
+            <div className="flex justify-center">
+              <Link 
+                href={user ? "/account" : "/login"} 
+                className="group flex flex-col items-center gap-1 transition-all hover:scale-105"
+              >
+                <div className="flex items-center gap-2 text-foreground/60 group-hover:text-primary transition-colors">
+                  <User className="h-4 w-4" />
+                  <span className="text-base md:text-lg font-black tracking-tight">Donor Portal</span>
+                </div>
+                <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                  (My Giving)
+                </span>
               </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="h-12 md:h-16 px-8 md:px-12 rounded-full font-black border-primary/20 text-primary text-sm md:text-lg hover:bg-primary/5 transition-all" asChild>
-              <Link href="/causes">Our causes</Link>
-            </Button>
+            </div>
           </div>
         </div>
       </section>
