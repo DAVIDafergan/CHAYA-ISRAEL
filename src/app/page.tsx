@@ -30,31 +30,34 @@ export default function Home() {
             Chaya <span className="text-primary">Israel</span>
           </h1>
           
-          <div className="space-y-8">
+          <div className="space-y-12 w-full max-w-4xl">
             <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-              <Button size="lg" asChild className="h-12 md:h-16 px-8 md:px-12 rounded-full font-black bg-primary text-white shadow-2xl text-sm md:text-lg border-b-4 border-primary-foreground/20 hover:scale-105 transition-all">
+              <Button size="lg" asChild className="h-14 md:h-20 px-8 md:px-16 rounded-full font-black bg-primary text-white shadow-2xl text-base md:text-xl border-b-4 border-primary-foreground/20 hover:scale-105 transition-all">
                 <Link href="/donate" className="flex items-center gap-2">
-                  Donate now <ArrowRight className="h-5 w-5" />
+                  Donate now <ArrowRight className="h-6 w-6" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-12 md:h-16 px-8 md:px-12 rounded-full font-black border-primary/20 text-primary text-sm md:text-lg hover:bg-primary/5 transition-all" asChild>
+              <Button size="lg" variant="outline" className="h-14 md:h-20 px-8 md:px-16 rounded-full font-black border-primary/20 text-primary text-base md:text-xl hover:bg-primary/5 transition-all" asChild>
                 <Link href="/causes">Our causes</Link>
               </Button>
             </div>
 
-            <div className="flex justify-center">
-              <Link 
-                href={user ? "/account" : "/login"} 
-                className="group flex flex-col items-center gap-1 transition-all hover:scale-105"
+            <div className="flex justify-center pt-4">
+              <Button 
+                variant="outline" 
+                asChild 
+                className="h-20 md:h-32 px-12 md:px-28 rounded-[3rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] hover:border-primary/30 transition-all duration-500 group border-2"
               >
-                <div className="flex items-center gap-2 text-foreground/60 group-hover:text-primary transition-colors">
-                  <User className="h-4 w-4" />
-                  <span className="text-base md:text-lg font-black tracking-tight">Donor Portal</span>
-                </div>
-                <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">
-                  (My Giving)
-                </span>
-              </Link>
+                <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-1">
+                  <div className="flex items-center gap-3 text-slate-900 group-hover:text-primary transition-colors">
+                    <User className="h-5 w-5 md:h-7 md:w-7" />
+                    <span className="text-lg md:text-3xl font-black tracking-tight">Donor Portal</span>
+                  </div>
+                  <span className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                    (My Giving)
+                  </span>
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
