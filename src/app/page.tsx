@@ -46,14 +46,14 @@ export default function Home() {
               <Button 
                 variant="outline" 
                 asChild 
-                className="h-20 md:h-32 px-12 md:px-28 rounded-[3rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] hover:border-primary/30 transition-all duration-500 group border-2"
+                className="h-20 md:h-32 px-12 md:px-28 rounded-[3rem] border-primary/10 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.06)] hover:shadow-primary/10 hover:border-primary/40 hover:scale-[1.03] transition-all duration-300 group border-2"
               >
                 <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-1">
-                  <div className="flex items-center gap-3 text-slate-900 group-hover:text-primary transition-colors">
-                    <User className="h-5 w-5 md:h-7 md:w-7" />
+                  <div className="flex items-center gap-3 text-slate-900 group-hover:text-primary transition-all duration-300">
+                    <User className="h-5 w-5 md:h-7 md:w-7 group-hover:scale-110 transition-transform" />
                     <span className="text-lg md:text-3xl font-black tracking-tight">Donor Portal</span>
                   </div>
-                  <span className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+                  <span className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest opacity-60 group-hover:text-primary/70 group-hover:opacity-100 transition-all">
                     (My Giving)
                   </span>
                 </Link>
