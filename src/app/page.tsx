@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from "react";
@@ -26,12 +27,12 @@ export default function Home() {
         </div>
         
         {/* Hero Content - Positioned immediately below the image */}
-        <div className="container mx-auto px-6 py-12 md:py-16 text-center flex flex-col items-center">
-          <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground leading-none mb-12 drop-shadow-sm">
+        <div className="container mx-auto px-6 pt-2 pb-12 md:pt-4 md:pb-16 text-center flex flex-col items-center">
+          <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter text-foreground leading-none mb-10 drop-shadow-sm">
             Chaya <span className="text-primary">Israel</span>
           </h1>
           
-          <div className="space-y-8 md:space-y-10 w-full max-w-4xl">
+          <div className="space-y-6 md:space-y-8 w-full max-w-4xl">
             <div className="flex flex-wrap justify-center gap-4 md:gap-8">
               <Button size="lg" asChild className="h-16 md:h-24 px-10 md:px-20 rounded-full font-black bg-primary text-white shadow-2xl text-lg md:text-2xl border-b-4 border-primary-foreground/20 hover:scale-110 transition-all duration-500">
                 <Link href="/donate" className="flex items-center gap-3">
