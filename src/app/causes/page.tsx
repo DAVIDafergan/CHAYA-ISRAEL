@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from "react";
@@ -152,6 +151,79 @@ export default function CausesPage() {
       )
     },
     {
+      id: "idf",
+      title: "Support the IDF",
+      subtitle: "Protecting The Homeland",
+      icon: <Flame className="h-5 w-5" />,
+      shortDesc: "Protecting The Homeland • Tactical Equipment • We Are One",
+      color: "bg-blue-900",
+      image: "/חיילים.png",
+      imageHint: "idf soldiers israel",
+      donateUrl: "/donate?cause=IDF",
+      fullContent: (
+        <div className="space-y-8">
+          <div className="text-center space-y-6">
+             <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Protecting The Homeland</h3>
+             <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-100 relative group/video max-w-2xl mx-auto">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src="https://www.youtube.com/embed/mQrWXrGfvmI" 
+                  title="IDF Support 1" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowFullScreen
+                ></iframe>
+             </div>
+
+             <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Tactical Equipment</h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
+                    <Image 
+                      src="/IDF1.png" 
+                      fill 
+                      alt="IDF Tactical Gear 1" 
+                      className="object-cover" 
+                    />
+                </div>
+                <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
+                    <Image 
+                      src="/SOLIDER.png" 
+                      fill 
+                      alt="IDF Tactical Gear 2" 
+                      className="object-cover" 
+                    />
+                </div>
+             </div>
+
+             <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">We Are One</h3>
+             <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-100 relative group/video max-w-2xl mx-auto">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src="https://www.youtube.com/embed/PPx5hP7WX18" 
+                  title="IDF Support 2" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowFullScreen
+                ></iframe>
+             </div>
+          </div>
+
+          <div className="text-center pt-4">
+              <Link 
+                href="https://www.youtube.com/@ChayaIsraelFoundation" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-primary font-bold tracking-tight text-[10px] md:text-xs hover:underline"
+              >
+                For more videos <Youtube className="h-4 w-4" />
+              </Link>
+          </div>
+        </div>
+      )
+    },
+    {
       id: "hachnasat-kalah",
       title: "Hachnasat Kalah",
       subtitle: "If Not Us, Whom? And If Not Now, When?",
@@ -255,79 +327,6 @@ export default function CausesPage() {
                    ]} 
                 />
              </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "idf",
-      title: "Support the IDF",
-      subtitle: "Protecting The Homeland",
-      icon: <Flame className="h-5 w-5" />,
-      shortDesc: "Protecting The Homeland • Tactical Equipment • We Are One",
-      color: "bg-blue-900",
-      image: "/חיילים.png",
-      imageHint: "idf soldiers israel",
-      donateUrl: "/donate?cause=IDF",
-      fullContent: (
-        <div className="space-y-8">
-          <div className="text-center space-y-6">
-             <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Protecting The Homeland</h3>
-             <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-100 relative group/video max-w-2xl mx-auto">
-                <iframe 
-                  width="100%" 
-                  height="100%" 
-                  src="https://www.youtube.com/embed/mQrWXrGfvmI" 
-                  title="IDF Support 1" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  allowFullScreen
-                ></iframe>
-             </div>
-
-             <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">Tactical Equipment</h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
-                    <Image 
-                      src="/IDF1.png" 
-                      fill 
-                      alt="IDF Tactical Gear 1" 
-                      className="object-cover" 
-                    />
-                </div>
-                <div className="relative aspect-square rounded-xl overflow-hidden shadow-2xl border border-slate-100">
-                    <Image 
-                      src="/SOLIDER.png" 
-                      fill 
-                      alt="IDF Tactical Gear 2" 
-                      className="object-cover" 
-                    />
-                </div>
-             </div>
-
-             <h3 className="text-xl md:text-2xl font-black text-blue-900 tracking-tight">We Are One</h3>
-             <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-slate-100 relative group/video max-w-2xl mx-auto">
-                <iframe 
-                  width="100%" 
-                  height="100%" 
-                  src="https://www.youtube.com/embed/PPx5hP7WX18" 
-                  title="IDF Support 2" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                  allowFullScreen
-                ></iframe>
-             </div>
-          </div>
-
-          <div className="text-center pt-4">
-              <Link 
-                href="https://www.youtube.com/@ChayaIsraelFoundation" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary font-bold tracking-tight text-[10px] md:text-xs hover:underline"
-              >
-                For more videos <Youtube className="h-4 w-4" />
-              </Link>
           </div>
         </div>
       )
