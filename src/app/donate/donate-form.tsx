@@ -157,7 +157,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
         return Promise.reject(new Error("Form is invalid"));
     }
 
-    // IMPORTANT: Make sure this plan_id exists in your PayPal dashboard
     return actions.subscription.create({
       plan_id: 'P-5ML4271244454362MC6277SA',
       custom_id: user?.uid || 'guest',
@@ -214,7 +213,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
   return (
     <PayPalScriptProvider 
-      key={watchIsRecurring ? "subscription" : "one-time"}
+      key={watchIsRecurring ? "subscription-provider" : "onetime-provider"}
       options={{ 
         clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
         currency: "USD",
@@ -242,7 +241,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <form className="space-y-6">
               <div className="space-y-6">
                 
-                {/* DONATION TYPE & FREQUENCY */}
                 <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
                   <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
@@ -314,7 +312,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
                   </CardContent>
                 </Card>
 
-                {/* AMOUNT CARD */}
                 <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
                   <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
                     <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
@@ -482,7 +479,10 @@ export default function DonateForm({ cause }: { cause?: string }) {
                   </div>
 
                   {isClient && (
-                    <div className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center">
+                    <div 
+                      key={watchIsRecurring ? "recurring-section" : "onetime-section"}
+                      className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
+                    >
                       <PayPalButtons 
                         style={{ 
                           layout: "vertical", 
