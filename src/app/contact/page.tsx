@@ -87,16 +87,7 @@ export default function ContactPage() {
                           <a href="mailto:Kramera613@gmail.com" className="text-xs sm:text-base text-muted-foreground hover:text-primary transition-colors">Kramera613@gmail.com</a>
                       </div>
                   </div>
-                  {/* Donations Email */}
-                  <div className="flex items-start gap-4">
-                      <div className="bg-primary/10 p-3 rounded-lg">
-                          <Mail className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                          <h3 className="font-semibold text-base">Donations Email</h3>
-                          <a href="mailto:chayaisraeldonations@gmail.com" className="text-xs sm:text-base text-muted-foreground hover:text-primary transition-colors">chayaisraeldonations@gmail.com</a>
-                      </div>
-                  </div>
+                  
                   <div className="flex items-start gap-4">
                         <div className="bg-primary/10 p-3 rounded-lg">
                           <Phone className="h-6 w-6 text-primary" />

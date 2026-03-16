@@ -71,6 +71,9 @@ function SpecialImageSwitcher({ images }: { images: string[] }) {
 }
 
 function DialogCard({ cause }: { cause: Cause }) {
+  // Priority for the first few items to ensure fast loading
+  const isPriority = cause.id === 'widows' || cause.id === 'idf';
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -83,6 +86,7 @@ function DialogCard({ cause }: { cause: Cause }) {
                 alt={cause.title} 
                 className="object-cover transition-transform duration-700 group-hover:scale-110" 
                 data-ai-hint={cause.imageHint}
+                priority={isPriority}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-2 right-2 md:top-3 md:right-3 bg-white/95 backdrop-blur-md p-1.5 md:p-2 rounded-full shadow-lg z-10">
@@ -230,7 +234,7 @@ export default function CausesPage() {
       icon: <Sparkles className="h-5 w-5" />,
       shortDesc: "If Not Us, Whom? And If Not Now, When? For newly-weds just starting off on their journey of marriage, financial matters can be tough and very challenging.",
       color: "bg-primary",
-      image: "/hachnasat-kalah.png",
+      image: "/wedding.png",
       imageHint: "jewish wedding",
       donateUrl: "/donate?cause=Hachnasat%20Kalah",
       fullContent: (
