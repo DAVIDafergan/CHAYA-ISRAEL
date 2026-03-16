@@ -124,7 +124,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         toast({
             variant: "destructive",
             title: "Information missing",
-            description: "Please fill out all required fields.",
+            description: "Please fill out all required fields before donating.",
         });
         return Promise.reject(new Error("Form is invalid"));
     }
@@ -152,7 +152,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         toast({
             variant: "destructive",
             title: "Information missing",
-            description: "Please fill out all required fields.",
+            description: "Please fill out all required fields before starting a subscription.",
         });
         return Promise.reject(new Error("Form is invalid"));
     }
@@ -238,7 +238,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
           </header>
 
           <Form {...form}>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
               <div className="space-y-6">
                 
                 <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
@@ -480,7 +480,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
                   {isClient && (
                     <div 
-                      key={watchIsRecurring ? "recurring-section" : "onetime-section"}
                       className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
                     >
                       <PayPalButtons 
@@ -494,6 +493,14 @@ export default function DonateForm({ cause }: { cause?: string }) {
                         createOrder={!watchIsRecurring ? createOrder : undefined}
                         createSubscription={watchIsRecurring ? createSubscription : undefined}
                         onApprove={handleOnApprove}
+                        onError={(err) => {
+                          console.error("PayPal Global Error:", err);
+                          toast({
+                            variant: "destructive",
+                            title: "PayPal Connection Error",
+                            description: "Could not connect to PayPal. Please check your information or try another payment method.",
+                          });
+                        }}
                       />
                     </div>
                   )}

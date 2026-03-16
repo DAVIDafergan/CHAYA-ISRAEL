@@ -64,7 +64,6 @@ export function Header() {
               alt="Chaya Israel" 
               width={220} 
               height={70} 
-              priority 
               className="h-10 md:h-12 w-auto"
             />
           </Link>
