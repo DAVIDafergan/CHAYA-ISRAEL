@@ -77,12 +77,23 @@ export default function ContactPage() {
                 <p className="mt-2 text-xs sm:text-base text-muted-foreground">Find us at our location, give us a call, or send an email. We are here to answer your questions.</p>
               </div>
               <div className="space-y-6">
+                  {/* Primary Email */}
                   <div className="flex items-start gap-4">
                       <div className="bg-primary/10 p-3 rounded-lg">
                           <Mail className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                          <h3 className="font-semibold text-base">Email Address</h3>
+                          <h3 className="font-semibold text-base">Primary Email</h3>
+                          <a href="mailto:Kramera613@gmail.com" className="text-xs sm:text-base text-muted-foreground hover:text-primary transition-colors">Kramera613@gmail.com</a>
+                      </div>
+                  </div>
+                  {/* Donations Email */}
+                  <div className="flex items-start gap-4">
+                      <div className="bg-primary/10 p-3 rounded-lg">
+                          <Mail className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                          <h3 className="font-semibold text-base">Donations Email</h3>
                           <a href="mailto:chayaisraeldonations@gmail.com" className="text-xs sm:text-base text-muted-foreground hover:text-primary transition-colors">chayaisraeldonations@gmail.com</a>
                       </div>
                   </div>
