@@ -28,6 +28,42 @@ export const metadata: Metadata = {
     template: '%s | Chaya Israel'
   },
   description: 'Chaya Israel Foundation provides essential support for widows, orphans, IDF soldiers, and families in need across Israel. Established by Rabbi Avraham Kramer in 2004.',
+  keywords: ['Chaya Israel', 'charity Israel', 'support IDF', 'widows and orphans', 'Rabbi Avraham Kramer', 'donation Israel', 'Jewish charity', 'Israel relief'],
+  authors: [{ name: 'Rabbi Avraham Kramer' }],
+  creator: 'Chaya Israel Foundation',
+  publisher: 'Chaya Israel Foundation',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Chaya Israel | Charity & Support for Families in Israel',
+    description: 'Providing essential food and assistance to hundreds of families, orphans, widows, and soldiers in Israel since 2004.',
+    url: 'https://chayaisrael.com',
+    siteName: 'Chaya Israel',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Chaya Israel | Charity & Support for Families in Israel',
+    description: 'Support widows, orphans, and IDF soldiers in Israel through Chaya Israel Foundation.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
