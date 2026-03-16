@@ -157,6 +157,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         return Promise.reject(new Error("Form is invalid"));
     }
 
+    // IMPORTANT: Make sure this plan_id exists in your PayPal dashboard
     return actions.subscription.create({
       plan_id: 'P-5ML4271244454362MC6277SA',
       custom_id: user?.uid || 'guest',
@@ -212,12 +213,15 @@ export default function DonateForm({ cause }: { cause?: string }) {
   }
 
   return (
-    <PayPalScriptProvider options={{ 
-      clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
-      currency: "USD",
-      intent: watchIsRecurring ? "subscription" : "capture",
-      vault: watchIsRecurring ? true : undefined
-    }}>
+    <PayPalScriptProvider 
+      key={watchIsRecurring ? "subscription" : "one-time"}
+      options={{ 
+        clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
+        currency: "USD",
+        intent: watchIsRecurring ? "subscription" : "capture",
+        vault: watchIsRecurring ? true : undefined
+      }}
+    >
       <div className="pt-32 pb-24 px-4 bg-slate-50 min-h-screen">
         <div className="container mx-auto max-w-2xl">
           <header className="text-center mb-12">
