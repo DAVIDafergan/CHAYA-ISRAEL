@@ -480,9 +480,11 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
                   {isClient && (
                     <div 
+                      key={watchIsRecurring ? "subscription-container" : "onetime-container"}
                       className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
                     >
                       <PayPalButtons 
+                        key={watchIsRecurring ? "subscription-buttons" : "onetime-buttons"}
                         style={{ 
                           layout: "vertical", 
                           color: 'blue', 
