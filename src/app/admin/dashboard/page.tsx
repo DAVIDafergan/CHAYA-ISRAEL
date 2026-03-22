@@ -33,7 +33,8 @@ import {
   ChevronRight,
   TrendingUp,
   Users,
-  Home
+  Home,
+  FileText
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -238,7 +239,8 @@ export default function AdminDashboard() {
                       <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Donor</TableHead>
                       <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Amount</TableHead>
                       <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Cause</TableHead>
-                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground pr-8">Status</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Status</TableHead>
+                      <TableHead className="font-bold text-[10px] uppercase text-muted-foreground pr-8 text-right">Receipt</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -259,12 +261,24 @@ export default function AdminDashboard() {
                         <TableCell className="text-sm font-medium text-slate-600">
                           {donation.cause || "General"}
                         </TableCell>
-                        <TableCell className="pr-8">
+                        <TableCell>
                           <span className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold ${
                             donation.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
                           }`}>
                             {donation.status}
                           </span>
+                        </TableCell>
+                        <TableCell className="pr-8 text-right">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            asChild
+                            className="h-9 px-3 rounded-full text-primary hover:bg-primary/5 font-bold text-[11px]"
+                          >
+                            <Link href={`/receipt/${donation.id}`}>
+                               <FileText className="h-3.5 w-3.5 mr-1.5" /> View
+                            </Link>
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))}
