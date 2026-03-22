@@ -157,6 +157,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         return Promise.reject(new Error("Form is invalid"));
     }
 
+    // Replace with your actual Live Plan ID from PayPal dashboard
     return actions.subscription.create({
       plan_id: 'P-5ML4271244454362MC6277SA',
       custom_id: user?.uid || 'guest',
@@ -212,279 +213,277 @@ export default function DonateForm({ cause }: { cause?: string }) {
   }
 
   return (
-    <PayPalScriptProvider 
-      key={watchIsRecurring ? "subscription-provider" : "onetime-provider"}
-      options={{ 
-        clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
-        currency: "USD",
-        intent: watchIsRecurring ? "subscription" : "capture",
-        vault: watchIsRecurring ? true : undefined
-      }}
-    >
-      <div className="pt-32 pb-24 px-4 bg-slate-50 min-h-screen">
-        <div className="container mx-auto max-w-2xl">
-          <header className="text-center mb-12">
-            <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
-              <Heart className="h-8 w-8 text-primary" />
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 leading-none mb-2">
-              Donate to Chaya Israel
-            </h1>
-            {cause && !isOtherCause && (
-              <p className="text-muted-foreground text-xs md:text-sm font-bold opacity-80 mb-4">
-                Cause: {cause}
-              </p>
-            )}
-          </header>
+    <div className="pt-32 pb-24 px-4 bg-slate-50 min-h-screen">
+      <div className="container mx-auto max-w-2xl">
+        <header className="text-center mb-12">
+          <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
+            <Heart className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 leading-none mb-2">
+            Donate to Chaya Israel
+          </h1>
+          {cause && !isOtherCause && (
+            <p className="text-muted-foreground text-xs md:text-sm font-bold opacity-80 mb-4">
+              Cause: {cause}
+            </p>
+          )}
+        </header>
 
-          <Form {...form}>
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-              <div className="space-y-6">
-                
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                    <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                      <CreditCard className="h-5 w-5" /> Donation Type
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <FormField
-                      control={form.control}
-                      name="isRecurring"
-                      render={({ field }) => (
-                        <FormItem className="space-y-3">
-                          <FormControl>
-                            <RadioGroup
-                              onValueChange={(value) => field.onChange(value === 'monthly')}
-                              defaultValue={field.value ? 'monthly' : 'one-time'}
-                              className="grid grid-cols-1 gap-4"
-                            >
-                              <div className={cn(
-                                "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
-                                !field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
-                              )} onClick={() => field.onChange(false)}>
-                                <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
-                                <div className="flex items-center gap-4 w-full">
-                                  <div className={cn(
-                                    "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
-                                    !field.value ? "border-primary" : "border-slate-300"
-                                  )}>
-                                    {!field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
-                                  </div>
-                                  <div>
-                                    <p className={cn("text-base font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
-                                      One-Time Donation
-                                    </p>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Single support contribution</p>
-                                  </div>
+        <Form {...form}>
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="space-y-6">
+              
+              <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
+                    <CreditCard className="h-5 w-5" /> Donation Type
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <FormField
+                    control={form.control}
+                    name="isRecurring"
+                    render={({ field }) => (
+                      <FormItem className="space-y-3">
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={(value) => field.onChange(value === 'monthly')}
+                            defaultValue={field.value ? 'monthly' : 'one-time'}
+                            className="grid grid-cols-1 gap-4"
+                          >
+                            <div className={cn(
+                              "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
+                              !field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
+                            )} onClick={() => field.onChange(false)}>
+                              <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
+                              <div className="flex items-center gap-4 w-full">
+                                <div className={cn(
+                                  "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
+                                  !field.value ? "border-primary" : "border-slate-300"
+                                )}>
+                                  {!field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
+                                </div>
+                                <div>
+                                  <p className={cn("text-base font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
+                                    One-Time Donation
+                                  </p>
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Single support contribution</p>
                                 </div>
                               </div>
+                            </div>
 
-                              <div className={cn(
-                                "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
-                                field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
-                              )} onClick={() => field.onChange(true)}>
-                                <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
-                                <div className="flex items-center gap-4 w-full">
-                                  <div className={cn(
-                                    "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
-                                    field.value ? "border-primary" : "border-slate-300"
-                                  )}>
-                                    {field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
-                                  </div>
-                                  <div>
-                                    <p className={cn("text-base font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
-                                      Monthly Donation
-                                    </p>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Continuous impact support</p>
-                                  </div>
-                                  <div className="ml-auto bg-primary/10 text-primary text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
-                                    Highly Needed
-                                  </div>
+                            <div className={cn(
+                              "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
+                              field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
+                            )} onClick={() => field.onChange(true)}>
+                              <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
+                              <div className="flex items-center gap-4 w-full">
+                                <div className={cn(
+                                  "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
+                                  field.value ? "border-primary" : "border-slate-300"
+                                )}>
+                                  {field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
+                                </div>
+                                <div>
+                                  <p className={cn("text-base font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
+                                    Monthly Donation
+                                  </p>
+                                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Continuous impact support</p>
+                                </div>
+                                <div className="ml-auto bg-primary/10 text-primary text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                  Highly Needed
                                 </div>
                               </div>
-                            </RadioGroup>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
 
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                    <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                      <DollarSign className="h-5 w-5" /> Donation amount
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <FormField
-                      control={form.control}
-                      name="amount"
-                      render={({ field }) => (
-                        <FormItem>
-                          <div className="relative">
-                              <span className="absolute left-8 top-1/2 -translate-y-1/2 text-4xl font-black text-primary">$</span>
-                              <FormControl>
-                                <Input 
-                                  type="number" 
-                                  placeholder="0.00" 
-                                  {...field} 
-                                  className="pl-16 h-24 text-5xl font-black bg-slate-50/50 rounded-3xl border-0 focus:ring-4 focus:ring-primary/10 transition-all"
-                                  required
-                                />
-                              </FormControl>
-                              {watchIsRecurring && (
-                                <span className="absolute right-8 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400 uppercase tracking-widest">/ Month</span>
-                              )}
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                    <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                      <User className="h-5 w-5" /> Personal details
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField control={form.control} name="firstName" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">First name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="John" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}/>
-                      <FormField control={form.control} name="lastName" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Last name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Doe" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}/>
-                    </div>
-                    <FormField control={form.control} name="email" render={({ field }) => (
+              <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
+                    <DollarSign className="h-5 w-5" /> Donation amount
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <FormField
+                    control={form.control}
+                    name="amount"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Email address</FormLabel>
                         <div className="relative">
-                          <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <FormControl>
-                            <Input 
-                              type="email" 
-                              placeholder="email@example.com" 
-                              {...field} 
-                              className="h-14 pl-14 bg-slate-50/50 rounded-2xl border-0"
-                              required
-                            />
-                          </FormControl>
+                            <span className="absolute left-8 top-1/2 -translate-y-1/2 text-4xl font-black text-primary">$</span>
+                            <FormControl>
+                              <Input 
+                                type="number" 
+                                placeholder="0.00" 
+                                {...field} 
+                                className="pl-16 h-24 text-5xl font-black bg-slate-50/50 rounded-3xl border-0 focus:ring-4 focus:ring-primary/10 transition-all"
+                                required
+                              />
+                            </FormControl>
+                            {watchIsRecurring && (
+                              <span className="absolute right-8 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400 uppercase tracking-widest">/ Month</span>
+                            )}
                         </div>
                         <FormMessage />
                       </FormItem>
-                    )}/>
-                  </CardContent>
-                </Card>
+                    )}
+                  />
+                </CardContent>
+              </Card>
 
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                    <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                      <MapPin className="h-5 w-5" /> Billing address
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8 space-y-4">
-                    <FormField control={form.control} name="address" render={({ field }) => (
+              <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
+                    <User className="h-5 w-5" /> Personal details
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="firstName" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Street address</FormLabel>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">First name</FormLabel>
                         <FormControl>
-                          <Input placeholder="123 Charity Lane" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                          <Input placeholder="John" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}/>
-                    <div className="grid grid-cols-2 gap-4">
-                      <FormField control={form.control} name="city" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">City</FormLabel>
-                          <FormControl>
-                            <Input placeholder="City" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}/>
-                      <FormField control={form.control} name="state" render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">State</FormLabel>
-                          <FormControl>
-                            <Input placeholder="State" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}/>
-                    </div>
-                    <FormField control={form.control} name="zip" render={({ field }) => (
+                    <FormField control={form.control} name="lastName" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Zip code</FormLabel>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Last name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Zip" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                          <Input placeholder="Doe" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}/>
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                  <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                    <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                      <MessageSquare className="h-5 w-5" /> 
-                      {isOtherCause ? 'Description' : 'Add a note'}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    <FormField
-                      control={form.control}
-                      name="note"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Textarea 
-                              placeholder={isOtherCause ? "Tell us more about this donation..." : "Message (optional)"}
-                              className="bg-slate-50/50 rounded-3xl min-h-[120px] border-0 p-6"
-                              {...field}
-                            />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-
-                <div className="space-y-6">
-                  <div className="bg-white p-6 rounded-[32px] border border-slate-100 flex items-start gap-4 shadow-sm">
-                     <div className="bg-primary/10 p-2 rounded-full">
-                        <Info className="h-5 w-5 text-primary" />
-                     </div>
-                     <p className="text-[11px] font-medium text-muted-foreground leading-relaxed">
-                        A tax-exempt receipt will be sent to your email. Your data is protected.
-                     </p>
                   </div>
+                  <FormField control={form.control} name="email" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Email address</FormLabel>
+                      <div className="relative">
+                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <FormControl>
+                          <Input 
+                            type="email" 
+                            placeholder="email@example.com" 
+                            {...field} 
+                            className="h-14 pl-14 bg-slate-50/50 rounded-2xl border-0"
+                            required
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}/>
+                </CardContent>
+              </Card>
 
-                  {isClient && (
-                    <div 
-                      key={watchIsRecurring ? "subscription-container" : "onetime-container"}
-                      className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
+              <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
+                    <MapPin className="h-5 w-5" /> Billing address
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8 space-y-4">
+                  <FormField control={form.control} name="address" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Street address</FormLabel>
+                      <FormControl>
+                        <Input placeholder="123 Charity Lane" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}/>
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="city" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">City</FormLabel>
+                        <FormControl>
+                          <Input placeholder="City" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}/>
+                    <FormField control={form.control} name="state" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">State</FormLabel>
+                        <FormControl>
+                          <Input placeholder="State" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}/>
+                  </div>
+                  <FormField control={form.control} name="zip" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Zip code</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Zip" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}/>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
+                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
+                    <MessageSquare className="h-5 w-5" /> 
+                    {isOtherCause ? 'Description' : 'Add a note'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                  <FormField
+                    control={form.control}
+                    name="note"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea 
+                            placeholder={isOtherCause ? "Tell us more about this donation..." : "Message (optional)"}
+                            className="bg-slate-50/50 rounded-3xl min-h-[120px] border-0 p-6"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-[32px] border border-slate-100 flex items-start gap-4 shadow-sm">
+                   <div className="bg-primary/10 p-2 rounded-full">
+                      <Info className="h-5 w-5 text-primary" />
+                   </div>
+                   <p className="text-[11px] font-medium text-muted-foreground leading-relaxed">
+                      A tax-exempt receipt will be sent to your email. Your data is protected.
+                   </p>
+                </div>
+
+                {isClient && (
+                  <div 
+                    key={watchIsRecurring ? "subscription-wrapper" : "onetime-wrapper"}
+                    className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
+                  >
+                    <PayPalScriptProvider 
+                      options={{ 
+                        clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
+                        currency: "USD",
+                        intent: watchIsRecurring ? "subscription" : "capture",
+                        vault: watchIsRecurring ? true : undefined
+                      }}
                     >
                       <PayPalButtons 
-                        key={watchIsRecurring ? "subscription-buttons" : "onetime-buttons"}
                         style={{ 
                           layout: "vertical", 
                           color: 'blue', 
@@ -504,14 +503,14 @@ export default function DonateForm({ cause }: { cause?: string }) {
                           });
                         }}
                       />
-                    </div>
-                  )}
-                </div>
+                    </PayPalScriptProvider>
+                  </div>
+                )}
               </div>
-            </form>
-          </Form>
-        </div>
+            </div>
+          </form>
+        </Form>
       </div>
-    </PayPalScriptProvider>
+    </div>
   );
 }
