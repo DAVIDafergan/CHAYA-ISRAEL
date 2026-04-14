@@ -71,6 +71,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
   const donationTotal = watchAmount || "0";
   const isOtherCause = cause === 'Other';
 
+  // Updated PayPal Client ID
   const PAYPAL_CLIENT_ID = "EONEBPyZ04zDf-ZV2RqIIYPNAsIKRec1TcvaAHWLodh0yWZp9EYy70d85vr9T-cgc-yCqDSMtZ1KD3Td";
 
   async function handleOnApprove(data: OnApproveData, actions: any) {
@@ -173,20 +174,20 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="bg-green-100 p-6 rounded-full w-fit mx-auto mb-8">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">Thank you!</h1>
-            <p className="text-lg text-slate-500 font-medium mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">Thank you!</h1>
+            <p className="text-xl text-slate-500 font-medium mb-12">
               Your contribution will make a significant impact in Israel.
             </p>
             
             {!user && (
               <div className="bg-primary/5 p-8 rounded-[32px] space-y-6">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-primary">Track your impact</h3>
-                  <p className="text-sm text-slate-600 font-medium leading-relaxed">
+                  <h3 className="text-2xl font-bold text-primary">Track your impact</h3>
+                  <p className="text-base text-slate-600 font-medium leading-relaxed">
                     Create an account using <strong>{lastEmail}</strong> to view your donation history.
                   </p>
                 </div>
-                <Button asChild className="rounded-full h-14 px-10 font-bold shadow-xl w-full">
+                <Button asChild className="rounded-full h-16 px-10 font-bold shadow-xl w-full">
                   <Link href={`/signup?email=${encodeURIComponent(lastEmail)}`} className="flex items-center justify-center gap-2">
                     Create account now <ArrowRight className="h-4 w-4" />
                   </Link>
@@ -195,7 +196,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
             )}
             
             <div className="pt-8">
-              <Button variant="ghost" asChild className="rounded-full font-bold text-primary">
+              <Button variant="ghost" asChild className="rounded-full font-bold text-primary text-lg">
                 <Link href="/">Back to home</Link>
               </Button>
             </div>
@@ -209,27 +210,27 @@ export default function DonateForm({ cause }: { cause?: string }) {
     <div className="pt-32 pb-24 px-4 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-2xl">
         <header className="text-center mb-12">
-          <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
-            <Heart className="h-8 w-8 text-primary" />
+          <div className="inline-flex bg-primary/10 p-5 rounded-full mb-6 shadow-sm">
+            <Heart className="h-10 w-10 text-primary" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 leading-none mb-2">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 leading-none mb-3">
             Donate to Chaya Israel
           </h1>
           {cause && !isOtherCause && (
-            <p className="text-muted-foreground text-xs md:text-sm font-bold opacity-80 mb-4">
+            <p className="text-muted-foreground text-sm md:text-base font-bold opacity-80 mb-4">
               Cause: {cause}
             </p>
           )}
         </header>
 
         <Form {...form}>
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            <div className="space-y-6">
+          <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
+            <div className="space-y-8">
               
               <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                    <CreditCard className="h-5 w-5" /> Donation Type
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
+                  <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
+                    <CreditCard className="h-6 w-6" /> Donation Type
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8">
@@ -237,7 +238,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                     control={form.control}
                     name="isRecurring"
                     render={({ field }) => (
-                      <FormItem className="space-y-3">
+                      <FormItem className="space-y-4">
                         <FormControl>
                           <RadioGroup
                             onValueChange={(value) => field.onChange(value === 'monthly')}
@@ -245,45 +246,45 @@ export default function DonateForm({ cause }: { cause?: string }) {
                             className="grid grid-cols-1 gap-4"
                           >
                             <div className={cn(
-                              "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
+                              "relative flex items-center p-8 rounded-[32px] border-2 transition-all cursor-pointer",
                               !field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
                             )} onClick={() => field.onChange(false)}>
                               <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
-                              <div className="flex items-center gap-4 w-full">
+                              <div className="flex items-center gap-5 w-full">
                                 <div className={cn(
-                                  "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
+                                  "h-7 w-7 rounded-full border-2 flex items-center justify-center shrink-0",
                                   !field.value ? "border-primary" : "border-slate-300"
                                 )}>
-                                  {!field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
+                                  {!field.value && <div className="h-4 w-4 rounded-full bg-primary" />}
                                 </div>
                                 <div>
-                                  <p className={cn("text-base font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
+                                  <p className={cn("text-xl font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
                                     One-Time Donation
                                   </p>
-                                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Single support contribution</p>
+                                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">Single support contribution</p>
                                 </div>
                               </div>
                             </div>
 
                             <div className={cn(
-                              "relative flex items-center p-6 rounded-3xl border-2 transition-all cursor-pointer",
+                              "relative flex items-center p-8 rounded-[32px] border-2 transition-all cursor-pointer",
                               field.value ? "border-primary bg-primary/5 shadow-md" : "border-slate-100 hover:border-primary/20"
                             )} onClick={() => field.onChange(true)}>
                               <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
-                              <div className="flex items-center gap-4 w-full">
+                              <div className="flex items-center gap-5 w-full">
                                 <div className={cn(
-                                  "h-6 w-6 rounded-full border-2 flex items-center justify-center shrink-0",
+                                  "h-7 w-7 rounded-full border-2 flex items-center justify-center shrink-0",
                                   field.value ? "border-primary" : "border-slate-300"
                                 )}>
-                                  {field.value && <div className="h-3 w-3 rounded-full bg-primary" />}
+                                  {field.value && <div className="h-4 w-4 rounded-full bg-primary" />}
                                 </div>
                                 <div>
-                                  <p className={cn("text-base font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
+                                  <p className={cn("text-xl font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
                                     Monthly Donation
                                   </p>
-                                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-60">Continuous impact support</p>
+                                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">Continuous impact support</p>
                                 </div>
-                                <div className="ml-auto bg-primary/10 text-primary text-[9px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest">
+                                <div className="ml-auto bg-primary/10 text-primary text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest">
                                   Highly Needed
                                 </div>
                               </div>
@@ -298,9 +299,9 @@ export default function DonateForm({ cause }: { cause?: string }) {
               </Card>
 
               <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                    <DollarSign className="h-5 w-5" /> Donation amount
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
+                  <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
+                    <DollarSign className="h-6 w-6" /> Donation amount
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8">
@@ -310,13 +311,13 @@ export default function DonateForm({ cause }: { cause?: string }) {
                     render={({ field }) => (
                       <FormItem>
                         <div className="relative">
-                            <span className="absolute left-8 top-1/2 -translate-y-1/2 text-4xl font-black text-primary">$</span>
+                            <span className="absolute left-8 top-1/2 -translate-y-1/2 text-5xl font-black text-primary">$</span>
                             <FormControl>
                               <Input 
                                 type="number" 
                                 placeholder="0.00" 
                                 {...field} 
-                                className="pl-16 h-24 text-5xl font-black bg-slate-50/50 rounded-3xl border-0 focus:ring-4 focus:ring-primary/10 transition-all"
+                                className="pl-16 h-28 text-6xl font-black bg-slate-50/50 rounded-[32px] border-0 focus:ring-4 focus:ring-primary/10 transition-all"
                                 required
                               />
                             </FormControl>
@@ -332,27 +333,27 @@ export default function DonateForm({ cause }: { cause?: string }) {
               </Card>
 
               <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                    <User className="h-5 w-5" /> Personal details
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
+                  <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
+                    <User className="h-6 w-6" /> Personal details
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-8 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                <CardContent className="p-8 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="firstName" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">First name</FormLabel>
+                        <FormLabel className="text-xs font-bold text-muted-foreground uppercase px-2 tracking-widest">First name</FormLabel>
                         <FormControl>
-                          <Input placeholder="John" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                          <Input placeholder="John" {...field} className="h-16 bg-slate-50/50 rounded-2xl px-6 border-0 text-lg" required />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}/>
                     <FormField control={form.control} name="lastName" render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Last name</FormLabel>
+                        <FormLabel className="text-xs font-bold text-muted-foreground uppercase px-2 tracking-widest">Last name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Doe" {...field} className="h-14 bg-slate-50/50 rounded-2xl px-6 border-0" required />
+                          <Input placeholder="Doe" {...field} className="h-16 bg-slate-50/50 rounded-2xl px-6 border-0 text-lg" required />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -360,15 +361,15 @@ export default function DonateForm({ cause }: { cause?: string }) {
                   </div>
                   <FormField control={form.control} name="email" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-bold text-muted-foreground uppercase px-1">Email address</FormLabel>
+                      <FormLabel className="text-xs font-bold text-muted-foreground uppercase px-2 tracking-widest">Email address</FormLabel>
                       <div className="relative">
-                        <Mail className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Mail className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <FormControl>
                           <Input 
                             type="email" 
                             placeholder="email@example.com" 
                             {...field} 
-                            className="h-14 pl-14 bg-slate-50/50 rounded-2xl border-0"
+                            className="h-16 pl-16 bg-slate-50/50 rounded-2xl border-0 text-lg"
                             required
                           />
                         </FormControl>
@@ -380,9 +381,9 @@ export default function DonateForm({ cause }: { cause?: string }) {
               </Card>
 
               <Card className="rounded-[40px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100">
-                  <CardTitle className="text-base font-bold flex items-center gap-2 text-primary">
-                    <MessageSquare className="h-5 w-5" /> 
+                <CardHeader className="bg-slate-50/50 py-6 border-b border-slate-100 px-8">
+                  <CardTitle className="text-lg font-bold flex items-center gap-3 text-primary">
+                    <MessageSquare className="h-6 w-6" /> 
                     {isOtherCause ? 'Description' : 'Add a note'}
                   </CardTitle>
                 </CardHeader>
@@ -395,7 +396,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                         <FormControl>
                           <Textarea 
                             placeholder={isOtherCause ? "Tell us more about this donation..." : "Message (optional)"}
-                            className="bg-slate-50/50 rounded-3xl min-h-[120px] border-0 p-6"
+                            className="bg-slate-50/50 rounded-[32px] min-h-[140px] border-0 p-8 text-lg"
                             {...field}
                           />
                         </FormControl>
@@ -405,23 +406,23 @@ export default function DonateForm({ cause }: { cause?: string }) {
                 </CardContent>
               </Card>
 
-              <div className="space-y-6">
-                <div className="bg-white p-6 rounded-[32px] border border-slate-100 flex items-start gap-4 shadow-sm">
-                   <div className="bg-primary/10 p-2 rounded-full">
-                      <Info className="h-5 w-5 text-primary" />
+              <div className="space-y-8">
+                <div className="bg-white p-8 rounded-[32px] border border-slate-100 flex items-start gap-5 shadow-sm">
+                   <div className="bg-primary/10 p-3 rounded-full">
+                      <Info className="h-6 w-6 text-primary" />
                    </div>
-                   <p className="text-[11px] font-medium text-muted-foreground leading-relaxed">
-                      A tax-exempt receipt will be sent to your email. Your data is protected.
+                   <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                      A tax-exempt receipt will be sent to your email. Your data is protected by industry-standard encryption.
                    </p>
                 </div>
 
                 {isClient && (
                   <div 
                     key={watchIsRecurring ? `paypal-sub-${PAYPAL_CLIENT_ID}` : `paypal-one-${PAYPAL_CLIENT_ID}`}
-                    className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
+                    className="bg-white p-6 rounded-[40px] shadow-2xl border border-slate-100 min-h-[180px] flex flex-col justify-center"
                   >
                     <PayPalScriptProvider 
-                      key={watchIsRecurring ? "script-sub" : "script-one"}
+                      key={watchIsRecurring ? "script-sub-reloaded" : "script-one-reloaded"}
                       options={{ 
                         clientId: PAYPAL_CLIENT_ID, 
                         currency: "USD",
@@ -430,7 +431,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                       }}
                     >
                       <PayPalButtons 
-                        key={watchIsRecurring ? "btns-sub" : "btns-one"}
+                        key={watchIsRecurring ? "btns-sub-active" : "btns-one-active"}
                         style={{ 
                           layout: "vertical", 
                           color: 'blue', 
@@ -446,7 +447,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                           toast({
                             variant: "destructive",
                             title: "PayPal Connection Error",
-                            description: "Could not connect to PayPal. Please try again.",
+                            description: "Could not connect to PayPal. Please check your internet connection and try again.",
                           });
                         }}
                       />
