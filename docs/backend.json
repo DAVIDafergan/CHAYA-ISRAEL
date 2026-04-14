@@ -19,6 +19,18 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["transactionId", "amount", "currency", "payerEmail", "status", "timestamp"]
+    },
+    "ContactMessage": {
+      "title": "Contact Message",
+      "type": "object",
+      "description": "Message sent via contact form.",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "message": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message"]
     }
   },
   "auth": {
@@ -28,6 +40,10 @@
     "/donations/{donationId}": {
       "schema": { "$ref": "#/entities/Donation" },
       "description": "Donations log for donors and admins."
+    },
+    "/contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/ContactMessage" },
+      "description": "Contact form submissions."
     },
     "/users/{userId}/profile": {
       "schema": {

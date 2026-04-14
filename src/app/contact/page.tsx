@@ -1,9 +1,11 @@
+
 'use client'
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -18,7 +20,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, Phone, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin, Loader2, CheckCircle2, ArrowRight } from "lucide-react"
+import { useFirestore } from "@/firebase"
+import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { processContactSubmission } from "@/ai/flows/contact-flow"
+import Link from "next/link"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -36,6 +42,9 @@ const formSchema = z.object({
 
 export default function ContactPage() {
   const { toast } = useToast()
+  const firestore = useFirestore()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,73 +55,109 @@ export default function ContactPage() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const recipient = "kramera613@gmail.com";
-    const subject = encodeURIComponent(`New Message from ${values.name} via Chaya Israel Site`);
-    const body = encodeURIComponent(
-      `Full Name: ${values.name}\n` +
-      `Sender Email: ${values.email}\n\n` +
-      `Message Content:\n${values.message}`
-    );
-    
-    const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
-    window.location.href = mailtoUrl;
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true)
+    try {
+      // 1. Process via Genkit Flow (Background Logic)
+      await processContactSubmission(values)
 
-    toast({
-      title: "Opening Email App...",
-      description: "Your default mail client is opening with your message ready to send.",
-    })
-    
-    form.reset()
+      // 2. Save to Firestore (Permanent Log)
+      if (firestore) {
+        await addDoc(collection(firestore, 'contacts'), {
+          ...values,
+          createdAt: serverTimestamp(),
+          recipient: 'kramera613@gmail.com'
+        })
+      }
+
+      setIsSuccess(true)
+      form.reset()
+    } catch (error) {
+      console.error("Submission error:", error)
+      toast({
+        variant: "destructive",
+        title: "Submission failed",
+        description: "There was an error sending your message. Please try again later.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white p-6 pt-40">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-xl w-full text-center space-y-8"
+        >
+          <div className="bg-green-100 p-8 rounded-full w-fit mx-auto mb-4">
+            <CheckCircle2 className="h-16 w-16 text-green-600" />
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight luxury-gradient-text leading-none">Message Sent!</h2>
+          <p className="text-xl md:text-3xl text-muted-foreground font-bold leading-relaxed">
+            Thank you for reaching out. Your message has been delivered to our team and we will respond to you shortly.
+          </p>
+          <div className="pt-8">
+            <Button asChild size="lg" className="rounded-full h-16 px-12 text-xl font-black bg-primary text-white shadow-xl">
+              <Link href="/" className="flex items-center gap-3">
+                Back to Home <ArrowRight className="h-6 w-6" />
+              </Link>
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    )
   }
 
   return (
     <div className="overflow-x-hidden pt-32 md:pt-40 bg-white min-h-screen">
        <section className="py-16 md:py-24">
           <div className="container mx-auto text-center px-4">
-              <h1 className="text-5xl font-black sm:text-6xl md:text-7xl luxury-gradient-text tracking-tight">
+              <h1 className="text-5xl font-black sm:text-6xl md:text-7xl lg:text-8xl luxury-gradient-text tracking-tight leading-none mb-8">
                   Contact Us
               </h1>
-              <p className="mt-8 max-w-3xl mx-auto text-xl text-muted-foreground sm:text-xl md:text-2xl font-medium leading-relaxed">
+              <p className="mt-8 max-w-4xl mx-auto text-xl sm:text-2xl md:text-4xl lg:text-5xl text-muted-foreground font-black leading-relaxed tracking-tight">
                 We'd love to hear from you. Reach out with any questions or to learn more about our mission.
               </p>
           </div>
       </section>
 
       <section className="py-12 md:py-20">
-        <div className="container mx-auto grid md:grid-cols-2 gap-12 items-start px-6 max-w-7xl">
-            <div className="space-y-12">
+        <div className="container mx-auto grid md:grid-cols-2 gap-16 items-start px-6 max-w-7xl">
+            <div className="space-y-16">
               <div>
-                <h2 className="text-4xl font-black text-primary sm:text-4xl tracking-tight">Get in Touch</h2>
-                <p className="mt-4 text-xl sm:text-xl text-muted-foreground font-medium">Find us at our location, give us a call, or send an email.</p>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-primary tracking-tight leading-tight">Get in Touch</h2>
+                <p className="mt-6 text-xl sm:text-2xl md:text-3xl text-muted-foreground font-bold tracking-tight">Find us at our location, give us a call, or send an email.</p>
               </div>
               <div className="space-y-12">
-                  <div className="flex items-start gap-8">
-                      <div className="bg-primary/10 p-5 rounded-2xl shrink-0">
+                  <div className="flex items-start gap-10">
+                      <div className="bg-primary/10 p-6 rounded-3xl shrink-0">
                           <Mail className="h-10 w-10 text-primary" />
                       </div>
-                      <div>
-                          <h3 className="font-black text-2xl sm:text-2xl text-slate-900 tracking-tight mb-2">Primary Email</h3>
-                          <a href="mailto:kramera613@gmail.com" className="text-xl sm:text-xl text-muted-foreground hover:text-primary transition-colors font-medium">kramera613@gmail.com</a>
+                      <div className="space-y-2">
+                          <h3 className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight uppercase opacity-50">Primary Email</h3>
+                          <a href="mailto:kramera613@gmail.com" className="text-2xl sm:text-3xl md:text-4xl text-primary font-black hover:underline transition-all">kramera613@gmail.com</a>
                       </div>
                   </div>
                   
-                  <div className="flex items-start gap-8">
-                        <div className="bg-primary/10 p-5 rounded-2xl shrink-0">
+                  <div className="flex items-start gap-10">
+                        <div className="bg-primary/10 p-6 rounded-3xl shrink-0">
                           <Phone className="h-10 w-10 text-primary" />
                       </div>
-                      <div>
-                          <h3 className="font-black text-2xl sm:text-2xl text-slate-900 tracking-tight mb-2">Phone Number</h3>
-                          <a href="tel:+19179156106" className="text-xl sm:text-xl text-muted-foreground hover:text-primary transition-colors font-medium">(+917) 915 - 6106</a>
+                      <div className="space-y-2">
+                          <h3 className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight uppercase opacity-50">Phone Number</h3>
+                          <a href="tel:+19179156106" className="text-2xl sm:text-3xl md:text-4xl text-primary font-black hover:underline transition-all">(+917) 915 - 6106</a>
                       </div>
                   </div>
-                  <div className="flex items-start gap-8">
-                      <div className="bg-primary/10 p-5 rounded-2xl shrink-0">
+                  <div className="flex items-start gap-10">
+                      <div className="bg-primary/10 p-6 rounded-3xl shrink-0">
                           <MapPin className="h-10 w-10 text-primary" />
                       </div>
-                      <div>
-                          <h3 className="font-black text-2xl sm:text-2xl text-slate-900 tracking-tight mb-2">Our Location</h3>
-                          <a href="https://www.google.com/maps/search/?api=1&query=335+East+77th+Street+New+York+NY+10075" target="_blank" rel="noopener noreferrer" className="text-xl sm:text-xl text-muted-foreground hover:text-primary transition-colors font-medium leading-relaxed">
+                      <div className="space-y-2">
+                          <h3 className="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight uppercase opacity-50">Our Location</h3>
+                          <a href="https://www.google.com/maps/search/?api=1&query=335+East+77th+Street+New+York+NY+10075" target="_blank" rel="noopener noreferrer" className="text-2xl sm:text-3xl md:text-4xl text-slate-800 font-black hover:text-primary transition-all leading-tight">
                               335 East 77th Street. Apt #3<br />New York, NY 10075
                           </a>
                       </div>
@@ -120,9 +165,10 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <Card className="p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.05)] bg-white border border-slate-100 h-full rounded-[40px]">
-                <CardHeader className="p-0 mb-10">
-                    <CardTitle className="text-4xl sm:text-4xl font-black tracking-tight luxury-gradient-text">Send us a Message</CardTitle>
+            <Card className="p-8 md:p-12 shadow-[0_40px_80px_rgba(0,0,0,0.08)] bg-white border-0 h-full rounded-[48px] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl" />
+                <CardHeader className="p-0 mb-12">
+                    <CardTitle className="text-4xl sm:text-5xl font-black tracking-tight luxury-gradient-text">Send us a Message</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Form {...form}>
@@ -132,9 +178,9 @@ export default function ContactPage() {
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-base font-black uppercase tracking-widest text-slate-400 px-1">Full Name</FormLabel>
+                                <FormLabel className="text-lg font-black uppercase tracking-widest text-slate-400 px-2">Full Name</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="John Doe" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-6 font-medium focus:ring-4 focus:ring-primary/10 transition-all text-xl"/>
+                                  <Input placeholder="John Doe" {...field} className="h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-2xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -145,9 +191,9 @@ export default function ContactPage() {
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-base font-black uppercase tracking-widest text-slate-400 px-1">Email Address</FormLabel>
+                                <FormLabel className="text-lg font-black uppercase tracking-widest text-slate-400 px-2">Email Address</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="john.doe@example.com" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-6 font-medium focus:ring-4 focus:ring-primary/10 transition-all text-xl"/>
+                                  <Input placeholder="john.doe@example.com" {...field} className="h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-2xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -158,11 +204,11 @@ export default function ContactPage() {
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-base font-black uppercase tracking-widest text-slate-400 px-1">Message</FormLabel>
+                                <FormLabel className="text-lg font-black uppercase tracking-widest text-slate-400 px-2">Message</FormLabel>
                                 <FormControl>
                                   <Textarea
                                     placeholder="Tell us how we can help..."
-                                    className="resize-none bg-slate-50/50 rounded-3xl border-0 p-6 font-medium focus:ring-4 focus:ring-primary/10 transition-all text-xl"
+                                    className="resize-none bg-slate-50/50 rounded-3xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-2xl"
                                     rows={5}
                                     {...field}
                                   />
@@ -171,7 +217,17 @@ export default function ContactPage() {
                               </FormItem>
                             )}
                           />
-                          <Button type="submit" className="w-full h-20 rounded-full bg-primary text-white hover:bg-primary/90 shadow-xl border-b-4 border-primary-foreground/20 font-black text-2xl mt-4 transition-all hover:scale-[1.02]">Send Message</Button>
+                          <Button 
+                            type="submit" 
+                            disabled={isSubmitting}
+                            className="w-full h-24 rounded-full bg-primary text-white hover:bg-primary/90 shadow-2xl border-b-8 border-primary-foreground/20 font-black text-2xl md:text-3xl mt-6 transition-all active:scale-95"
+                          >
+                            {isSubmitting ? (
+                              <div className="flex items-center gap-3">
+                                <Loader2 className="h-8 w-8 animate-spin" /> Sending...
+                              </div>
+                            ) : "Send Message"}
+                          </Button>
                       </form>
                     </Form>
                 </CardContent>
