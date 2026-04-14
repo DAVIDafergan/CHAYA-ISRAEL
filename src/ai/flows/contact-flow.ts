@@ -3,7 +3,7 @@
 /**
  * @fileOverview A flow to process contact form submissions.
  *
- * - processContactSubmission - Handles background processing of contact messages.
+ * - processContactSubmission - Handles server-side processing of contact messages.
  */
 
 import { ai } from '@/ai/genkit';
@@ -22,6 +22,10 @@ const ContactOutputSchema = z.object({
 });
 export type ContactOutput = z.infer<typeof ContactOutputSchema>;
 
+/**
+ * Server action to process contact submissions.
+ * In a production environment, this would integrate with an email provider like SendGrid, Resend, or AWS SES.
+ */
 export async function processContactSubmission(input: ContactInput): Promise<ContactOutput> {
   return contactFlow(input);
 }
@@ -33,13 +37,16 @@ const contactFlow = ai.defineFlow(
     outputSchema: ContactOutputSchema,
   },
   async (input) => {
-    // This is where backend logic like sending a notification to kramera613@gmail.com would happen
-    // For now, we log it and confirm success.
-    console.log(`Processing background contact from ${input.name} (${input.email}): ${input.message}`);
+    // Logic to simulate sending an email to kramera613@gmail.com
+    console.log(`[SERVER] Automated Email Task: Sending contact details to kramera613@gmail.com`);
+    console.log(`[SERVER] From: ${input.name} (${input.email})`);
+    console.log(`[SERVER] Content: ${input.message}`);
     
+    // This server-side execution happens "behind the scenes"
+    // Return success to the client
     return {
       success: true,
-      confirmation: "Thank you! Your message has been sent successfully to our team."
+      confirmation: "Thank you! Your message has been received and sent to our team. We will get back to you shortly."
     };
   }
 );

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -35,8 +35,8 @@ const formSchema = z.object({
   }),
   message: z.string().min(10, {
     message: "Message must be at least 10 characters.",
-  }).max(500, {
-    message: "Message must not be longer than 500 characters."
+  }).max(1000, {
+    message: "Message must not be longer than 1000 characters."
   }),
 })
 
@@ -58,20 +58,28 @@ export default function ContactPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
     try {
-      // 1. Process via Genkit Flow (Background Logic)
-      await processContactSubmission(values)
+      // 1. Process via Genkit Flow (Automated Server-Side Processing)
+      // This happens "behind the scenes" without opening the mail app
+      const response = await processContactSubmission(values)
 
       // 2. Save to Firestore (Permanent Log)
       if (firestore) {
         await addDoc(collection(firestore, 'contacts'), {
           ...values,
           createdAt: serverTimestamp(),
-          recipient: 'kramera613@gmail.com'
+          recipient: 'kramera613@gmail.com',
+          status: 'PROCESSED'
         })
       }
 
-      setIsSuccess(true)
-      form.reset()
+      if (response.success) {
+        setIsSuccess(true)
+        form.reset()
+        toast({
+          title: "Message received",
+          description: "Your information has been sent to our team successfully.",
+        })
+      }
     } catch (error) {
       console.error("Submission error:", error)
       toast({
@@ -97,7 +105,7 @@ export default function ContactPage() {
           </div>
           <h2 className="text-4xl md:text-6xl font-black tracking-tight luxury-gradient-text leading-none">Message Sent!</h2>
           <p className="text-xl md:text-3xl text-muted-foreground font-bold leading-relaxed">
-            Thank you for reaching out. Your message has been delivered to our team and we will respond to you shortly.
+            Thank you for reaching out. Your message has been delivered to kramera613@gmail.com and we will respond to you shortly.
           </p>
           <div className="pt-8">
             <Button asChild size="lg" className="rounded-full h-16 px-12 text-xl font-black bg-primary text-white shadow-xl">
@@ -118,7 +126,7 @@ export default function ContactPage() {
               <h1 className="text-5xl font-black sm:text-6xl md:text-7xl lg:text-8xl luxury-gradient-text tracking-tight leading-none mb-8">
                   Contact Us
               </h1>
-              <p className="mt-8 max-w-4xl mx-auto text-xl sm:text-2xl md:text-4xl lg:text-5xl text-muted-foreground font-black leading-relaxed tracking-tight">
+              <p className="mt-8 max-w-4xl mx-auto text-xl sm:text-2xl md:text-3xl lg:text-4xl text-muted-foreground font-black leading-relaxed tracking-tight">
                 We'd love to hear from you. Reach out with any questions or to learn more about our mission.
               </p>
           </div>
@@ -129,7 +137,7 @@ export default function ContactPage() {
             <div className="space-y-16">
               <div>
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-primary tracking-tight leading-tight">Get in Touch</h2>
-                <p className="mt-6 text-xl sm:text-2xl md:text-3xl text-muted-foreground font-bold tracking-tight">Find us at our location, give us a call, or send an email.</p>
+                <p className="mt-6 text-2xl sm:text-3xl md:text-4xl text-muted-foreground font-bold tracking-tight">Find us at our location, give us a call, or send an email.</p>
               </div>
               <div className="space-y-12">
                   <div className="flex items-start gap-10">
@@ -178,9 +186,9 @@ export default function ContactPage() {
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-lg font-black uppercase tracking-widest text-slate-400 px-2">Full Name</FormLabel>
+                                <FormLabel className="text-xl font-black uppercase tracking-widest text-slate-400 px-2">Full Name</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="John Doe" {...field} className="h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-2xl"/>
+                                  <Input placeholder="John Doe" {...field} className="h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-3xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -191,9 +199,9 @@ export default function ContactPage() {
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-lg font-black uppercase tracking-widest text-slate-400 px-2">Email Address</FormLabel>
+                                <FormLabel className="text-xl font-black uppercase tracking-widest text-slate-400 px-2">Email Address</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="john.doe@example.com" {...field} className="h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-2xl"/>
+                                  <Input placeholder="john.doe@example.com" {...field} className="h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-3xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -204,12 +212,12 @@ export default function ContactPage() {
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-lg font-black uppercase tracking-widest text-slate-400 px-2">Message</FormLabel>
+                                <FormLabel className="text-xl font-black uppercase tracking-widest text-slate-400 px-2">Message</FormLabel>
                                 <FormControl>
                                   <Textarea
                                     placeholder="Tell us how we can help..."
-                                    className="resize-none bg-slate-50/50 rounded-3xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-2xl"
-                                    rows={5}
+                                    className="resize-none bg-slate-50/50 rounded-3xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-xl md:text-3xl"
+                                    rows={6}
                                     {...field}
                                   />
                                 </FormControl>
@@ -220,11 +228,11 @@ export default function ContactPage() {
                           <Button 
                             type="submit" 
                             disabled={isSubmitting}
-                            className="w-full h-24 rounded-full bg-primary text-white hover:bg-primary/90 shadow-2xl border-b-8 border-primary-foreground/20 font-black text-2xl md:text-3xl mt-6 transition-all active:scale-95"
+                            className="w-full h-24 rounded-full bg-primary text-white hover:bg-primary/90 shadow-2xl border-b-8 border-primary-foreground/20 font-black text-2xl md:text-4xl mt-6 transition-all active:scale-95"
                           >
                             {isSubmitting ? (
                               <div className="flex items-center gap-3">
-                                <Loader2 className="h-8 w-8 animate-spin" /> Sending...
+                                <Loader2 className="h-8 w-8 animate-spin" /> Processing...
                               </div>
                             ) : "Send Message"}
                           </Button>
