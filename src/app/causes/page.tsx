@@ -72,7 +72,7 @@ function SpecialImageSwitcher({ images }: { images: string[] }) {
 
 function DialogCard({ cause }: { cause: Cause }) {
   // Priority for the first few items to ensure fast loading
-  const isPriority = cause.id === 'widows' || cause.id === 'idf';
+  const isPriority = cause.id === 'idf' || cause.id === 'widows';
 
   return (
     <Dialog>
@@ -134,26 +134,6 @@ function DialogCard({ cause }: { cause: Cause }) {
 
 export default function CausesPage() {
   const causes: Cause[] = [
-    {
-      id: "widows",
-      title: "Support Widows and Orphans",
-      subtitle: "Support Widows and Orphans",
-      icon: <Heart className="h-5 w-5" />,
-      shortDesc: "When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward.",
-      color: "bg-red-500",
-      image: "/widows-support.webp",
-      imageHint: "israel charity support",
-      donateUrl: "/donate?cause=Widows%20and%20Orphans",
-      fullContent: (
-        <div className="space-y-4">
-          <p className="font-bold text-base md:text-lg text-primary">When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward.</p>
-          <div className="space-y-3">
-            <h3 className="font-bold text-red-600 text-lg md:text-xl tracking-tight">Focus on Victims of Terror Attacks and Wars</h3>
-            <p>Over the years, we’ve found that a family victimized by terror often suffers both financial and psychological struggles. It’s hard to lose a loved one – and it’s also hard to lose a source of income. Many women and kids have joined the circle of widows and orphans that have sacrificed more than we know for this great country we call “The Homeland”.</p>
-          </div>
-        </div>
-      )
-    },
     {
       id: "idf",
       title: "Support the IDF",
@@ -228,6 +208,26 @@ export default function CausesPage() {
       )
     },
     {
+      id: "widows",
+      title: "Support Widows and Orphans",
+      subtitle: "Support Widows and Orphans",
+      icon: <Heart className="h-5 w-5" />,
+      shortDesc: "When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward.",
+      color: "bg-red-500",
+      image: "/widows-support.webp",
+      imageHint: "israel charity support",
+      donateUrl: "/donate?cause=Widows%20and%20Orphans",
+      fullContent: (
+        <div className="space-y-4">
+          <p className="font-bold text-base md:text-lg text-primary">When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward.</p>
+          <div className="space-y-3">
+            <h3 className="font-bold text-red-600 text-lg md:text-xl tracking-tight">Focus on Victims of Terror Attacks and Wars</h3>
+            <p>Over the years, we’ve found that a family victimized by terror often suffers both financial and psychological struggles. It’s hard to lose a loved one – and it’s also hard to lose a source of income. Many women and kids have joined the circle of widows and orphans that have sacrificed more than we know for this great country we call “The Homeland”.</p>
+          </div>
+        </div>
+      )
+    },
+    {
       id: "hachnasat-kalah",
       title: "Hachnasat Kalah",
       subtitle: "If Not Us, Whom? And If Not Now, When?",
@@ -242,7 +242,7 @@ export default function CausesPage() {
           <h3 className="text-lg md:text-xl font-bold text-primary tracking-tight">If Not Us, Whom? And If Not Now, When?</h3>
           
           <div className="grid md:grid-cols-2 gap-6 items-start">
-             <div className="space-y-3 text-sm md:text-base font-medium text-muted-foreground leading-relaxed">
+             <div className="space-y-3 text-sm md:text-base font-medium text-muted-foreground leadership-relaxed">
                 <p>For newly-weds just starting off on their journey of marriage, financial matters can be tough and very challenging.</p>
              </div>
              <div>
@@ -437,7 +437,7 @@ export default function CausesPage() {
                         { label: "Pesach", href: "pesach" }
                       ].map((link, idx) => (
                         <Link 
-                          key={idx} 
+                          key={link.href} 
                           href={`#${link.href}`} 
                           className="flex items-center justify-between p-2 md:p-2.5 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link border border-transparent hover:border-primary/10"
                           onClick={(e) => {
