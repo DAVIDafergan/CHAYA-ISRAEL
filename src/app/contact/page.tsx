@@ -59,11 +59,34 @@ export default function ContactPage() {
     setIsSubmitting(true)
     try {
       // 1. Process via Genkit Flow (Automated Server-Side Processing)
-      // This happens "behind the scenes" without opening the mail app
       const response = await processContactSubmission(values)
 
-      // 2. Save to Firestore (Permanent Log)
+      // 2. Trigger Email via Firestore Extension (mail collection)
       if (firestore) {
+        // Create the email document for the 'Trigger Email' extension
+        await addDoc(collection(firestore, 'mail'), {
+          to: 'kramera613@gmail.com',
+          message: {
+            subject: `New message from ${values.name} (via Chaya Israel Website)`,
+            text: `Name: ${values.name}\nEmail: ${values.email}\nMessage: ${values.message}`,
+            html: `
+              <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #0070f3;">New Contact Form Submission</h2>
+                <p><strong>Name:</strong> ${values.name}</p>
+                <p><strong>Email:</strong> ${values.email}</p>
+                <p><strong>Message:</strong></p>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 4px solid #0070f3;">
+                  ${values.message.replace(/\n/g, '<br>') || ""}
+                </div>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #888;">This email was sent automatically from your website's contact form.</p>
+              </div>
+            `,
+          },
+          createdAt: serverTimestamp(),
+        })
+
+        // Also save to a separate contacts log for backup
         await addDoc(collection(firestore, 'contacts'), {
           ...values,
           createdAt: serverTimestamp(),
@@ -77,7 +100,7 @@ export default function ContactPage() {
         form.reset()
         toast({
           title: "Message received",
-          description: "Your information has been sent to our team successfully.",
+          description: "Your information has been sent and we will get back to you shortly.",
         })
       }
     } catch (error) {
