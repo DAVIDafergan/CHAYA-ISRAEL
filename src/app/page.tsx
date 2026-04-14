@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from "react";
@@ -88,7 +87,7 @@ export default function Home() {
               </div>
               <div className="space-y-1">
                 <h3 className="text-xl md:text-3xl font-black text-foreground tracking-tight">Rabbi Avraham Kramer</h3>
-                <p className="text-xs md:text-base font-bold tracking-tight text-primary">Executive director</p>
+                <p className="text-sm md:text-base font-bold tracking-tight text-primary">Executive director</p>
               </div>
             </div>
             
@@ -104,7 +103,7 @@ export default function Home() {
               </div>
               <div className="space-y-1">
                 <h3 className="text-xl md:text-3xl font-black text-foreground tracking-tight">Dr. Shilo Kramer</h3>
-                <p className="text-xs md:text-base font-bold tracking-tight text-primary">Co-director</p>
+                <p className="text-sm md:text-base font-bold tracking-tight text-primary">Co-director</p>
               </div>
             </div>
           </div>

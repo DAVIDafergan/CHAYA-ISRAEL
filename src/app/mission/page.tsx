@@ -59,7 +59,7 @@ export default function MissionPage() {
               </div>
               <div className="space-y-0.5">
                 <h3 className="text-lg md:text-2xl font-black text-foreground tracking-tight">Rabbi Avraham Kramer</h3>
-                <p className="text-[9px] md:text-base font-bold text-primary">Executive Director</p>
+                <p className="text-sm md:text-base font-bold text-primary">Executive Director</p>
               </div>
             </div>
             
@@ -76,7 +76,7 @@ export default function MissionPage() {
               </div>
               <div className="space-y-0.5">
                 <h3 className="text-lg md:text-2xl font-black text-foreground tracking-tight">Dr. Shilo Kramer</h3>
-                <p className="text-[9px] md:text-base font-bold text-primary">Co-director</p>
+                <p className="text-sm md:text-base font-bold text-primary">Co-director</p>
               </div>
             </div>
           </div>
