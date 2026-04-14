@@ -71,6 +71,9 @@ export default function DonateForm({ cause }: { cause?: string }) {
   const donationTotal = watchAmount || "0";
   const isOtherCause = cause === 'Other';
 
+  // Use the new Client ID provided by the user
+  const PAYPAL_CLIENT_ID = "EONEBPyZ04zDf-ZV2RqIIYPNAsIKRec1TcvaAHWLodh0yWZp9EYy70d85vr9T-cgc-yCqDSMtZ1KD3Td";
+
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
       const transactionId = data.orderID || data.subscriptionID || 'unknown';
@@ -421,7 +424,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                     <PayPalScriptProvider 
                       key={watchIsRecurring ? "script-sub" : "script-one"}
                       options={{ 
-                        clientId: "ASE12L1NxuxPX9d1J8xfMuhwsP_YuKfOYj64Z-Nx46wW_wPtX4bUQYOZFsPElXdznnKBya_o9uxpIryd", 
+                        clientId: PAYPAL_CLIENT_ID, 
                         currency: "USD",
                         intent: watchIsRecurring ? "subscription" : "capture",
                         vault: watchIsRecurring ? true : undefined
