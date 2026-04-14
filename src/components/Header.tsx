@@ -1,7 +1,6 @@
 'use client';
 
 /**
- * Redirecting uppercase Header to lowercase header to resolve 
- * Next.js/Webpack casing collision errors.
+ * Redirecting to lowercase header component to resolve Next.js casing errors.
  */
 export { Header } from './header';

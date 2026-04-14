@@ -47,7 +47,6 @@ export default function ContactPage() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Construct the mailto URL
     const recipient = "kramera613@gmail.com";
     const subject = encodeURIComponent(`New Message from ${values.name} via Chaya Israel Site`);
     const body = encodeURIComponent(
@@ -57,14 +56,11 @@ export default function ContactPage() {
     );
     
     const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
-    
-    // Open the default email client
     window.location.href = mailtoUrl;
 
     toast({
       title: "Opening Email App...",
       description: "Your default mail client is opening with your message ready to send.",
-      variant: "default",
     })
     
     form.reset()
@@ -78,7 +74,7 @@ export default function ContactPage() {
                   Contact Us
               </h1>
               <p className="mt-4 max-w-3xl mx-auto text-xs text-muted-foreground sm:text-base md:text-lg">
-                We'd love to hear from you. Reach out with any questions, partnership ideas, or to learn more about how you can get involved in our mission.
+                We'd love to hear from you. Reach out with any questions or to learn more about our mission.
               </p>
           </div>
       </section>
@@ -88,10 +84,9 @@ export default function ContactPage() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-xl font-bold text-primary sm:text-3xl">Get in Touch</h2>
-                <p className="mt-2 text-xs sm:text-base text-muted-foreground">Find us at our location, give us a call, or send an email. We are here to answer your questions.</p>
+                <p className="mt-2 text-xs sm:text-base text-muted-foreground">Find us at our location, give us a call, or send an email.</p>
               </div>
               <div className="space-y-6">
-                  {/* Primary Email */}
                   <div className="flex items-start gap-4">
                       <div className="bg-primary/10 p-3 rounded-lg">
                           <Mail className="h-6 w-6 text-primary" />

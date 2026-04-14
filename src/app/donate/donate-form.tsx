@@ -71,7 +71,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
   const donationTotal = watchAmount || "0";
   const isOtherCause = cause === 'Other';
 
-  // Use the new Client ID provided by the user
   const PAYPAL_CLIENT_ID = "EONEBPyZ04zDf-ZV2RqIIYPNAsIKRec1TcvaAHWLodh0yWZp9EYy70d85vr9T-cgc-yCqDSMtZ1KD3Td";
 
   async function handleOnApprove(data: OnApproveData, actions: any) {
@@ -80,7 +79,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
       const payerEmail = form.getValues('email').trim().toLowerCase();
       
       if (firestore) {
-        await addDoc(collection(firestore, 'donations'), {
+        addDoc(collection(firestore, 'donations'), {
           transactionId: transactionId,
           amount: parseFloat(donationTotal),
           currency: 'USD',
@@ -100,7 +99,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
       setIsSuccess(true);
       toast({
         title: "Donation successful",
-        description: `Thank you, ${form.getValues('firstName')}, for your generous support.`,
+        description: `Thank you for your generous support.`,
       });
       form.reset();
     } catch (error) {
@@ -108,7 +107,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
       toast({
         variant: "destructive",
         title: "Transaction failed",
-        description: "There was an issue processing your payment. Please try again.",
+        description: "There was an issue processing your payment.",
       });
     }
   }
@@ -119,7 +118,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         toast({
             variant: "destructive",
             title: "Information missing",
-            description: "Please fill out all required fields before donating.",
+            description: "Please fill out all required fields.",
         });
         return Promise.reject(new Error("Form is invalid"));
     }
@@ -147,7 +146,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
         toast({
             variant: "destructive",
             title: "Information missing",
-            description: "Please fill out all required fields before starting a subscription.",
+            description: "Please fill out all required fields.",
         });
         return Promise.reject(new Error("Form is invalid"));
     }
@@ -176,7 +175,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
             </div>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-4">Thank you!</h1>
             <p className="text-lg text-slate-500 font-medium mb-12">
-              Your contribution will make a significant impact on families in Israel.
+              Your contribution will make a significant impact in Israel.
             </p>
             
             {!user && (
@@ -184,7 +183,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                 <div className="space-y-2">
                   <h3 className="text-xl font-bold text-primary">Track your impact</h3>
                   <p className="text-sm text-slate-600 font-medium leading-relaxed">
-                    Want to see your donation history and download receipts? Create an account using your email <strong>{lastEmail}</strong>.
+                    Create an account using <strong>{lastEmail}</strong> to view your donation history.
                   </p>
                 </div>
                 <Button asChild className="rounded-full h-14 px-10 font-bold shadow-xl w-full">
@@ -418,7 +417,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
                 {isClient && (
                   <div 
-                    key={watchIsRecurring ? "subscription-wrapper" : "onetime-wrapper"}
+                    key={watchIsRecurring ? `paypal-sub-${PAYPAL_CLIENT_ID}` : `paypal-one-${PAYPAL_CLIENT_ID}`}
                     className="bg-white p-4 rounded-[40px] shadow-2xl border border-slate-100 min-h-[150px] flex flex-col justify-center"
                   >
                     <PayPalScriptProvider 
@@ -447,7 +446,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                           toast({
                             variant: "destructive",
                             title: "PayPal Connection Error",
-                            description: "Could not connect to PayPal. Please check your information or try another payment method.",
+                            description: "Could not connect to PayPal. Please try again.",
                           });
                         }}
                       />
