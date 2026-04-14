@@ -71,15 +71,14 @@ function SpecialImageSwitcher({ images }: { images: string[] }) {
 }
 
 function DialogCard({ cause }: { cause: Cause }) {
-  // Priority for the first few items to ensure fast loading
-  const isPriority = cause.id === 'idf' || cause.id === 'widows';
+  const isPriority = cause.id === 'idf';
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <div className="group cursor-pointer h-full" id={cause.id}>
           <div className="glass-card h-full rounded-[24px] md:rounded-[32px] overflow-hidden flex flex-col border border-primary/5 bg-white shadow-xl transition-all duration-500 hover:-translate-y-1">
-            <div className="relative h-28 md:h-48 overflow-hidden">
+            <div className="relative h-32 md:h-48 overflow-hidden">
               <Image 
                 src={cause.image} 
                 fill 
@@ -90,18 +89,18 @@ function DialogCard({ cause }: { cause: Cause }) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-2 right-2 md:top-3 md:right-3 bg-white/95 backdrop-blur-md p-1.5 md:p-2 rounded-full shadow-lg z-10">
-                 {React.cloneElement(cause.icon as React.ReactElement, { className: "h-3 w-3 md:h-5 md:w-5 text-primary" })}
+                 {React.cloneElement(cause.icon as React.ReactElement, { className: "h-4 w-4 md:h-5 md:w-5 text-primary" })}
               </div>
             </div>
-            <div className="p-3 md:p-6 flex flex-col flex-1 justify-between gap-2">
+            <div className="p-4 md:p-6 flex flex-col flex-1 justify-between gap-3">
               <div>
-                 <h3 className="text-[12px] md:text-lg font-bold tracking-tight leading-none mb-1 md:mb-2">{cause.title}</h3>
-                 <p className="text-[9px] md:text-xs text-muted-foreground font-medium tracking-tight leading-tight line-clamp-2 md:line-clamp-none opacity-80">{cause.shortDesc}</p>
+                 <h3 className="text-sm md:text-lg font-bold tracking-tight leading-tight mb-1 md:mb-2">{cause.title}</h3>
+                 <p className="text-[11px] md:text-xs text-muted-foreground font-medium tracking-tight leading-relaxed line-clamp-3 md:line-clamp-none opacity-80">{cause.shortDesc}</p>
               </div>
-              <div className="pt-1 md:pt-3 flex items-center justify-between border-t border-slate-100 mt-auto">
-                 <span className="text-[10px] md:text-sm font-bold text-primary tracking-tight">View Details</span>
-                 <div className="h-6 w-6 md:h-8 md:w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-                    <ArrowRight className="h-3 w-3 md:h-4 md:w-4" />
+              <div className="pt-2 md:pt-3 flex items-center justify-between border-t border-slate-100 mt-auto">
+                 <span className="text-[11px] md:text-sm font-bold text-primary tracking-tight">View Details</span>
+                 <div className="h-7 w-7 md:h-8 md:w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+                    <ArrowRight className="h-4 w-4 md:h-4 md:w-4" />
                  </div>
               </div>
             </div>
@@ -109,20 +108,20 @@ function DialogCard({ cause }: { cause: Cause }) {
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] rounded-[32px] overflow-hidden p-0 gap-0 border-0 shadow-2xl bg-white z-[200]">
-         <div className="relative h-40 md:h-56">
+         <div className="relative h-48 md:h-56">
             <Image src={cause.image} fill alt={cause.title} className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6 right-6 text-white">
                <h2 className="text-2xl md:text-3xl font-bold tracking-tight leading-none mb-1">{cause.title}</h2>
-               {cause.subtitle && <p className="text-[10px] md:text-sm font-medium tracking-tight text-white/80">{cause.subtitle}</p>}
+               {cause.subtitle && <p className="text-xs md:text-sm font-medium tracking-tight text-white/80">{cause.subtitle}</p>}
             </div>
          </div>
          <div className="p-6 md:p-8 max-h-[60vh] overflow-y-auto custom-scrollbar">
-            <div className="text-[13px] md:text-base leading-relaxed text-muted-foreground font-medium">
+            <div className="text-sm md:text-base leading-relaxed text-muted-foreground font-medium">
               {cause.fullContent}
             </div>
             <div className="pt-6">
-               <Button className="w-full h-12 md:h-14 rounded-full font-bold text-[14px] md:text-lg tracking-tight shadow-xl border-b-4 border-primary-foreground/20 hover:scale-[1.02] transition-all" asChild>
+               <Button className="w-full h-14 rounded-full font-bold text-base md:text-lg tracking-tight shadow-xl border-b-4 border-primary-foreground/20 hover:scale-[1.02] transition-all" asChild>
                   <Link href={cause.donateUrl}>Donate Now</Link>
                </Button>
             </div>
@@ -199,7 +198,7 @@ export default function CausesPage() {
                 href="https://www.youtube.com/@ChayaIsraelFoundation" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary font-bold tracking-tight text-[10px] md:text-xs hover:underline"
+                className="inline-flex items-center gap-2 text-primary font-bold tracking-tight text-xs md:text-xs hover:underline"
               >
                 For more videos <Youtube className="h-4 w-4" />
               </Link>
@@ -242,7 +241,7 @@ export default function CausesPage() {
           <h3 className="text-lg md:text-xl font-bold text-primary tracking-tight">If Not Us, Whom? And If Not Now, When?</h3>
           
           <div className="grid md:grid-cols-2 gap-6 items-start">
-             <div className="space-y-3 text-sm md:text-base font-medium text-muted-foreground leadership-relaxed">
+             <div className="space-y-3 text-sm md:text-base font-medium text-muted-foreground leading-relaxed">
                 <p>For newly-weds just starting off on their journey of marriage, financial matters can be tough and very challenging.</p>
              </div>
              <div>
@@ -349,7 +348,7 @@ export default function CausesPage() {
       fullContent: (
         <div className="space-y-3">
           <h3 className="font-bold text-indigo-600 text-lg md:text-xl tracking-tight">Teshuva, Tefila and Tzdakah</h3>
-          <p className="font-medium text-foreground leadership-relaxed">We will soon be begging Hashem, pleading for a Shana Tovah for ourselves and for our families and I am sure that this Mitzva of tzedakah will stand for us all on the upcoming days of Judgement. Please open your heart generously and assist us in bringing joy and relief to our fellow Jews who rely on our help.</p>
+          <p className="font-medium text-foreground leading-relaxed">We will soon be begging Hashem, pleading for a Shana Tovah for ourselves and for our families and I am sure that this Mitzva of tzedakah will stand for us all on the upcoming days of Judgement. Please open your heart generously and assist us in bringing joy and relief to our fellow Jews who rely on our help.</p>
         </div>
       )
     },
@@ -401,7 +400,7 @@ export default function CausesPage() {
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold luxury-gradient-text tracking-tight leading-none mb-3">
             Our Causes
           </h1>
-          <p className="text-[10px] md:text-base text-muted-foreground font-medium tracking-[0.15em] opacity-70">
+          <p className="text-xs md:text-base text-muted-foreground font-medium tracking-[0.15em] opacity-70">
             They Rely on Your Donation
           </p>
         </div>
@@ -416,7 +415,7 @@ export default function CausesPage() {
             
             <div className="group h-full">
               <div className="glass-card h-full rounded-[24px] md:rounded-[32px] overflow-hidden flex flex-col border border-primary/10 bg-white shadow-xl transition-all duration-500 hover:-translate-y-1">
-                 <div className="relative h-28 md:h-40 overflow-hidden">
+                 <div className="relative h-32 md:h-40 overflow-hidden">
                     <Image 
                       src="/HOLIDAYS.png" 
                       fill 
@@ -425,11 +424,11 @@ export default function CausesPage() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute top-2 right-2 md:top-3 md:right-3 bg-white/95 backdrop-blur-md p-1.5 md:p-2 rounded-full shadow-lg z-10">
-                       <CalendarDays className="h-3 w-3 md:h-5 md:w-5 text-primary" />
+                       <CalendarDays className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                     </div>
                  </div>
                  <div className="p-4 md:p-6 flex flex-col flex-1">
-                    <h3 className="text-[12px] md:text-lg font-bold text-primary mb-3 leading-tight">High Holidays Donations</h3>
+                    <h3 className="text-sm md:text-lg font-bold text-primary mb-3 leading-tight">High Holidays Donations</h3>
                     <div className="flex flex-col gap-2 md:gap-3 flex-1">
                       {[
                         { label: "Rosh Hashanah", href: "rosh-hashanah-sukkot" },
@@ -439,13 +438,13 @@ export default function CausesPage() {
                         <Link 
                           key={link.href} 
                           href={`#${link.href}`} 
-                          className="flex items-center justify-between p-2 md:p-2.5 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link border border-transparent hover:border-primary/10"
+                          className="flex items-center justify-between p-2.5 md:p-2.5 rounded-xl bg-slate-50 hover:bg-primary/5 hover:text-primary transition-all group/link border border-transparent hover:border-primary/10"
                           onClick={(e) => {
                             e.preventDefault();
                             document.getElementById(link.href)?.scrollIntoView({ behavior: 'smooth' });
                           }}
                         >
-                          <span className="text-[10px] md:text-xs font-bold">{link.label}</span>
+                          <span className="text-[11px] md:text-xs font-bold">{link.label}</span>
                           <ChevronRight className="h-3 w-3 opacity-30 group-hover/link:opacity-100 transition-opacity" />
                         </Link>
                       ))}
@@ -467,13 +466,13 @@ export default function CausesPage() {
                 High Holidays Donations
              </h2>
              <div className="max-w-2xl mx-auto space-y-4">
-               <p className="text-[11px] md:text-base text-muted-foreground font-medium leading-relaxed tracking-tight">
+               <p className="text-sm md:text-base text-muted-foreground font-medium leading-relaxed tracking-tight">
                   There are many who have lost their sources of income, many orphans and widows, and many unprivileged families, and as the High Holidays draw near, we must help them celebrate in a dignified manner.
                </p>
-               <p className="text-[11px] md:text-base text-primary font-bold leading-tight tracking-tight">
+               <p className="text-sm md:text-base text-primary font-bold leading-tight tracking-tight">
                   Your contribution enables families to respectfully purchase food and other necessities for the Yom Tov.
                </p>
-               <p className="text-[10px] md:text-sm font-bold tracking-tight text-foreground">
+               <p className="text-xs md:text-sm font-bold tracking-tight text-foreground">
                   Please help those that can't manage on their own.
                </p>
              </div>
@@ -495,16 +494,16 @@ export default function CausesPage() {
                        <Info className="h-5 w-5 md:h-6 md:w-6" />
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-[11px] md:text-lg font-bold tracking-tight">Other Causes</h3>
-                      <p className="text-[7px] md:text-xs text-muted-foreground font-medium tracking-tight leading-tight opacity-70 max-w-[150px] md:max-w-xs mx-auto">
+                      <h3 className="text-xs md:text-lg font-bold tracking-tight">Other Causes</h3>
+                      <p className="text-[10px] md:text-xs text-muted-foreground font-medium tracking-tight leading-tight opacity-70 max-w-[150px] md:max-w-xs mx-auto">
                         Providing Basic Necessities Enables Us to Enliven Disadvantaged Communities All Year Long.
                       </p>
-                      <p className="text-[9px] md:text-sm font-black text-primary tracking-tight mt-2 italic">
+                      <p className="text-[11px] md:text-sm font-black text-primary tracking-tight mt-2 italic">
                         Please help us give life to those who rely on YOU
                       </p>
                     </div>
                     <div className="pt-1">
-                      <span className="text-[8px] md:text-xs font-bold text-primary underline decoration-primary/20 underline-offset-4 tracking-tight">Please describe your donation</span>
+                      <span className="text-[10px] md:text-xs font-bold text-primary underline decoration-primary/20 underline-offset-4 tracking-tight">Please describe your donation</span>
                     </div>
                  </div>
               </div>
@@ -513,7 +512,6 @@ export default function CausesPage() {
         </div>
       </section>
 
-      {/* NEW CTA SECTION */}
       <section className="py-20 md:py-32 bg-foreground text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full -mr-64 -mt-64 blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/10 rounded-full -ml-64 -mb-64 blur-[120px]" />
@@ -525,7 +523,7 @@ export default function CausesPage() {
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-            <Button size="lg" asChild className="rounded-full h-14 md:h-20 px-12 md:px-24 font-black bg-primary text-white shadow-2xl text-base md:text-2xl border-b-4 border-primary-foreground/20 hover:scale-110 transition-all">
+            <Button size="lg" asChild className="rounded-full h-16 md:h-20 px-12 md:px-24 font-black bg-primary text-white shadow-2xl text-lg md:text-2xl border-b-4 border-primary-foreground/20 hover:scale-110 transition-all">
               <Link href="/donate">Donate Now</Link>
             </Button>
           </div>
