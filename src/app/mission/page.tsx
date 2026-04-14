@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from "react";
@@ -128,7 +127,7 @@ export default function MissionPage() {
             <div className="glass-card p-6 md:p-10 rounded-[28px] md:rounded-[40px] border border-primary/5 shadow-xl bg-white space-y-5 flex flex-col group hover:border-accent/30">
               <div className="flex items-center gap-4 md:gap-6">
                 <div className="relative w-14 h-14 md:w-20 md:h-20 overflow-hidden rounded-full border-[2px] md:border-[4px] border-primary/10 shadow-lg shrink-0">
-                  <Image src="/Avichai Amosi.png" alt="Avichai Amosi" fill className="object-cover object-top" />
+                  <Image src="/Avichai%20Amosi.png" alt="Avichai Amosi" fill className="object-cover object-top" />
                 </div>
                 <div>
                   <h4 className="text-base md:text-xl font-black text-foreground leading-tight tracking-tight">Avichai Amosi</h4>
