@@ -47,12 +47,26 @@ export default function ContactPage() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    // Construct the mailto URL
+    const recipient = "kramera613@gmail.com";
+    const subject = encodeURIComponent(`New Message from ${values.name} via Chaya Israel Site`);
+    const body = encodeURIComponent(
+      `Full Name: ${values.name}\n` +
+      `Sender Email: ${values.email}\n\n` +
+      `Message Content:\n${values.message}`
+    );
+    
+    const mailtoUrl = `mailto:${recipient}?subject=${subject}&body=${body}`;
+    
+    // Open the default email client
+    window.location.href = mailtoUrl;
+
     toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We will get back to you shortly.",
+      title: "Opening Email App...",
+      description: "Your default mail client is opening with your message ready to send.",
       variant: "default",
     })
+    
     form.reset()
   }
 
@@ -84,7 +98,7 @@ export default function ContactPage() {
                       </div>
                       <div>
                           <h3 className="font-semibold text-base">Primary Email</h3>
-                          <a href="mailto:Kramera613@gmail.com" className="text-xs sm:text-base text-muted-foreground hover:text-primary transition-colors">Kramera613@gmail.com</a>
+                          <a href="mailto:kramera613@gmail.com" className="text-xs sm:text-base text-muted-foreground hover:text-primary transition-colors">kramera613@gmail.com</a>
                       </div>
                   </div>
                   
