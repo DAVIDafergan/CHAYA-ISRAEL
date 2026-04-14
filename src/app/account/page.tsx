@@ -44,7 +44,6 @@ export default function MyAccountPage() {
   const donationsQuery = useMemoFirebase(() => {
     if (!firestore || !user?.email) return null;
     const cleanEmail = user.email.trim().toLowerCase();
-    // Search strictly by the payer's email stored in Firestore
     return query(
       collection(firestore, 'donations'),
       where('payerEmail', '==', cleanEmail)
@@ -103,7 +102,7 @@ export default function MyAccountPage() {
                  </Link>
                </Button>
              )}
-             <Button asChild className="rounded-full h-12 px-8 font-bold shadow-xl">
+             <Button asChild className="rounded-full h-12 px-8 font-bold shadow-xl bg-primary text-white hover:bg-primary/90">
                <Link href="/donate">Donate again</Link>
              </Button>
           </div>
@@ -175,7 +174,7 @@ export default function MyAccountPage() {
                           <TableHead className="font-bold text-[10px] uppercase text-muted-foreground py-6 pl-8">Date</TableHead>
                           <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Amount</TableHead>
                           <TableHead className="font-bold text-[10px] uppercase text-muted-foreground">Cause</TableHead>
-                          <TableHead className="font-bold text-[10px] uppercase text-muted-foreground pr-8 text-right">Receipt</TableHead>
+                          <TableHead className="font-bold text-[10px] uppercase text-muted-foreground pr-8 text-right">Action</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -200,9 +199,9 @@ export default function MyAccountPage() {
                                 variant="outline" 
                                 size="sm" 
                                 asChild
-                                className="h-9 px-4 rounded-full border-primary/20 text-primary hover:bg-primary/5 font-bold text-[11px]"
+                                className="h-9 px-4 rounded-full border-primary/20 text-primary hover:bg-primary/10 font-bold text-[11px] shadow-sm"
                               >
-                                <Link href={`/receipt/${donation.id}`}>
+                                <Link href={`/receipt/${donation.id}?print=true`}>
                                    <Download className="h-3 w-3 mr-2" /> Download
                                 </Link>
                               </Button>
@@ -223,7 +222,7 @@ export default function MyAccountPage() {
                         Your generosity will appear here once you make your first donation using {user.email}.
                       </p>
                     </div>
-                    <Button asChild className="rounded-full h-12 px-10 shadow-lg">
+                    <Button asChild className="rounded-full h-12 px-10 shadow-lg bg-primary text-white hover:bg-primary/90">
                        <Link href="/donate">Donate now</Link>
                     </Button>
                   </div>

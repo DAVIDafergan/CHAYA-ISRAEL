@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,10 +8,13 @@ import { Printer, CheckCircle2, ShieldCheck, Heart, Mail, User, CreditCard as Ca
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import { useEffect } from 'react';
 
 export default function ReceiptPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const id = params.id as string;
+  const shouldPrint = searchParams.get('print') === 'true';
   const firestore = useFirestore();
 
   const docRef = useMemoFirebase(() => {
@@ -20,6 +23,16 @@ export default function ReceiptPage() {
   }, [firestore, id]);
 
   const { data: donation, isLoading } = useDoc(docRef);
+
+  useEffect(() => {
+    if (!isLoading && donation && shouldPrint) {
+      // Small delay to ensure images/layout are ready for print
+      const timer = setTimeout(() => {
+        window.print();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, donation, shouldPrint]);
 
   if (isLoading) {
     return (
