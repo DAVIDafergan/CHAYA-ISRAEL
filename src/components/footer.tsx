@@ -10,7 +10,7 @@ export function Footer() {
         <div className="grid md:grid-cols-2 items-center gap-12 md:gap-20">
           <div className="text-center md:text-left space-y-6 md:space-y-8">
             <Link href="/" className="inline-block transition-transform duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-primary rounded-lg" aria-label="Chaya Israel home">
-              <Image src="/Logo.png" alt="Chaya Israel logo" width={140} height={40} priority className="w-auto h-10 md:h-14 isolate bg-transparent"/>
+              <Image src="/Logo.png" alt="Chaya Israel logo" width={140} height={40} className="w-auto h-10 md:h-14 isolate bg-transparent"/>
             </Link>
             <div className="flex flex-col gap-2">
               <p className="text-[10px] md:text-sm text-muted-foreground font-bold opacity-70">
