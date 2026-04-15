@@ -1,4 +1,3 @@
-
 import { NextResponse } from 'next/server';
 import { adminDb, admin } from '@/lib/firebase-admin';
 
@@ -8,7 +7,8 @@ import { adminDb, admin } from '@/lib/firebase-admin';
  */
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json();
+    const body = await request.json();
+    const { name, email, message } = body;
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       name,
       email,
-      source: 'contact-form'
+      source: 'contact-api'
     };
 
     // Save to Firestore 'mail' collection to trigger the extension
@@ -60,6 +60,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('Contact API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Internal Server Error',
+      message: error.message 
+    }, { status: 500 });
   }
 }

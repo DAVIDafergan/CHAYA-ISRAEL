@@ -1,16 +1,20 @@
-
 import * as admin from 'firebase-admin';
 
 /**
  * Singleton Firebase Admin initialization.
- * Prevents multiple initializations and memory leaks.
+ * Prevents multiple initializations and memory leaks in Next.js development mode.
  */
-if (!admin.apps.length) {
-  admin.initializeApp({
+function getAdminApp() {
+  if (admin.apps.length > 0) {
+    return admin.apps[0];
+  }
+
+  return admin.initializeApp({
     projectId: 'chayaisrael-8e860',
   });
 }
 
-const adminDb = admin.firestore();
+const adminApp = getAdminApp();
+const adminDb = adminApp.firestore();
 
-export { admin, adminDb };
+export { admin, adminDb, adminApp };

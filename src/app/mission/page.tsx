@@ -12,16 +12,16 @@ export default function MissionPage() {
       {/* Header Section */}
       <section className="pb-10 md:pb-24 px-4">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black luxury-gradient-text mb-4 tracking-tight leading-tight break-words">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black luxury-gradient-text mb-6 tracking-tight leading-tight break-words px-4">
             About Us
           </h1>
-          <h2 className="text-xl md:text-3xl font-bold mb-8 md:mb-12 text-foreground/70 tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-foreground/70 tracking-tight">
             Our Mission
           </h2>
           
           <div className="max-w-4xl mx-auto">
             <div className="glass-card p-8 md:p-16 rounded-[32px] md:rounded-[64px] border border-primary/5 bg-slate-50/30 shadow-xl relative overflow-hidden">
-              <div className="relative z-10 text-base md:text-2xl leading-relaxed font-medium text-foreground/80 space-y-6">
+              <div className="relative z-10 text-lg md:text-2xl leading-relaxed font-medium text-foreground/80 space-y-6">
                 <p>
                   Chaya Israel Foundation was established by Rabbi Avraham Kramer in 2004,
                   to alleviate poverty in Israel and to assist those who are truly in need. The
@@ -39,7 +39,7 @@ export default function MissionPage() {
       <section className="py-16 md:py-32 bg-slate-50/50 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight luxury-gradient-text">Our Leadership</h2>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight luxury-gradient-text break-words">Our Leadership</h2>
             <div className="h-1.5 w-20 bg-accent mx-auto mt-4 rounded-full" />
           </div>
           
@@ -50,7 +50,7 @@ export default function MissionPage() {
               </div>
               <div>
                 <h3 className="text-2xl md:text-3xl font-black text-foreground">Rabbi Avraham Kramer</h3>
-                <p className="text-base md:text-xl font-black text-primary uppercase tracking-wider">Executive Director</p>
+                <p className="text-lg md:text-xl font-black text-primary uppercase tracking-wider">Executive Director</p>
               </div>
             </div>
             
@@ -60,7 +60,7 @@ export default function MissionPage() {
               </div>
               <div>
                 <h3 className="text-2xl md:text-3xl font-black text-foreground">Dr. Shilo Kramer</h3>
-                <p className="text-base md:text-xl font-black text-primary uppercase tracking-wider">Co-director</p>
+                <p className="text-lg md:text-xl font-black text-primary uppercase tracking-wider">Co-director</p>
               </div>
             </div>
           </div>
@@ -71,8 +71,8 @@ export default function MissionPage() {
       <section className="py-16 md:py-32 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12 md:mb-20">
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight luxury-gradient-text leading-tight break-words">Community Partners</h2>
-            <p className="max-w-3xl mx-auto mt-4 text-base md:text-xl text-foreground/80 font-medium leading-relaxed">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight luxury-gradient-text leading-tight break-words px-4">Community Partners</h2>
+            <p className="max-w-3xl mx-auto mt-4 text-lg md:text-xl text-foreground/80 font-medium leading-relaxed">
               We partner with local leaders who know their communities best, ensuring every donation reaches those in greatest need.
             </p>
           </div>
@@ -88,7 +88,7 @@ export default function MissionPage() {
                   <p className="text-primary font-bold text-xs md:text-sm uppercase tracking-wider">Or Hachaim Organization</p>
                 </div>
               </div>
-              <p className="text-foreground/80 text-base md:text-lg italic font-medium leading-relaxed">
+              <p className="text-foreground/80 text-lg md:text-xl italic font-medium leading-relaxed">
                 "I am proud to testify on behalf of the Chaya Israel Foundation. It's a great mitzva to support this organization so that it can continue to support those in need."
               </p>
             </div>
@@ -103,7 +103,7 @@ export default function MissionPage() {
                   <p className="text-primary font-black text-xs md:text-sm uppercase tracking-wider">Merkaz Chesed Sderot</p>
                 </div>
               </div>
-              <p className="text-foreground/80 text-base md:text-lg italic font-medium leading-relaxed">
+              <p className="text-foreground/80 text-lg md:text-xl italic font-medium leading-relaxed">
                 "Chaya Israel Foundation has been steadily providing meals for the Sderot community for over two decades. We can't thank them enough for their support!"
               </p>
             </div>
@@ -114,8 +114,8 @@ export default function MissionPage() {
       {/* CTA Section */}
       <section className="py-24 md:py-40 bg-foreground text-white relative overflow-hidden px-4">
         <div className="container mx-auto text-center relative z-10 space-y-8 md:space-y-12">
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight break-words">Support Our Mission</h2>
-          <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto font-medium leading-relaxed">Join us in making a real difference in the lives of those who need it most.</p>
+          <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight break-words px-4">Support Our Mission</h2>
+          <p className="text-xl md:text-2xl text-white/70 max-w-2xl mx-auto font-medium leading-relaxed">Join us in making a real difference in the lives of those who need it most.</p>
           <Button size="lg" className="rounded-full px-12 md:px-24 h-16 md:h-24 text-xl md:text-3xl font-black bg-primary text-white hover:scale-105 transition-all border-b-4 border-primary-foreground/20" asChild>
             <Link href="/donate">Partner With Us</Link>
           </Button>
