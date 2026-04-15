@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from "react";
@@ -25,7 +26,7 @@ export default function Home() {
         </div>
         
         <div className="container mx-auto px-4 md:px-6 pt-8 pb-16 md:pt-12 md:pb-24 text-center flex flex-col items-center">
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-foreground leading-tight mb-8 break-words max-w-full">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight text-foreground leading-tight mb-8 break-words max-w-full px-4">
             Chaya <span className="text-primary">Israel</span>
           </h1>
           
@@ -50,7 +51,7 @@ export default function Home() {
                 <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-1">
                   <div className="flex items-center gap-3 text-slate-900 group-hover:text-primary transition-colors">
                     <User className="h-6 w-6 md:h-8 md:w-8 group-hover:scale-110 transition-transform" />
-                    <span className="text-lg md:text-2xl font-black tracking-tight uppercase">Donor Portal</span>
+                    <span className="text-base md:text-2xl font-black tracking-tight uppercase">Donor Portal</span>
                   </div>
                   <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">
                     (My Giving)
@@ -66,8 +67,8 @@ export default function Home() {
       <section className="py-16 md:py-32 bg-slate-50/50">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16 md:mb-24">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight luxury-gradient-text mb-6">About Us</h2>
-            <h3 className="text-2xl md:text-4xl font-black tracking-tight text-slate-800 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tight luxury-gradient-text mb-6">About Us</h2>
+            <h3 className="text-xl md:text-4xl font-black tracking-tight text-slate-800 max-w-4xl mx-auto leading-tight px-4">
               24 Years of Broad Chesed Activity
             </h3>
           </div>
@@ -83,8 +84,8 @@ export default function Home() {
                 />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">Rabbi Avraham Kramer</h3>
-                <p className="text-lg md:text-xl font-black tracking-tight text-primary uppercase">Executive director</p>
+                <h3 className="text-xl md:text-3xl font-black text-foreground tracking-tight">Rabbi Avraham Kramer</h3>
+                <p className="text-base md:text-xl font-black tracking-tight text-primary uppercase">Executive director</p>
               </div>
             </div>
             
@@ -98,8 +99,8 @@ export default function Home() {
                 />
               </div>
               <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">Dr. Shilo Kramer</h3>
-                <p className="text-lg md:text-xl font-black tracking-tight text-primary uppercase">Co-director</p>
+                <h3 className="text-xl md:text-3xl font-black text-foreground tracking-tight">Dr. Shilo Kramer</h3>
+                <p className="text-base md:text-xl font-black tracking-tight text-primary uppercase">Co-director</p>
               </div>
             </div>
           </div>
@@ -116,9 +117,9 @@ export default function Home() {
       <section className="py-16 md:py-32 bg-white">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center mb-16 md:mb-24">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight luxury-gradient-text mb-6">Community Leaders</h2>
+            <h2 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tight luxury-gradient-text mb-6">Community Leaders</h2>
             <div className="max-w-4xl mx-auto">
-              <p className="text-lg md:text-2xl text-foreground font-medium leading-relaxed tracking-tight opacity-90">
+              <p className="text-base md:text-2xl text-foreground font-medium leading-relaxed tracking-tight opacity-90 px-4">
                 Community leaders know the needs of their congregations best. They ensure your donations make the biggest possible impact where it is needed most.
               </p>
             </div>
@@ -131,13 +132,13 @@ export default function Home() {
                   <Image src="/reuven-elbaz.png" alt="Rabbi Reuven Elbaz" fill className="object-cover object-top" />
                 </div>
                 <div>
-                  <h4 className="text-xl md:text-3xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>
+                  <h4 className="text-lg md:text-3xl font-black text-foreground leading-tight tracking-tight">Rabbi Reuven Elbaz</h4>
                   <p className="text-primary font-black text-sm md:text-lg tracking-tight opacity-80">Director of Or Hachaim</p>
                 </div>
               </div>
               <div className="relative">
                 <Quote className="absolute -top-6 -left-6 h-12 w-12 text-accent/10" />
-                <p className="text-foreground/80 text-base md:text-xl leading-relaxed relative z-10 font-medium italic">
+                <p className="text-foreground/80 text-sm md:text-xl leading-relaxed relative z-10 font-medium italic">
                   I am proud to testify on behalf of the Chaya Israel Foundation. The foundation supports newlyweds, orphaned grooms and brides, widows and other disadvantaged members of the community.
                 </p>
               </div>
@@ -154,13 +155,13 @@ export default function Home() {
                   <Image src="/Avichai Amosi.png" alt="Avichai Amosi" fill className="object-cover object-top" />
                 </div>
                 <div>
-                  <h4 className="text-xl md:text-3xl font-black text-foreground leading-tight tracking-tight">Avichai Amosi</h4>
+                  <h4 className="text-lg md:text-3xl font-black text-foreground leading-tight tracking-tight">Avichai Amosi</h4>
                   <p className="text-primary font-black text-sm md:text-lg tracking-tight opacity-80">Merkaz Chesed Sderot</p>
                 </div>
               </div>
               <div className="relative">
                 <Quote className="absolute -top-6 -left-6 h-12 w-12 text-accent/10" />
-                <p className="text-foreground/80 text-base md:text-xl leading-relaxed relative z-10 font-medium italic">
+                <p className="text-foreground/80 text-sm md:text-xl leading-relaxed relative z-10 font-medium italic">
                   Chaya Israel Foundation has been steadily providing meals for the Sderot community for over two decades. We can't thank them enough for their support!
                 </p>
               </div>
@@ -175,15 +176,15 @@ export default function Home() {
       </section>
 
       {/* Footer Area Call-to-Action */}
-      <section className="py-24 md:py-40 bg-foreground text-white relative overflow-hidden">
+      <section className="py-24 md:py-40 bg-foreground text-white relative overflow-hidden px-4">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/20 rounded-full -mr-48 -mt-48 blur-[100px]" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-accent/20 rounded-full -ml-48 -mb-48 blur-[100px]" />
         <div className="container mx-auto px-6 text-center relative z-10 space-y-12 md:space-y-20">
           <div className="space-y-8">
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight break-words max-w-full">
+            <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black tracking-tight leading-tight break-words max-w-full">
               Please help us give life to those who rely on <span className="text-primary luxury-gradient-text brightness-150">YOU</span>
             </h2>
-            <p className="text-lg md:text-2xl text-white/70 max-w-4xl mx-auto font-medium leading-relaxed">
+            <p className="text-base md:text-2xl text-white/70 max-w-4xl mx-auto font-medium leading-relaxed">
               Allow us to serve as your messenger by distributing charity to those in Israel who are most in need.
             </p>
           </div>

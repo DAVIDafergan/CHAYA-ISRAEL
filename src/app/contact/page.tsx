@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState } from "react";
@@ -130,8 +131,8 @@ export default function ContactPage() {
           <div className="bg-green-100 p-8 rounded-full w-fit mx-auto mb-4">
             <CheckCircle2 className="h-16 w-16 text-green-600" />
           </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight luxury-gradient-text leading-tight px-4 break-words">Message Sent!</h2>
-          <p className="text-xl md:text-2xl text-muted-foreground font-bold leading-relaxed px-6">
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight luxury-gradient-text leading-tight px-4 break-words">Message Sent!</h2>
+          <p className="text-lg md:text-2xl text-muted-foreground font-bold leading-relaxed px-6">
             Thank you for reaching out. Your message has been delivered and we will respond to you shortly.
           </p>
           <div className="pt-8">
@@ -150,10 +151,10 @@ export default function ContactPage() {
     <div className="overflow-x-hidden pt-28 md:pt-40 bg-white min-h-screen">
        <section className="py-12 md:py-20 px-6">
           <div className="container mx-auto text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black luxury-gradient-text tracking-tight leading-tight mb-8 break-words px-4">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black luxury-gradient-text tracking-tight leading-tight mb-8 break-words px-4">
                   Contact Us
               </h1>
-              <p className="max-w-3xl mx-auto text-lg sm:text-xl md:text-2xl text-muted-foreground font-medium leading-relaxed px-6">
+              <p className="max-w-3xl mx-auto text-base md:text-xl lg:text-2xl text-muted-foreground font-medium leading-relaxed px-6">
                 We'd love to hear from you. Reach out with any questions or to learn more about our mission.
               </p>
           </div>
@@ -163,8 +164,8 @@ export default function ContactPage() {
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start max-w-7xl">
             <div className="space-y-12 md:space-y-20">
               <div className="px-4">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight break-words">Get in Touch</h2>
-                <p className="mt-6 text-lg md:text-2xl text-muted-foreground font-medium leading-relaxed">Find us at our location, give us a call, or send an email.</p>
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight break-words">Get in Touch</h2>
+                <p className="mt-6 text-base md:text-2xl text-muted-foreground font-medium leading-relaxed">Find us at our location, give us a call, or send an email.</p>
               </div>
               <div className="space-y-10 md:space-y-16">
                   <div className="flex items-start gap-8 md:gap-12">
@@ -172,8 +173,8 @@ export default function ContactPage() {
                           <Mail className="h-8 w-8 md:h-10 md:w-10 text-primary" />
                       </div>
                       <div className="space-y-2">
-                          <h3 className="font-black text-xs md:text-sm text-slate-400 uppercase tracking-widest">Primary Email</h3>
-                          <a href="mailto:kramera613@gmail.com" className="text-xl md:text-3xl text-primary font-black hover:underline transition-all break-all leading-tight">kramera613@gmail.com</a>
+                          <h3 className="font-black text-[10px] md:text-sm text-slate-400 uppercase tracking-widest">Primary Email</h3>
+                          <a href="mailto:kramera613@gmail.com" className="text-lg md:text-3xl text-primary font-black hover:underline transition-all break-all leading-tight">kramera613@gmail.com</a>
                       </div>
                   </div>
                   
@@ -182,8 +183,8 @@ export default function ContactPage() {
                           <Phone className="h-8 w-8 md:h-10 md:w-10 text-primary" />
                       </div>
                       <div className="space-y-2">
-                          <h3 className="font-black text-xs md:text-sm text-slate-400 uppercase tracking-widest">Phone Number</h3>
-                          <a href="tel:+19179156106" className="text-xl md:text-3xl text-primary font-black hover:underline transition-all leading-tight">(+917) 915 - 6106</a>
+                          <h3 className="font-black text-[10px] md:text-sm text-slate-400 uppercase tracking-widest">Phone Number</h3>
+                          <a href="tel:+19179156106" className="text-lg md:text-3xl text-primary font-black hover:underline transition-all leading-tight">(+917) 915 - 6106</a>
                       </div>
                   </div>
                   <div className="flex items-start gap-8 md:gap-12">
@@ -191,8 +192,8 @@ export default function ContactPage() {
                           <MapPin className="h-8 w-8 md:h-10 md:w-10 text-primary" />
                       </div>
                       <div className="space-y-2">
-                          <h3 className="font-black text-xs md:text-sm text-slate-400 uppercase tracking-widest">Our Location</h3>
-                          <p className="text-xl md:text-3xl text-slate-800 font-black leading-tight break-words">
+                          <h3 className="font-black text-[10px] md:text-sm text-slate-400 uppercase tracking-widest">Our Location</h3>
+                          <p className="text-lg md:text-3xl text-slate-800 font-black leading-tight break-words">
                               335 East 77th Street. Apt #3<br />New York, NY 10075
                           </p>
                       </div>
@@ -202,7 +203,7 @@ export default function ContactPage() {
 
             <Card className="p-8 md:p-14 shadow-2xl bg-white border-0 rounded-[48px] overflow-hidden">
                 <CardHeader className="p-0 mb-10">
-                    <CardTitle className="text-3xl md:text-4xl font-black tracking-tight luxury-gradient-text break-words">Send us a Message</CardTitle>
+                    <CardTitle className="text-2xl md:text-4xl font-black tracking-tight luxury-gradient-text break-words">Send us a Message</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Form {...form}>
@@ -212,9 +213,9 @@ export default function ContactPage() {
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Full Name</FormLabel>
+                                <FormLabel className="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Full Name</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="John Doe" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-lg md:text-xl"/>
+                                  <Input placeholder="John Doe" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-base md:text-xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -225,9 +226,9 @@ export default function ContactPage() {
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Email Address</FormLabel>
+                                <FormLabel className="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Email Address</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="john.doe@example.com" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-lg md:text-xl"/>
+                                  <Input placeholder="john.doe@example.com" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-base md:text-xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -238,11 +239,11 @@ export default function ContactPage() {
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Message</FormLabel>
+                                <FormLabel className="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Message</FormLabel>
                                 <FormControl>
                                   <Textarea
                                     placeholder="Tell us how we can help..."
-                                    className="resize-none bg-slate-50/50 rounded-2xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-lg md:text-xl"
+                                    className="resize-none bg-slate-50/50 rounded-2xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-base md:text-xl"
                                     rows={5}
                                     {...field}
                                   />
