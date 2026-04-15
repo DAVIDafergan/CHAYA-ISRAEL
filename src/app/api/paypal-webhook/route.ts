@@ -1,9 +1,11 @@
-
 import { NextResponse } from 'next/server';
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, limit } from 'firebase/firestore';
 import { firebaseConfig } from '@/firebase/config';
 
+/**
+ * Singleton Firebase initialization for API routes.
+ */
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const db = getFirestore(app);
 
@@ -19,7 +21,6 @@ export async function POST(request: Request) {
     
     console.log(`Processing PayPal Webhook Event: ${eventType}`);
 
-    // Events that signify a valid donation or subscription
     const handledEvents = [
       'PAYMENT.CAPTURE.COMPLETED',
       'CHECKOUT.ORDER.APPROVED',
@@ -33,9 +34,6 @@ export async function POST(request: Request) {
     if (handledEvents.includes(eventType)) {
       const resource = body.resource;
       
-      // 1. Extract Amount
-      // Subscriptions might not have a 'last_payment' yet on 'CREATED', 
-      // so we try to find any value or default to 0.
       const amountValue = resource.amount?.value || 
                          resource.seller_receivable_breakdown?.gross_amount?.value || 
                          resource.billing_info?.last_payment?.amount?.value || 
@@ -44,21 +42,15 @@ export async function POST(request: Request) {
       const currencyCode = resource.amount?.currency_code || 
                           resource.billing_info?.last_payment?.amount?.currency_code || "USD";
 
-      // 2. Extract Payer Email
-      // Subscriptions use 'subscriber', standard checkouts use 'payer'
       const subscriberEmail = resource.subscriber?.email_address;
       const payerEmailRaw = resource.payer?.email_address || resource.payer?.email || subscriberEmail || "unknown@paypal.com";
       const payerEmail = payerEmailRaw.toLowerCase().trim();
 
-      // 3. Extract Payer Name
       const nameData = resource.subscriber?.name || resource.payer?.name || {};
       const payerName = `${nameData.given_name || ""} ${nameData.surname || ""}`.trim() || "PayPal Donor";
 
-      // 4. Transaction ID
-      // For subscriptions, the primary ID is the Subscription ID (starts with I-)
       const transactionId = resource.id || resource.subscription_id || body.id || `tr-${Date.now()}`;
 
-      // 5. Metadata (Cause and Note)
       const note = resource.custom_description || resource.description || body.summary || "";
       let cause = "General";
       if (note.toLowerCase().includes('donation for ')) {
@@ -69,7 +61,6 @@ export async function POST(request: Request) {
       const isSubscriptionEvent = eventType.startsWith('BILLING.SUBSCRIPTION');
       const paymentType = isSubscriptionEvent ? 'RECURRING' : 'ONE_TIME';
 
-      // Find internal userId if exists
       let userId = 'guest';
       try {
         const usersQuery = query(
@@ -102,7 +93,6 @@ export async function POST(request: Request) {
         webhookEventType: eventType
       };
 
-      // Prevent duplicates by checking transactionId
       const existingQuery = query(
         collection(db, 'donations'),
         where('transactionId', '==', transactionId),
@@ -112,9 +102,7 @@ export async function POST(request: Request) {
 
       if (existingSnapshot.empty) {
         await addDoc(collection(db, 'donations'), donationData);
-        console.log(`Donation SAVED: ${transactionId} for ${payerEmail} (${eventType})`);
-      } else {
-        console.log(`Donation ALREADY EXISTS: ${transactionId}, skipping.`);
+        console.log(`Donation SAVED: ${transactionId} for ${payerEmail}`);
       }
     }
 
