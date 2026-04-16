@@ -142,7 +142,7 @@ export default function CausesPage() {
       icon: <Flame className="h-6 w-6" />,
       shortDesc: "Protecting The Homeland • Tactical Equipment • We Are One",
       color: "bg-blue-900",
-      image: "/חיילים.png",
+      image: "/SOLIDER.png",
       imageHint: "idf soldiers israel",
       donateUrl: "/donate?cause=IDF",
       fullContent: (
@@ -247,7 +247,7 @@ export default function CausesPage() {
       title: "Support South of Israel",
       subtitle: "While Rockets Flies, We send Love",
       icon: <Shield className="h-6 w-6" />,
-      shortDesc: "The Chaya Israel branch in Sderot plays a significant role in the community. The city's residents have been suffering for years from the threat of Qassam rockets.",
+      shortDesc: "The Chaya Israel branch in Sderot plays a significant role in the community. The city's residents have been suffering for years from the threat of Qassam rockets that impacts all aspects of life.",
       color: "bg-orange-500",
       image: "/הרס-מקסאם-בשכונת-הרכבות.jpg",
       imageHint: "sderot israel support",
