@@ -67,9 +67,6 @@ export default function Home() {
         <div className="container mx-auto">
           <div className="text-center mb-20 md:mb-40">
             <h2 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter luxury-gradient-text mb-10 break-words hyphens-auto">About Us</h2>
-            <h3 className="text-2xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-800 max-w-6xl mx-auto leading-tight px-4 break-words">
-              24 Years of Broad Chesed Activity Across All of Israel
-            </h3>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-20 md:gap-40 max-w-7xl mx-auto">
@@ -102,12 +99,6 @@ export default function Home() {
                 <p className="text-xl md:text-3xl font-black tracking-tight text-primary uppercase">Co-director</p>
               </div>
             </div>
-          </div>
-          
-          <div className="flex justify-center mt-24 md:mt-48">
-            <Button variant="outline" className="rounded-full h-20 md:h-28 px-16 md:px-32 font-black border-2 md:border-4 border-primary/20 text-primary hover:bg-primary/5 text-2xl md:text-4xl transition-all shadow-lg" asChild>
-              <Link href="/mission">Our Full Story</Link>
-            </Button>
           </div>
         </div>
       </section>
