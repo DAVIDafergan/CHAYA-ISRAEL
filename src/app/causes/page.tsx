@@ -35,7 +35,7 @@ function SpecialImageSwitcher({ images }: { images: string[] }) {
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % images.length);
-    }, 2000);
+    }, 2500);
     return () => clearInterval(timer);
   }, [images.length]);
 
@@ -140,13 +140,13 @@ export default function CausesPage() {
       title: "Support the IDF",
       subtitle: "Protecting The Homeland",
       icon: <Flame className="h-6 w-6" />,
-      shortDesc: "Providing life-saving tactical gear and essential equipment to the brave soldiers defending Israel's borders.",
+      shortDesc: "Protecting The Homeland • Tactical Equipment • We Are One",
       color: "bg-blue-900",
-      image: "/SOLIDER.png",
-      imageHint: "idf soldier israel",
+      image: "/חיילים.png",
+      imageHint: "idf soldiers israel",
       donateUrl: "/donate?cause=IDF",
       fullContent: (
-        <div className="space-y-10">
+        <div className="space-y-12">
           <div className="text-center space-y-8">
              <h3 className="text-2xl md:text-4xl font-black text-blue-900">Protecting The Homeland</h3>
              <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-100 max-w-full mx-auto">
@@ -162,13 +162,21 @@ export default function CausesPage() {
              </div>
 
              <h3 className="text-2xl md:text-4xl font-black text-blue-900">Tactical Equipment</h3>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="relative aspect-square rounded-3xl overflow-hidden shadow-xl">
-                    <Image src="/IDF1.png" fill alt="IDF Tactical Gear 1" className="object-cover" />
-                </div>
-                <div className="relative aspect-square rounded-3xl overflow-hidden shadow-xl">
-                    <Image src="/חיילים.png" fill alt="IDF Soldiers" className="object-cover" />
-                </div>
+             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-xl mx-auto max-w-2xl">
+                <Image src="/תמונה מלחמה.jpg" fill alt="Tactical Equipment" className="object-cover" />
+             </div>
+
+             <h3 className="text-2xl md:text-4xl font-black text-blue-900">We Are One</h3>
+             <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-100 max-w-full mx-auto">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  src="https://www.youtube.com/embed/S2pEToiW8w8" 
+                  title="IDF Support 2" 
+                  frameBorder="0" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowFullScreen
+                ></iframe>
              </div>
           </div>
         </div>
@@ -176,25 +184,28 @@ export default function CausesPage() {
     },
     {
       id: "widows",
-      title: "Widows and Orphans",
-      subtitle: "A Lifeline of Hope",
+      title: "Support Widows and Orphans",
+      subtitle: "Support Widows and Orphans",
       icon: <Heart className="h-6 w-6" />,
-      shortDesc: "Providing direct monthly financial and emotional support to families who have lost their breadwinners.",
+      shortDesc: "When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward.",
       color: "bg-red-500",
-      image: "/widows-support.webp",
+      image: "/יתומים ואלמנות .webp",
       imageHint: "israel charity widows",
       donateUrl: "/donate?cause=Widows%20and%20Orphans",
       fullContent: (
-        <div className="space-y-8">
-          <p className="font-black text-2xl md:text-3xl text-primary leading-tight">When life has you pinned against the wall, friends help you move forward.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-             <div className="space-y-6">
-                <h3 className="font-black text-red-600 text-2xl md:text-3xl">Direct Aid</h3>
-                <p>We provide a safety net for families victimized by terror and war. Our support covers rent, utilities, and therapeutic needs to help them rebuild their lives.</p>
-             </div>
-             <div className="relative aspect-video rounded-3xl overflow-hidden shadow-lg">
-                <Image src="/widows-support.webp" fill alt="Support for widows" className="object-cover" />
-             </div>
+        <div className="space-y-10">
+          <div className="bg-primary/5 p-10 rounded-[40px] border border-primary/10 italic text-center">
+            <Quote className="h-10 w-10 text-primary/20 mx-auto mb-6" />
+            <p className="font-black text-2xl md:text-3xl text-primary leading-tight">
+              "When life has you pinned against the wall, it is often the help from your friends that allows you to keep moving forward."
+            </p>
+          </div>
+          
+          <div className="space-y-6">
+            <h3 className="font-black text-red-600 text-2xl md:text-4xl">Focus on Victims of Terror Attacks and Wars</h3>
+            <p>
+              Over the years, we’ve found that a family victimized by terror often suffers both financial and psychological struggles. It’s hard to lose a loved one – and it’s also hard to lose a source of income. Many women and kids have joined the circle of widows and orphans that have sacrificed more than we know for this great country we call “The Homeland”.
+            </p>
           </div>
         </div>
       )
@@ -202,28 +213,29 @@ export default function CausesPage() {
     {
       id: "hachnasat-kalah",
       title: "Hachnasat Kalah",
-      subtitle: "Building Jewish Homes",
+      subtitle: "If Not Us, Whom? And If Not Now, When?",
       icon: <Sparkles className="h-6 w-6" />,
-      shortDesc: "Helping orphaned or underprivileged couples start their lives together with dignity and joy.",
+      shortDesc: "If Not Us, Whom? And If Not Now, When? For newly-weds just starting off on their journey of marriage, financial matters can be tough and very challenging.",
       color: "bg-pink-500",
-      image: "/wedding.png",
+      image: "/hachnasat-kalah.png",
       imageHint: "jewish wedding",
       donateUrl: "/donate?cause=Hachnasat%20Kalah",
       fullContent: (
         <div className="space-y-10">
-          <h3 className="text-2xl md:text-4xl font-black text-primary text-center">Building The Future</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
              <div className="space-y-6">
-                <p>The cost of establishing a home can be overwhelming. We provide basic furniture, appliances, and wedding assistance to ensure no couple is held back by poverty.</p>
-                <div className="bg-primary/5 p-8 rounded-[32px] border border-primary/10 italic">
-                   "Your support wasn't just money, it was the message that we are not alone."
-                </div>
+                <p className="text-xl md:text-2xl font-bold text-foreground">
+                  For newly-weds just starting off on their journey of marriage, financial matters can be tough and very challenging.
+                </p>
+                <p>
+                  We assist orphaned or underprivileged couples in building their new Jewish home with basic furniture, appliances, and wedding expenses.
+                </p>
              </div>
              <SpecialImageSwitcher 
                images={[
                  "/hachnasat-kalah.png",
                  "/pexels-bride-1850126_1920.jpg",
-                 "/wedding.png"
+                 "/הכנסת כלה2.png"
                ]} 
              />
           </div>
@@ -232,61 +244,28 @@ export default function CausesPage() {
     },
     {
       id: "sderot",
-      title: "Support for Sderot",
-      subtitle: "Resilience on the Frontline",
+      title: "Support South of Israel",
+      subtitle: "While Rockets Flies, We send Love",
       icon: <Shield className="h-6 w-6" />,
-      shortDesc: "Supporting residents of Sderot facing constant rocket threats with essential aid and trauma relief.",
+      shortDesc: "The Chaya Israel branch in Sderot plays a significant role in the community. The city's residents have been suffering for years from the threat of Qassam rockets.",
       color: "bg-orange-500",
-      image: "/SDEROT.png",
+      image: "/הרס-מקסאם-בשכונת-הרכבות.jpg",
       imageHint: "sderot israel support",
       donateUrl: "/donate?cause=Sderot",
       fullContent: (
         <div className="space-y-10">
-          <h3 className="font-black text-orange-600 text-2xl md:text-4xl">While Rockets Fly, We Send Love</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-             <div className="order-2 md:order-1 space-y-6">
-                <p>The residents of Sderot have been on the front lines for decades. We partner with the local Chesed Center to provide emergency food, bomb shelter repairs, and psychological support.</p>
-                <p className="font-black text-xl">Join us in standing with the people of the South.</p>
-             </div>
-             <div className="order-1 md:order-2">
-                <SpecialImageSwitcher 
-                  images={[
-                    "/הרס-מקסאם-בשכונת-הרכבות.jpg", 
-                    "/-צבע-אדום-e1633425858580.jpg", 
-                    "/SDEROT.png"
-                  ]} 
-                />
-             </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      id: "food-boxes",
-      title: "Food & Warmth",
-      subtitle: "Basic Needs, Maximum Impact",
-      icon: <Package className="h-6 w-6" />,
-      shortDesc: "Monthly distribution of food boxes and winter blankets to the most vulnerable communities in Israel.",
-      color: "bg-cyan-600",
-      image: "/featured-image-7.jpg",
-      imageHint: "charity food box",
-      donateUrl: "/donate?cause=Food%20and%20Blankets",
-      fullContent: (
-        <div className="space-y-10">
-          <h3 className="font-black text-cyan-600 text-2xl md:text-4xl text-center">Small Acts, Big Changes</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
              <div className="space-y-6">
-                <p>A simple box of food or a warm blanket can be the difference between despair and hope. We focus on direct distribution to ensure 100% of your impact reaches the family's table.</p>
-                <div className="bg-cyan-50 p-8 rounded-[32px] border border-cyan-100 flex items-center gap-4">
-                   <Package className="h-10 w-10 text-cyan-600" />
-                   <p className="font-black text-cyan-900">$180 feeds a family for a whole month.</p>
-                </div>
+                <p className="font-black text-xl text-orange-600">The Chaya Israel branch in Sderot plays a significant role in the community.</p>
+                <p>The city's residents have been suffering for years from the threat of Qassam rockets that impacts all aspects of life.</p>
+                <p className="font-bold">Please join us in providing hope & support for the people that protect the borders of Israel with their lives.</p>
              </div>
              <SpecialImageSwitcher 
                 images={[
-                  "/featured-image-7.jpg",
-                  "/Packing-Food-in-Netivot-4.jpg",
-                  "/IMG-20201207-WA0002.jpg"
+                  "/הרס-מקסאם-בשכונת-הרכבות.jpg",
+                  "/-צבע-אדום-e1633425858580.jpg",
+                  "/SDEROT.png",
+                  "/TIL.jpg"
                 ]} 
              />
           </div>
@@ -294,32 +273,98 @@ export default function CausesPage() {
       )
     },
     {
-      id: "holidays",
-      title: "Holiday Support",
-      subtitle: "Passover & High Holidays",
-      icon: <CalendarDays className="h-6 w-6" />,
-      shortDesc: "Ensuring every family in Israel can celebrate with dignity. Providing holiday meals and essentials.",
-      color: "bg-amber-500",
-      image: "/IMG-20201207-WA0002.jpg",
-      imageHint: "passover meal charity",
-      donateUrl: "/donate?cause=Holidays",
-      isHoliday: true,
+      id: "food-boxes",
+      title: "Food Boxes & Warm Blankets",
+      subtitle: "We Are One",
+      icon: <Package className="h-6 w-6" />,
+      shortDesc: "Providing nourishment and warmth to families in need across Israel.",
+      color: "bg-cyan-600",
+      image: "/featured-image-7.jpg",
+      imageHint: "charity food box",
+      donateUrl: "/donate?cause=Food%20and%20Blankets",
       fullContent: (
-        <div className="space-y-8">
-           <h3 className="text-2xl md:text-4xl font-black text-amber-600">No One Left Behind</h3>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-6">
-                 <p>Before every major holiday like Passover, Rosh Hashanah, and Succot, Chaya Israel distributes massive food parcels to thousands of needy families.</p>
-                 <p className="font-black text-foreground">Your donation ensures a holiday of joy instead of hunger.</p>
-              </div>
-              <SpecialImageSwitcher 
-                images={[
-                  "/IMG-20201207-WA0002.jpg",
-                  "/featured-image-7.jpg",
-                  "/Packing-Food-in-Netivot-4.jpg"
-                ]} 
-              />
-           </div>
+        <div className="space-y-10">
+          <div className="aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-100 max-w-full mx-auto">
+            <iframe 
+              width="100%" 
+              height="100%" 
+              src="https://www.youtube.com/embed/fW_D_C0-78k" 
+              title="Food and Blankets Support" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen
+            ></iframe>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="space-y-6">
+               <p>Providing nourishment and warmth to families in need across Israel. Our monthly distributions ensure that no child goes to sleep hungry or cold.</p>
+            </div>
+            <SpecialImageSwitcher 
+              images={[
+                "/1000_F_1742300809_eN16WzZ1qRS7mrQR0QRpxZVu31KCtd4F.jpg",
+                "/featured-image-7.jpg",
+                "/Packing-Food-in-Netivot-4.jpg",
+                "/IMG-20201207-WA0002.jpg"
+              ]} 
+            />
+          </div>
+        </div>
+      )
+    }
+  ];
+
+  const holidayCauses: Cause[] = [
+    {
+      id: "rosh-hashanah",
+      title: "Rosh Hashanah & Sukkot",
+      subtitle: "Teshuva, Tefila and Tzdakah",
+      icon: <CalendarDays className="h-6 w-6" />,
+      shortDesc: "Teshuva, Tefila and Tzdakah - High Holiday relief.",
+      color: "bg-amber-500",
+      image: "/Screenshot 2026-02-19 11.13.10.png",
+      imageHint: "rosh hashanah charity",
+      donateUrl: "/donate?cause=Holidays",
+      fullContent: (
+        <div className="space-y-6">
+          <p className="text-xl md:text-2xl font-bold leading-relaxed">
+            "We will soon be begging Hashem, pleading for a Shana Tovah for ourselves and for our families and I am sure that this Mitzva of tzedakah will stand for us all on the upcoming days of Judgement. Please open your heart generously and assist us in bringing joy and relief to our fellow Jews who rely on our help."
+          </p>
+        </div>
+      )
+    },
+    {
+      id: "purim",
+      title: "Purim",
+      subtitle: "Matanot Laevyonim",
+      icon: <Star className="h-6 w-6" />,
+      shortDesc: "Matanot Laevyonim - Gifts to the poor.",
+      color: "bg-purple-500",
+      image: "/Gemini_Generated_Image_cxdvzjcxdvzjcxdv.png",
+      imageHint: "purim charity",
+      donateUrl: "/donate?cause=Purim",
+      fullContent: (
+        <div className="space-y-6">
+          <p className="text-xl md:text-2xl font-bold leading-relaxed">
+            "As in past years, we will be distributing מתנות לאביונים, gifts to the poor, on Purim day. Please give generously so we can keep doing our holy work and speed up the ultimate Geulah."
+          </p>
+        </div>
+      )
+    },
+    {
+      id: "pesach",
+      title: "Pesach",
+      subtitle: "Maot Chitim",
+      icon: <Utensils className="h-6 w-6" />,
+      shortDesc: "Maot Chitim - Support for Pesach.",
+      color: "bg-blue-500",
+      image: "/Screenshot 2026-02-19 11.12.50.png",
+      imageHint: "pesach maot chitim",
+      donateUrl: "/donate?cause=Pesach",
+      fullContent: (
+        <div className="space-y-6">
+          <p className="text-xl md:text-2xl font-bold leading-relaxed">
+            "Please appoint us as your Shaliach for this most important Mitzvah of Maot Chitim. As you are likely aware, the need is great, especially during the seven days of Pesach, when people's expenses are doubled compared to other holidays. We will also be assisting the widows and orphans of our brave brethren HY”D who sacrificed their lives since Simchas Torah so that we can continue to live as proud Jews in Eretz Yisrael and abroad."
+          </p>
         </div>
       )
     }
@@ -327,6 +372,7 @@ export default function CausesPage() {
 
   return (
     <div className="overflow-x-hidden pt-32 md:pt-48 bg-white min-h-screen">
+      {/* Hero Header */}
       <section className="pb-16 md:pb-24 px-6">
         <div className="container mx-auto text-center px-4">
           <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black luxury-gradient-text tracking-tight leading-tight mb-6 break-words hyphens-auto">
@@ -338,13 +384,43 @@ export default function CausesPage() {
         </div>
       </section>
 
+      {/* Main Causes Grid */}
       <section className="pb-24 md:pb-32 px-6">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
             {causes.map((cause) => (
               <DialogCard key={cause.id} cause={cause} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* High Holidays Intro Section */}
+      <section className="py-24 md:py-32 bg-slate-50/50 px-6 border-y border-slate-100">
+        <div className="container mx-auto max-w-5xl text-center px-4">
+          <div className="inline-flex bg-primary/10 p-6 rounded-full mb-8">
+            <CalendarDays className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-8 break-words hyphens-auto luxury-gradient-text">
+            High Holidays Donations
+          </h2>
+          <div className="glass-card p-10 md:p-16 rounded-[48px] bg-white shadow-xl border-primary/5">
+             <p className="text-lg md:text-2xl text-muted-foreground font-medium leading-relaxed">
+               "There are many who have lost their sources of income, many orphans and widows, and many unprivileged families, and as the High Holidays draw near, we must help them celebrate in a dignified manner. Your contribution enables families to respectfully purchase food and other necessities for the Yom Tov. Please help those that can't manage on their own."
+             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Holiday Causes Grid */}
+      <section className="py-24 md:py-32 px-6 bg-white">
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+            {holidayCauses.map((cause) => (
+              <DialogCard key={cause.id} cause={cause} />
+            ))}
             
+            {/* Hardcoded Other Causes Card */}
             <Link href="/donate?cause=Other" className="group h-full">
               <div className="glass-card h-full rounded-[32px] md:rounded-[40px] overflow-hidden flex flex-col border border-dashed border-primary/30 bg-white hover:bg-primary/5 transition-all shadow-md">
                  <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-6">
@@ -354,7 +430,10 @@ export default function CausesPage() {
                     <div className="space-y-4">
                       <h3 className="text-2xl md:text-3xl font-black tracking-tight break-words">Other Causes</h3>
                       <p className="text-base md:text-lg text-muted-foreground font-medium leading-relaxed opacity-80">
-                        Supporting disadvantaged communities and emergency needs all year long.
+                        Providing Basic Necessities Enables Us to Enliven Disadvantaged Communities All Year Long.
+                      </p>
+                      <p className="text-xs font-black text-primary uppercase tracking-widest pt-4 group-hover:underline">
+                        Please describe your donation
                       </p>
                     </div>
                  </div>
@@ -364,6 +443,7 @@ export default function CausesPage() {
         </div>
       </section>
 
+      {/* Footer CTA */}
       <section className="py-32 md:py-48 bg-foreground text-white relative overflow-hidden px-6">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full -mr-48 -mt-48 blur-[120px]" />
         <div className="container mx-auto text-center relative z-10 space-y-12">
@@ -380,3 +460,9 @@ export default function CausesPage() {
     </div>
   );
 }
+
+const Quote = ({ className }: { className?: string }) => (
+  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V12C14.017 12.5523 13.5693 13 13.017 13H11.017C10.4647 13 10.017 12.5523 10.017 12V9C10.017 7.34315 11.3601 6 13.017 6H19.017C20.6739 6 22.017 7.34315 22.017 9V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM3.017 21L3.017 18C3.017 16.8954 3.91243 16 5.017 16H8.017C8.56928 16 9.017 15.5523 9.017 15V9C9.017 8.44772 8.56928 8 8.017 8H4.017C3.46472 8 3.017 8.44772 3.017 9V12C3.017 12.5523 2.56928 13 2.017 13H0.017C-0.535282 13 -1.017 12.5523 -1.017 12V9C-1.017 7.34315 0.326142 6 1.017 6H8.017C9.67386 6 11.017 7.34315 11.017 9V15C11.017 18.3137 8.33071 21 5.017 21H3.017Z" />
+  </svg>
+);
