@@ -30,13 +30,13 @@ export default function Home() {
           </h1>
           
           <div className="space-y-12 md:space-y-20 w-full max-w-5xl px-4">
-            <div className="flex flex-col sm:flex-row justify-center gap-6 md:gap-12">
-              <Button size="lg" asChild className="h-18 md:h-28 px-12 md:px-24 rounded-full font-black bg-primary text-white shadow-2xl text-2xl md:text-4xl border-b-4 border-primary-foreground/20 hover:scale-105 transition-all">
-                <Link href="/donate" className="flex items-center gap-3">
-                  Donate now <ArrowRight className="h-8 w-8 md:h-12 md:w-12" />
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 md:gap-10">
+              <Button size="lg" asChild className="h-16 md:h-20 px-10 md:px-14 rounded-full font-black bg-primary text-white shadow-xl text-xl md:text-2xl border-b-4 border-primary-foreground/20 hover:scale-105 transition-all w-full sm:w-auto">
+                <Link href="/donate" className="flex items-center justify-center gap-3">
+                  Donate now <ArrowRight className="h-6 w-6 md:h-8 md:w-8" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-18 md:h-28 px-12 md:px-24 rounded-full font-black border-2 md:border-4 border-primary/20 text-primary text-2xl md:text-4xl hover:bg-primary/5 transition-all shadow-md" asChild>
+              <Button size="lg" variant="outline" className="h-16 md:h-20 px-10 md:px-14 rounded-full font-black border-2 md:border-4 border-primary/20 text-primary text-xl md:text-2xl hover:bg-primary/5 transition-all shadow-md w-full sm:w-auto" asChild>
                 <Link href="/causes">Our causes</Link>
               </Button>
             </div>
@@ -45,14 +45,14 @@ export default function Home() {
               <Button 
                 variant="outline" 
                 asChild 
-                className="h-24 md:h-40 px-12 md:px-20 rounded-[3rem] md:rounded-[5rem] border-2 md:border-4 border-primary/10 bg-white shadow-xl hover:shadow-glow-blue hover:border-primary/40 transition-all group"
+                className="h-24 md:h-36 px-10 md:px-16 rounded-[3rem] border-2 border-primary/10 bg-white shadow-lg hover:shadow-glow-blue hover:border-primary/40 transition-all group"
               >
                 <Link href={user ? "/account" : "/login"} className="flex flex-col items-center justify-center gap-1 md:gap-2">
                   <div className="flex items-center gap-4 text-slate-900 group-hover:text-primary transition-colors">
-                    <User className="h-8 w-8 md:h-14 md:w-14 group-hover:scale-110 transition-transform" />
-                    <span className="text-xl md:text-4xl font-black tracking-tight uppercase">Donor Portal</span>
+                    <User className="h-8 w-8 md:h-12 md:w-12 group-hover:scale-110 transition-transform" />
+                    <span className="text-xl md:text-3xl font-black tracking-tight uppercase">Donor Portal</span>
                   </div>
-                  <span className="text-[11px] md:text-lg font-black text-muted-foreground uppercase tracking-widest opacity-60">
+                  <span className="text-[10px] md:text-sm font-black text-muted-foreground uppercase tracking-widest opacity-60">
                     (My Giving History)
                   </span>
                 </Link>
