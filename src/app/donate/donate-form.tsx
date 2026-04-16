@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DollarSign, Heart, MessageSquare, Info, User, Mail, Loader2, CheckCircle2, ArrowRight, CreditCard } from "lucide-react";
+import { DollarSign, Heart, Mail, Loader2, CheckCircle2, ArrowRight, CreditCard, User } from "lucide-react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { type OnApproveData } from "@paypal/paypal-js";
 import { useState, useEffect } from 'react';
@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -123,7 +122,6 @@ export default function DonateForm({ cause }: { cause?: string }) {
         return Promise.reject(new Error("Form is invalid"));
     }
       
-    // Updated to include payment_source for 3D Secure / SCA compliance
     return actions.order.create({
       intent: "CAPTURE",
       purchase_units: [
@@ -185,12 +183,12 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="bg-green-100 p-6 rounded-full w-fit mx-auto mb-8">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 leading-none">Thank you!</h1>
-            <p className="text-lg md:text-xl text-slate-500 font-bold mb-8 leading-relaxed">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 leading-none break-words">Thank you!</h1>
+            <p className="text-base md:text-xl text-slate-500 font-bold mb-8 leading-relaxed">
               Your contribution will make a significant impact in Israel.
             </p>
             
-            {!user && (lastEmail) && (
+            {!user && lastEmail && (
               <div className="bg-primary/5 p-6 rounded-[24px] space-y-4">
                 <div className="space-y-2">
                   <h3 className="text-xl md:text-2xl font-black text-primary tracking-tight">Track your impact</h3>
@@ -220,16 +218,16 @@ export default function DonateForm({ cause }: { cause?: string }) {
   return (
     <div className="pt-24 pb-16 px-4 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-xl">
-        <header className="text-center mb-8">
+        <header className="text-center mb-8 px-4">
           <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
             <Heart className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight mb-2">
+          <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight mb-2 break-words">
             Donate to Chaya Israel
           </h1>
           {cause && !isOtherCause && (
             <div className="bg-primary/5 py-1 px-4 rounded-full inline-block">
-              <p className="text-primary text-sm md:text-lg font-black uppercase tracking-tight">
+              <p className="text-primary text-xs md:text-lg font-black uppercase tracking-tight">
                 Cause: {cause}
               </p>
             </div>
@@ -237,194 +235,186 @@ export default function DonateForm({ cause }: { cause?: string }) {
         </header>
 
         <Form {...form}>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <div className="space-y-4">
-              
-              <Card className="rounded-[24px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100 px-6">
-                  <CardTitle className="text-lg font-black flex items-center gap-2 text-primary tracking-tight">
-                    <CreditCard className="h-5 w-5" /> Donation Type
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 md:p-6">
-                  <FormField
-                    control={form.control}
-                    name="isRecurring"
-                    render={({ field }) => (
-                      <FormItem className="space-y-3">
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={(value) => field.onChange(value === 'monthly')}
-                            defaultValue={field.value ? 'monthly' : 'one-time'}
-                            className="grid grid-cols-1 gap-2"
-                          >
-                            <div className={cn(
-                              "relative flex items-center p-3 md:p-4 rounded-[16px] border-2 transition-all cursor-pointer",
-                              !field.value ? "border-primary bg-primary/5 shadow-sm" : "border-slate-100 hover:border-primary/20"
-                            )} onClick={() => field.onChange(false)}>
-                              <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
-                              <div className="flex items-center gap-3 w-full">
-                                <div className={cn(
-                                  "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
-                                  !field.value ? "border-primary" : "border-slate-300"
-                                )}>
-                                  {!field.value && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
-                                </div>
-                                <p className={cn("text-base md:text-lg font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
-                                  One-Time Donation
-                                </p>
+          <form className="space-y-4 px-2 md:px-0" onSubmit={(e) => e.preventDefault()}>
+            <Card className="rounded-[24px] overflow-hidden border-0 shadow-sm bg-white">
+              <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100 px-6">
+                <CardTitle className="text-base md:text-lg font-black flex items-center gap-2 text-primary tracking-tight">
+                  <CreditCard className="h-5 w-5" /> Donation Type
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 md:p-6">
+                <FormField
+                  control={form.control}
+                  name="isRecurring"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={(value) => field.onChange(value === 'monthly')}
+                          defaultValue={field.value ? 'monthly' : 'one-time'}
+                          className="grid grid-cols-1 gap-2"
+                        >
+                          <div className={cn(
+                            "relative flex items-center p-3 md:p-4 rounded-[16px] border-2 transition-all cursor-pointer",
+                            !field.value ? "border-primary bg-primary/5 shadow-sm" : "border-slate-100 hover:border-primary/20"
+                          )} onClick={() => field.onChange(false)}>
+                            <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
+                            <div className="flex items-center gap-3 w-full">
+                              <div className={cn(
+                                "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
+                                !field.value ? "border-primary" : "border-slate-300"
+                              )}>
+                                {!field.value && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                              </div>
+                              <p className={cn("text-base md:text-lg font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
+                                One-Time
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className={cn(
+                            "relative flex items-center p-3 md:p-4 rounded-[16px] border-2 transition-all cursor-pointer",
+                            field.value ? "border-primary bg-primary/5 shadow-sm" : "border-slate-100 hover:border-primary/20"
+                          )} onClick={() => field.onChange(true)}>
+                            <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
+                            <div className="flex items-center gap-3 w-full">
+                              <div className={cn(
+                                "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
+                                field.value ? "border-primary" : "border-slate-300"
+                              )}>
+                                {field.value && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
+                              </div>
+                              <p className={cn("text-base md:text-lg font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
+                                Monthly
+                              </p>
+                              <div className="ml-auto bg-primary text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-widest">
+                                Needed
                               </div>
                             </div>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
 
-                            <div className={cn(
-                              "relative flex items-center p-3 md:p-4 rounded-[16px] border-2 transition-all cursor-pointer",
-                              field.value ? "border-primary bg-primary/5 shadow-sm" : "border-slate-100 hover:border-primary/20"
-                            )} onClick={() => field.onChange(true)}>
-                              <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
-                              <div className="flex items-center gap-3 w-full">
-                                <div className={cn(
-                                  "h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0",
-                                  field.value ? "border-primary" : "border-slate-300"
-                                )}>
-                                  {field.value && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
-                                </div>
-                                <p className={cn("text-base md:text-lg font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
-                                  Monthly Donation
-                                </p>
-                                <div className="ml-auto bg-primary text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-widest shadow-sm">
-                                  Needed
-                                </div>
-                              </div>
-                            </div>
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-[24px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100 px-6">
-                  <CardTitle className="text-lg font-black flex items-center gap-2 text-primary tracking-tight">
-                    <DollarSign className="h-5 w-5" /> Donation amount
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 md:p-6">
-                  <FormField
-                    control={form.control}
-                    name="amount"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl md:text-4xl font-black text-primary">$</span>
-                            <FormControl>
-                              <Input 
-                                type="number" 
-                                placeholder="0.00" 
-                                {...field} 
-                                className="pl-10 md:pl-14 h-14 md:h-18 text-2xl md:text-4xl font-black bg-slate-50/50 rounded-[16px] border-0 focus:ring-4 focus:ring-primary/10 transition-all"
-                                required
-                              />
-                            </FormControl>
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-
-              <Card className="rounded-[24px] overflow-hidden border-0 shadow-sm bg-white">
-                <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100 px-6">
-                  <CardTitle className="text-lg font-black flex items-center gap-2 text-primary tracking-tight">
-                    <User className="h-5 w-5" /> Personal details
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 md:p-6 space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <FormField control={form.control} name="firstName" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1 tracking-widest mb-0.5 block">First name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="John" {...field} className="h-11 bg-slate-50/50 rounded-xl px-4 border-0 text-sm font-bold" required />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}/>
-                    <FormField control={form.control} name="lastName" render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1 tracking-widest mb-0.5 block">Last name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Doe" {...field} className="h-11 bg-slate-50/50 rounded-xl px-4 border-0 text-sm font-bold" required />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}/>
-                  </div>
-                  <FormField control={form.control} name="email" render={({ field }) => (
+            <Card className="rounded-[24px] overflow-hidden border-0 shadow-sm bg-white">
+              <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100 px-6">
+                <CardTitle className="text-base md:text-lg font-black flex items-center gap-2 text-primary tracking-tight">
+                  <DollarSign className="h-5 w-5" /> Amount
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 md:p-6">
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1 tracking-widest mb-0.5 block">Email address</FormLabel>
                       <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="email@example.com" 
-                            {...field} 
-                            className="h-11 pl-11 bg-slate-50/50 rounded-xl border-0 text-sm font-bold"
-                            required
-                          />
-                        </FormControl>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl md:text-4xl font-black text-primary">$</span>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              placeholder="0.00" 
+                              {...field} 
+                              className="pl-10 md:pl-14 h-12 md:h-16 text-xl md:text-3xl font-black bg-slate-50/50 rounded-[16px] border-0 focus:ring-4 focus:ring-primary/10"
+                              required
+                            />
+                          </FormControl>
                       </div>
                       <FormMessage />
                     </FormItem>
-                  )}/>
-                </CardContent>
-              </Card>
+                  )}
+                />
+              </CardContent>
+            </Card>
 
-              <div className="space-y-4">
-                {isClient && (
-                  <div 
-                    key={watchIsRecurring ? `paypal-sub-v5-${PAYPAL_CLIENT_ID}` : `paypal-one-v5-${PAYPAL_CLIENT_ID}`}
-                    className="bg-white p-4 rounded-[24px] shadow-lg border border-slate-100 flex flex-col justify-center gap-2"
-                  >
-                    <PayPalScriptProvider 
-                      key={watchIsRecurring ? "script-sub-v5-reloaded" : "script-one-v5-reloaded"}
-                      options={{ 
-                        clientId: PAYPAL_CLIENT_ID, 
-                        currency: "USD",
-                        intent: watchIsRecurring ? "subscription" : "capture",
-                        vault: watchIsRecurring ? true : undefined
-                      }}
-                    >
-                      <PayPalButtons 
-                        key={watchIsRecurring ? "btns-sub-v5-active" : "btns-one-v5-active"}
-                        style={{ 
-                          layout: "vertical", 
-                          color: 'blue', 
-                          shape: 'pill', 
-                          label: watchIsRecurring ? 'subscribe' : 'donate',
-                          height: 55 // Fixed to maximum allowed height to prevent crashes
-                        }}
-                        createOrder={!watchIsRecurring ? createOrder : undefined}
-                        createSubscription={watchIsRecurring ? createSubscription : undefined}
-                        onApprove={handleOnApprove}
-                        onError={(err) => {
-                          console.error("PayPal Global Error:", err);
-                          toast({
-                            variant: "destructive",
-                            title: "Connection Error",
-                            description: "Could not connect to PayPal. Please try again.",
-                          });
-                        }}
+            <Card className="rounded-[24px] overflow-hidden border-0 shadow-sm bg-white">
+              <CardHeader className="bg-slate-50/50 py-3 border-b border-slate-100 px-6">
+                <CardTitle className="text-base md:text-lg font-black flex items-center gap-2 text-primary tracking-tight">
+                  <User className="h-5 w-5" /> Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 md:p-6 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <FormField control={form.control} name="firstName" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1">First name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="John" {...field} className="h-11 bg-slate-50/50 rounded-xl px-4 border-0 text-sm font-bold" required />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}/>
+                  <FormField control={form.control} name="lastName" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1">Last name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Doe" {...field} className="h-11 bg-slate-50/50 rounded-xl px-4 border-0 text-sm font-bold" required />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}/>
+                </div>
+                <FormField control={form.control} name="email" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1">Email</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="email" 
+                        placeholder="email@example.com" 
+                        {...field} 
+                        className="h-11 bg-slate-50/50 rounded-xl border-0 text-sm font-bold"
+                        required
                       />
-                    </PayPalScriptProvider>
-                    <p className="text-center text-[8px] font-black text-slate-400 uppercase tracking-widest">Secure Payment Gateway</p>
-                  </div>
-                )}
-              </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}/>
+              </CardContent>
+            </Card>
+
+            <div className="space-y-4 mt-6">
+              {isClient && (
+                <div 
+                  key={watchIsRecurring ? `paypal-sub-v5` : `paypal-one-v5`}
+                  className="bg-white p-4 rounded-[24px] shadow-lg border border-slate-100"
+                >
+                  <PayPalScriptProvider 
+                    options={{ 
+                      clientId: PAYPAL_CLIENT_ID, 
+                      currency: "USD",
+                      intent: watchIsRecurring ? "subscription" : "capture",
+                      vault: watchIsRecurring ? true : undefined
+                    }}
+                  >
+                    <PayPalButtons 
+                      style={{ 
+                        layout: "vertical", 
+                        color: 'blue', 
+                        shape: 'pill', 
+                        label: watchIsRecurring ? 'subscribe' : 'donate',
+                        height: 55 
+                      }}
+                      createOrder={!watchIsRecurring ? createOrder : undefined}
+                      createSubscription={watchIsRecurring ? createSubscription : undefined}
+                      onApprove={handleOnApprove}
+                      onError={(err) => {
+                        console.error("PayPal Global Error:", err);
+                        toast({
+                          variant: "destructive",
+                          title: "Connection Error",
+                          description: "Could not connect to PayPal. Please try again.",
+                        });
+                      }}
+                    />
+                  </PayPalScriptProvider>
+                  <p className="text-center text-[8px] font-black text-slate-400 uppercase tracking-widest mt-2">Secure Payment Gateway</p>
+                </div>
+              )}
             </div>
           </form>
         </Form>

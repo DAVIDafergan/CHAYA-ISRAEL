@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, Phone, MapPin, Loader2, CheckCircle2, ArrowRight } from "lucide-react"
+import { Mail, Phone, Loader2, CheckCircle2, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import { useFirestore } from "@/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
@@ -56,11 +56,9 @@ export default function ContactPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
     try {
-      if (!firestore) {
-        throw new Error("Firestore connection error. Please refresh the page.");
-      }
+      if (!firestore) throw new Error("Connection failed. Please refresh.");
 
-      // Create document in 'mail' collection for Trigger Email extension
+      // Use Firestore 'mail' collection to trigger automated email
       await addDoc(collection(firestore, 'mail'), {
         to: 'kramera613@gmail.com',
         replyTo: values.email,
@@ -68,39 +66,28 @@ export default function ContactPage() {
           subject: `פנייה חדשה מאתר חיה ישראל - ${values.name}`,
           text: `Name: ${values.name}\nEmail: ${values.email}\nMessage: ${values.message}`,
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #f0f0f0; border-radius: 20px; background-color: #ffffff;">
-              <div style="text-align: center; margin-bottom: 30px;">
-                <h1 style="color: #1E4099; font-size: 24px; margin: 0;">פנייה חדשה מאתר חיה ישראל</h1>
-              </div>
-              <div style="background-color: #f8f9fa; padding: 25px; border-radius: 15px; margin-bottom: 25px;">
-                <p style="margin: 0 0 15px 0;"><strong>שם השולח:</strong> ${values.name}</p>
-                <p style="margin: 0 0 15px 0;"><strong>דוא"ל לחזרה:</strong> ${values.email}</p>
-                <p style="margin: 0;"><strong>תוכן ההודעה:</strong></p>
-                <div style="margin-top: 10px; padding: 15px; background-color: #ffffff; border-left: 5px solid #1E4099; border-radius: 5px; font-style: italic;">
-                  ${values.message.replace(/\n/g, '<br>')}
-                </div>
-              </div>
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 12px;">
+              <h2 style="color: #1E4099;">פנייה חדשה מאתר חיה ישראל</h2>
+              <p><strong>שם:</strong> ${values.name}</p>
+              <p><strong>דוא"ל:</strong> ${values.email}</p>
+              <p><strong>הודעה:</strong></p>
+              <p style="background: #f9f9f9; padding: 15px; border-radius: 8px;">${values.message.replace(/\n/g, '<br>')}</p>
             </div>
           `,
         },
         createdAt: serverTimestamp(),
-        name: values.name,
-        email: values.email,
-        source: 'contact-form'
+        source: 'contact-page'
       });
 
       setIsSuccess(true)
       form.reset()
-      toast({
-        title: "Message sent!",
-        description: "Thank you, we will get back to you shortly.",
-      })
+      toast({ title: "Message sent!" });
     } catch (error: any) {
       console.error("Submission error:", error)
       toast({
         variant: "destructive",
         title: "Submission failed",
-        description: error.message || "Please check your internet connection and try again.",
+        description: error.message || "Please try again later.",
       })
     } finally {
       setIsSubmitting(false)
@@ -113,17 +100,17 @@ export default function ContactPage() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-xl w-full text-center space-y-8"
+          className="max-w-xl w-full text-center space-y-10 px-4"
         >
           <div className="bg-green-100 p-8 rounded-full w-fit mx-auto mb-4">
             <CheckCircle2 className="h-16 w-16 text-green-600" />
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight luxury-gradient-text leading-tight px-4 break-words">Message Sent!</h2>
-          <p className="text-lg md:text-2xl text-muted-foreground font-bold leading-relaxed px-6">
-            Thank you for reaching out. Your message has been delivered and we will respond to you shortly.
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight luxury-gradient-text leading-tight break-words">Message Sent!</h2>
+          <p className="text-xl md:text-3xl text-muted-foreground font-bold leading-relaxed">
+            Thank you. We will get back to you shortly at kramera613@gmail.com.
           </p>
           <div className="pt-8">
-            <Button asChild size="lg" className="rounded-full h-18 px-12 text-xl font-black bg-primary text-white shadow-xl border-b-4 border-primary-foreground/20">
+            <Button asChild size="lg" className="rounded-full h-20 md:h-24 px-12 md:px-20 text-xl md:text-3xl font-black bg-primary text-white shadow-xl border-b-4 border-primary-foreground/20">
               <Link href="/" className="flex items-center gap-3">
                 Back to Home <ArrowRight className="h-6 w-6" />
               </Link>
@@ -135,63 +122,63 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="overflow-x-hidden pt-28 md:pt-40 bg-white min-h-screen">
-       <section className="py-12 md:py-20 px-6">
+    <div className="overflow-x-hidden pt-28 md:pt-48 bg-white min-h-screen">
+       <section className="py-12 md:py-24 px-6">
           <div className="container mx-auto text-center">
-              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black luxury-gradient-text tracking-tight leading-tight mb-8 break-words px-4">
+              <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black luxury-gradient-text tracking-tight leading-tight mb-10 break-words px-4">
                   Contact Us
               </h1>
-              <p className="max-w-3xl mx-auto text-base md:text-xl lg:text-2xl text-muted-foreground font-medium leading-relaxed px-6">
+              <p className="max-w-4xl mx-auto text-lg md:text-3xl text-muted-foreground font-medium leading-relaxed px-4">
                 We'd love to hear from you. Reach out with any questions or to learn more about our mission.
               </p>
           </div>
       </section>
 
-      <section className="py-12 md:py-20 px-6">
-        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start max-w-7xl">
-            <div className="space-y-12 md:space-y-20">
+      <section className="py-12 md:py-24 px-6">
+        <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-32 items-start max-w-7xl">
+            <div className="space-y-16 md:space-y-24">
               <div className="px-4">
-                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight break-words">Get in Touch</h2>
-                <p className="mt-6 text-base md:text-2xl text-muted-foreground font-medium leading-relaxed">Find us at our location, give us a call, or send an email.</p>
+                <h2 className="text-3xl md:text-6xl font-black text-primary tracking-tight leading-tight break-words">Get in Touch</h2>
+                <p className="mt-8 text-xl md:text-3xl text-muted-foreground font-medium leading-relaxed">Reach out via email or phone for any assistance.</p>
               </div>
-              <div className="space-y-10 md:space-y-16">
-                  <div className="flex items-start gap-8 md:gap-12">
-                      <div className="bg-primary/10 p-5 md:p-7 rounded-2xl shrink-0">
-                          <Mail className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+              <div className="space-y-12 md:space-y-20 px-4">
+                  <div className="flex items-start gap-10">
+                      <div className="bg-primary/10 p-6 rounded-2xl shrink-0">
+                          <Mail className="h-10 w-10 text-primary" />
                       </div>
                       <div className="space-y-2">
-                          <h3 className="font-black text-[10px] md:text-sm text-slate-400 uppercase tracking-widest">Primary Email</h3>
-                          <a href="mailto:kramera613@gmail.com" className="text-lg md:text-2xl lg:text-3xl text-primary font-black hover:underline transition-all break-all leading-tight">kramera613@gmail.com</a>
+                          <h3 className="font-black text-xs md:text-lg text-slate-400 uppercase tracking-widest">Email</h3>
+                          <a href="mailto:kramera613@gmail.com" className="text-xl md:text-4xl text-primary font-black hover:underline transition-all break-all leading-tight">kramera613@gmail.com</a>
                       </div>
                   </div>
                   
-                  <div className="flex items-start gap-8 md:gap-12">
-                        <div className="bg-primary/10 p-5 md:p-7 rounded-2xl shrink-0">
-                          <Phone className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+                  <div className="flex items-start gap-10">
+                        <div className="bg-primary/10 p-6 rounded-2xl shrink-0">
+                          <Phone className="h-10 w-10 text-primary" />
                       </div>
                       <div className="space-y-2">
-                          <h3 className="font-black text-[10px] md:text-sm text-slate-400 uppercase tracking-widest">Phone Number</h3>
-                          <a href="tel:+19179156106" className="text-lg md:text-2xl lg:text-3xl text-primary font-black hover:underline transition-all leading-tight">(+917) 915 - 6106</a>
+                          <h3 className="font-black text-xs md:text-lg text-slate-400 uppercase tracking-widest">Phone</h3>
+                          <a href="tel:+19179156106" className="text-xl md:text-4xl text-primary font-black hover:underline transition-all leading-tight">(+917) 915 - 6106</a>
                       </div>
                   </div>
               </div>
             </div>
 
-            <Card className="p-8 md:p-14 shadow-2xl bg-white border-0 rounded-[48px] overflow-hidden">
-                <CardHeader className="p-0 mb-10">
-                    <CardTitle className="text-2xl md:text-4xl font-black tracking-tight luxury-gradient-text break-words">Send us a Message</CardTitle>
+            <Card className="p-10 md:p-20 shadow-2xl bg-white border-0 rounded-[48px] overflow-hidden">
+                <CardHeader className="p-0 mb-12">
+                    <CardTitle className="text-3xl md:text-5xl font-black tracking-tight luxury-gradient-text break-words">Send a Message</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-10">
                           <FormField
                             control={form.control}
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Full Name</FormLabel>
+                                <FormLabel className="text-xs md:text-base font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Full Name</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="John Doe" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-base md:text-xl"/>
+                                  <Input placeholder="John Doe" {...field} className="h-18 md:h-24 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 text-lg md:text-2xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -202,9 +189,9 @@ export default function ContactPage() {
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Email Address</FormLabel>
+                                <FormLabel className="text-xs md:text-base font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Email</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="john.doe@example.com" {...field} className="h-16 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-base md:text-xl"/>
+                                  <Input placeholder="name@example.com" {...field} className="h-18 md:h-24 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 text-lg md:text-2xl"/>
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -215,12 +202,12 @@ export default function ContactPage() {
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-[10px] md:text-sm font-black uppercase tracking-widest text-slate-400 mb-2 block">Message</FormLabel>
+                                <FormLabel className="text-xs md:text-base font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Message</FormLabel>
                                 <FormControl>
                                   <Textarea
-                                    placeholder="Tell us how we can help..."
-                                    className="resize-none bg-slate-50/50 rounded-2xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 transition-all text-base md:text-xl"
-                                    rows={5}
+                                    placeholder="How can we help?"
+                                    className="resize-none bg-slate-50/50 rounded-2xl border-0 p-8 font-bold focus:ring-4 focus:ring-primary/10 text-lg md:text-2xl"
+                                    rows={6}
                                     {...field}
                                   />
                                 </FormControl>
@@ -231,13 +218,9 @@ export default function ContactPage() {
                           <Button 
                             type="submit" 
                             disabled={isSubmitting}
-                            className="w-full h-20 rounded-full bg-primary text-white hover:bg-primary/90 shadow-xl border-b-4 border-primary-foreground/20 font-black text-xl md:text-2xl mt-6 transition-all"
+                            className="w-full h-20 md:h-28 rounded-full bg-primary text-white hover:bg-primary/90 shadow-xl border-b-4 border-primary-foreground/20 font-black text-xl md:text-4xl mt-6 transition-all"
                           >
-                            {isSubmitting ? (
-                              <div className="flex items-center gap-3">
-                                <Loader2 className="h-7 w-7 animate-spin" /> Processing...
-                              </div>
-                            ) : "Send Message"}
+                            {isSubmitting ? <Loader2 className="h-8 w-8 animate-spin" /> : "Send Message"}
                           </Button>
                       </form>
                     </Form>
