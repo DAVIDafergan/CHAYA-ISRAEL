@@ -175,36 +175,6 @@ export default function CausesPage() {
       )
     },
     {
-      id: "holidays",
-      title: "Holiday Support",
-      subtitle: "Passover & High Holidays",
-      icon: <CalendarDays className="h-6 w-6" />,
-      shortDesc: "Ensuring every family in Israel can celebrate with dignity. Providing holiday meals and essentials.",
-      color: "bg-amber-500",
-      image: "/IMG-20201207-WA0002.jpg",
-      imageHint: "passover meal charity",
-      donateUrl: "/donate?cause=Holidays",
-      isHoliday: true,
-      fullContent: (
-        <div className="space-y-8">
-           <h3 className="text-2xl md:text-4xl font-black text-amber-600">No One Left Behind</h3>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-              <div className="space-y-6">
-                 <p>Before every major holiday like Passover, Rosh Hashanah, and Succot, Chaya Israel distributes massive food parcels to thousands of needy families.</p>
-                 <p className="font-black text-foreground">Your donation ensures a holiday of joy instead of hunger.</p>
-              </div>
-              <SpecialImageSwitcher 
-                images={[
-                  "/IMG-20201207-WA0002.jpg",
-                  "/featured-image-7.jpg",
-                  "/Packing-Food-in-Netivot-4.jpg"
-                ]} 
-              />
-           </div>
-        </div>
-      )
-    },
-    {
       id: "widows",
       title: "Widows and Orphans",
       subtitle: "A Lifeline of Hope",
@@ -320,6 +290,36 @@ export default function CausesPage() {
                 ]} 
              />
           </div>
+        </div>
+      )
+    },
+    {
+      id: "holidays",
+      title: "Holiday Support",
+      subtitle: "Passover & High Holidays",
+      icon: <CalendarDays className="h-6 w-6" />,
+      shortDesc: "Ensuring every family in Israel can celebrate with dignity. Providing holiday meals and essentials.",
+      color: "bg-amber-500",
+      image: "/IMG-20201207-WA0002.jpg",
+      imageHint: "passover meal charity",
+      donateUrl: "/donate?cause=Holidays",
+      isHoliday: true,
+      fullContent: (
+        <div className="space-y-8">
+           <h3 className="text-2xl md:text-4xl font-black text-amber-600">No One Left Behind</h3>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div className="space-y-6">
+                 <p>Before every major holiday like Passover, Rosh Hashanah, and Succot, Chaya Israel distributes massive food parcels to thousands of needy families.</p>
+                 <p className="font-black text-foreground">Your donation ensures a holiday of joy instead of hunger.</p>
+              </div>
+              <SpecialImageSwitcher 
+                images={[
+                  "/IMG-20201207-WA0002.jpg",
+                  "/featured-image-7.jpg",
+                  "/Packing-Food-in-Netivot-4.jpg"
+                ]} 
+              />
+           </div>
         </div>
       )
     }
