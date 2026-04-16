@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { DollarSign, Heart, Mail, Loader2, CheckCircle2, ArrowRight, CreditCard, User } from "lucide-react";
+import { DollarSign, Heart, Loader2, CheckCircle2, ArrowRight, CreditCard, User } from "lucide-react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { type OnApproveData } from "@paypal/paypal-js";
 import { useState, useEffect } from 'react';
@@ -142,7 +142,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
           }
         },
       ],
-      // Force 3D Secure / SCA to prevent international card rejections
+      // Force 3D Secure / SCA to prevent international card rejections (especially US cards)
       payment_source: {
         card: {
           attributes: {
@@ -187,21 +187,21 @@ export default function DonateForm({ cause }: { cause?: string }) {
   if (isSuccess) {
     return (
       <div className="pt-24 pb-16 px-4 bg-slate-50 min-h-screen flex items-center justify-center">
-        <div className="container mx-auto max-w-xl text-center">
+        <div className="container mx-auto max-w-xl text-center px-4">
           <Card className="rounded-[32px] overflow-hidden border-0 shadow-xl bg-white p-6 md:p-12">
             <div className="bg-green-100 p-6 rounded-full w-fit mx-auto mb-8">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 leading-none break-words px-2">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 mb-4 leading-tight break-words">
               Thank you!
             </h1>
-            <p className="text-base md:text-xl text-slate-500 font-bold mb-8 leading-relaxed px-2">
+            <p className="text-base md:text-xl lg:text-2xl text-slate-500 font-bold mb-8 leading-relaxed">
               Your contribution will make a significant impact in Israel.
             </p>
             
             {!user && lastEmail && (
               <div className="bg-primary/5 p-6 rounded-[24px] space-y-4">
-                <div className="space-y-2">
+                <div className="space-y-2 text-center">
                   <h3 className="text-xl md:text-2xl font-black text-primary tracking-tight break-words">Track your impact</h3>
                   <p className="text-sm md:text-base text-slate-600 font-bold leading-relaxed break-words">
                     Create an account using <span className="text-primary">{lastEmail}</span> to view your donation history and receipts.
@@ -229,16 +229,16 @@ export default function DonateForm({ cause }: { cause?: string }) {
   return (
     <div className="pt-24 pb-16 px-4 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-xl">
-        <header className="text-center mb-8 px-4">
+        <header className="text-center mb-8 px-6">
           <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
             <Heart className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight mb-2 break-words">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight mb-2 break-words">
             Donate to Chaya Israel
           </h1>
           {cause && !isOtherCause && (
-            <div className="bg-primary/5 py-1 px-4 rounded-full inline-block">
-              <p className="text-primary text-xs md:text-lg font-black uppercase tracking-tight">
+            <div className="bg-primary/5 py-1 px-4 rounded-full inline-block mt-2">
+              <p className="text-primary text-sm md:text-lg font-black uppercase tracking-tight">
                 Cause: {cause}
               </p>
             </div>
@@ -277,7 +277,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                               )}>
                                 {!field.value && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
                               </div>
-                              <p className={cn("text-base md:text-lg font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
+                              <p className={cn("text-base md:text-lg lg:text-xl font-black tracking-tight", !field.value ? "text-primary" : "text-slate-600")}>
                                 One-Time
                               </p>
                             </div>
@@ -295,7 +295,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                               )}>
                                 {field.value && <div className="h-2.5 w-2.5 rounded-full bg-primary" />}
                               </div>
-                              <p className={cn("text-base md:text-lg font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
+                              <p className={cn("text-base md:text-lg lg:text-xl font-black tracking-tight", field.value ? "text-primary" : "text-slate-600")}>
                                 Monthly
                               </p>
                               <div className="ml-auto bg-primary text-white text-[8px] font-black px-2 py-1 rounded-full uppercase tracking-widest">
@@ -331,7 +331,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                               type="number" 
                               placeholder="0.00" 
                               {...field} 
-                              className="pl-10 md:pl-12 h-12 md:h-14 text-lg md:text-2xl font-black bg-slate-50/50 rounded-[16px] border-0 focus:ring-4 focus:ring-primary/10"
+                              className="pl-10 md:pl-12 h-12 md:h-14 text-lg md:text-2xl lg:text-3xl font-black bg-slate-50/50 rounded-[16px] border-0 focus:ring-4 focus:ring-primary/10"
                               required
                             />
                           </FormControl>
@@ -353,18 +353,18 @@ export default function DonateForm({ cause }: { cause?: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <FormField control={form.control} name="firstName" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1">First name</FormLabel>
+                      <FormLabel className="text-[10px] md:text-xs font-black text-muted-foreground uppercase px-1">First name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John" {...field} className="h-11 bg-slate-50/50 rounded-xl px-4 border-0 text-sm font-bold" required />
+                        <Input placeholder="John" {...field} className="h-11 md:h-12 bg-slate-50/50 rounded-xl px-4 border-0 text-sm md:text-base font-bold" required />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}/>
                   <FormField control={form.control} name="lastName" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1">Last name</FormLabel>
+                      <FormLabel className="text-[10px] md:text-xs font-black text-muted-foreground uppercase px-1">Last name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Doe" {...field} className="h-11 bg-slate-50/50 rounded-xl px-4 border-0 text-sm font-bold" required />
+                        <Input placeholder="Doe" {...field} className="h-11 md:h-12 bg-slate-50/50 rounded-xl px-4 border-0 text-sm md:text-base font-bold" required />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -372,13 +372,13 @@ export default function DonateForm({ cause }: { cause?: string }) {
                 </div>
                 <FormField control={form.control} name="email" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[10px] font-black text-muted-foreground uppercase px-1">Email</FormLabel>
+                    <FormLabel className="text-[10px] md:text-xs font-black text-muted-foreground uppercase px-1">Email</FormLabel>
                     <FormControl>
                       <Input 
                         type="email" 
                         placeholder="email@example.com" 
                         {...field} 
-                        className="h-11 bg-slate-50/50 rounded-xl border-0 text-sm font-bold"
+                        className="h-11 md:h-12 bg-slate-50/50 rounded-xl border-0 text-sm md:text-base font-bold"
                         required
                       />
                     </FormControl>
@@ -391,7 +391,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="space-y-4 mt-6">
               {isClient && (
                 <div 
-                  key={watchIsRecurring ? `paypal-sub-v6` : `paypal-one-v6`}
+                  key={watchIsRecurring ? `paypal-sub-v7` : `paypal-one-v7`}
                   className="bg-white p-4 rounded-[24px] shadow-lg border border-slate-100"
                 >
                   <PayPalScriptProvider 
@@ -400,7 +400,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
                       currency: "USD",
                       intent: watchIsRecurring ? "subscription" : "capture",
                       vault: watchIsRecurring ? true : undefined,
-                      components: "buttons,applepay"
+                      components: "buttons,applepay", // Enable Apple Pay component
+                      enableFunding: "applepay" // Force check for Apple Pay
                     }}
                   >
                     <PayPalButtons 
@@ -424,7 +425,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                       }}
                     />
                   </PayPalScriptProvider>
-                  <p className="text-center text-[8px] font-black text-slate-400 uppercase tracking-widest mt-2">Secure Payment Gateway</p>
+                  <p className="text-center text-[8px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Secure Payment Gateway • Apple Pay Enabled</p>
                 </div>
               )}
             </div>
