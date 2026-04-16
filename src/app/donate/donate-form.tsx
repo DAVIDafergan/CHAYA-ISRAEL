@@ -74,7 +74,14 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
-      const transactionId = data.orderID || data.subscriptionID || 'unknown';
+      // CRITICAL: Capture the order first to ensure the payment is processed
+      let captureResult = null;
+      if (!watchIsRecurring && actions.order) {
+        captureResult = await actions.order.capture();
+        console.log("PayPal Capture Result:", captureResult);
+      }
+
+      const transactionId = data.orderID || data.subscriptionID || captureResult?.id || 'unknown';
       const payerEmail = form.getValues('email').trim().toLowerCase();
       
       if (firestore) {
@@ -90,7 +97,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
           cause: cause || 'General',
           note: form.getValues('note') || '',
           createdAt: serverTimestamp(),
-          paymentType: watchIsRecurring ? 'RECURRING_START' : 'ONE_TIME'
+          paymentType: watchIsRecurring ? 'RECURRING_START' : 'ONE_TIME',
+          paypalDetails: captureResult || null
         });
       }
 
@@ -102,11 +110,11 @@ export default function DonateForm({ cause }: { cause?: string }) {
       });
       form.reset();
     } catch (error) {
-      console.error("PayPal Approval Error:", error);
+      console.error("PayPal Approval/Capture Error:", error);
       toast({
         variant: "destructive",
         title: "Transaction failed",
-        description: "There was an issue processing your payment.",
+        description: "There was an issue processing your payment. Please check your card or try another method.",
       });
     }
   }
@@ -134,6 +142,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
           }
         },
       ],
+      // Force 3D Secure / SCA to prevent international card rejections
       payment_source: {
         card: {
           attributes: {
@@ -183,16 +192,18 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="bg-green-100 p-6 rounded-full w-fit mx-auto mb-8">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 leading-none break-words">Thank you!</h1>
-            <p className="text-base md:text-xl text-slate-500 font-bold mb-8 leading-relaxed">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 leading-none break-words px-2">
+              Thank you!
+            </h1>
+            <p className="text-base md:text-xl text-slate-500 font-bold mb-8 leading-relaxed px-2">
               Your contribution will make a significant impact in Israel.
             </p>
             
             {!user && lastEmail && (
               <div className="bg-primary/5 p-6 rounded-[24px] space-y-4">
                 <div className="space-y-2">
-                  <h3 className="text-xl md:text-2xl font-black text-primary tracking-tight">Track your impact</h3>
-                  <p className="text-sm md:text-base text-slate-600 font-bold leading-relaxed">
+                  <h3 className="text-xl md:text-2xl font-black text-primary tracking-tight break-words">Track your impact</h3>
+                  <p className="text-sm md:text-base text-slate-600 font-bold leading-relaxed break-words">
                     Create an account using <span className="text-primary">{lastEmail}</span> to view your donation history and receipts.
                   </p>
                 </div>
@@ -222,7 +233,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
           <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4 shadow-sm">
             <Heart className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-2xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight mb-2 break-words">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 leading-tight mb-2 break-words">
             Donate to Chaya Israel
           </h1>
           {cause && !isOtherCause && (
@@ -314,13 +325,13 @@ export default function DonateForm({ cause }: { cause?: string }) {
                   render={({ field }) => (
                     <FormItem>
                       <div className="relative">
-                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl md:text-4xl font-black text-primary">$</span>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl md:text-2xl font-black text-primary">$</span>
                           <FormControl>
                             <Input 
                               type="number" 
                               placeholder="0.00" 
                               {...field} 
-                              className="pl-10 md:pl-14 h-12 md:h-16 text-xl md:text-3xl font-black bg-slate-50/50 rounded-[16px] border-0 focus:ring-4 focus:ring-primary/10"
+                              className="pl-10 md:pl-12 h-12 md:h-14 text-lg md:text-2xl font-black bg-slate-50/50 rounded-[16px] border-0 focus:ring-4 focus:ring-primary/10"
                               required
                             />
                           </FormControl>
@@ -380,7 +391,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="space-y-4 mt-6">
               {isClient && (
                 <div 
-                  key={watchIsRecurring ? `paypal-sub-v5` : `paypal-one-v5`}
+                  key={watchIsRecurring ? `paypal-sub-v6` : `paypal-one-v6`}
                   className="bg-white p-4 rounded-[24px] shadow-lg border border-slate-100"
                 >
                   <PayPalScriptProvider 
@@ -388,7 +399,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
                       clientId: PAYPAL_CLIENT_ID, 
                       currency: "USD",
                       intent: watchIsRecurring ? "subscription" : "capture",
-                      vault: watchIsRecurring ? true : undefined
+                      vault: watchIsRecurring ? true : undefined,
+                      components: "buttons,applepay"
                     }}
                   >
                     <PayPalButtons 
@@ -397,7 +409,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                         color: 'blue', 
                         shape: 'pill', 
                         label: watchIsRecurring ? 'subscribe' : 'donate',
-                        height: 55 
+                        height: 55 // Fixed at 55px to prevent React crash
                       }}
                       createOrder={!watchIsRecurring ? createOrder : undefined}
                       createSubscription={watchIsRecurring ? createSubscription : undefined}
@@ -406,8 +418,8 @@ export default function DonateForm({ cause }: { cause?: string }) {
                         console.error("PayPal Global Error:", err);
                         toast({
                           variant: "destructive",
-                          title: "Connection Error",
-                          description: "Could not connect to PayPal. Please try again.",
+                          title: "Payment Error",
+                          description: "Could not connect to PayPal. Please check your card or try another method.",
                         });
                       }}
                     />
