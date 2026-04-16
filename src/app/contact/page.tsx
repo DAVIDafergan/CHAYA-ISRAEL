@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useState } from "react";
@@ -114,14 +115,14 @@ export default function ContactPage() {
           <div className="bg-green-100 p-8 rounded-full w-fit mx-auto mb-4">
             <CheckCircle2 className="h-16 w-16 text-green-600" />
           </div>
-          <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tight luxury-gradient-text leading-tight break-words hyphens-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight luxury-gradient-text leading-tight break-words hyphens-auto">
             Message Sent!
           </h2>
-          <p className="text-base md:text-2xl lg:text-3xl text-muted-foreground font-bold leading-relaxed">
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground font-bold leading-relaxed">
             Thank you. We will get back to you shortly at kramera613@gmail.com.
           </p>
           <div className="pt-8">
-            <Button asChild size="lg" className="rounded-full h-16 md:h-24 px-10 md:px-20 text-lg md:text-3xl font-black bg-primary text-white shadow-xl border-b-4 border-primary-foreground/20">
+            <Button asChild size="lg" className="rounded-full h-16 md:h-20 px-10 md:px-20 text-lg md:text-2xl font-black bg-primary text-white shadow-xl border-b-4 border-primary-foreground/20">
               <Link href="/" className="flex items-center gap-3">
                 Back to Home <ArrowRight className="h-6 w-6" />
               </Link>
@@ -136,10 +137,10 @@ export default function ContactPage() {
     <div className="overflow-x-hidden pt-28 md:pt-48 bg-white min-h-screen">
        <section className="py-12 md:py-24 px-6">
           <div className="container mx-auto text-center px-4">
-              <h1 className="text-4xl sm:text-6xl lg:text-8xl font-black luxury-gradient-text tracking-tight leading-tight mb-10 break-words hyphens-auto">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black luxury-gradient-text tracking-tight leading-tight mb-10 break-words hyphens-auto">
                   Contact Us
               </h1>
-              <p className="max-w-4xl mx-auto text-lg md:text-2xl lg:text-3xl text-muted-foreground font-medium leading-relaxed">
+              <p className="max-w-4xl mx-auto text-lg md:text-xl lg:text-2xl text-muted-foreground font-medium leading-relaxed">
                 We'd love to hear from you. Reach out with any questions or to learn more about our mission.
               </p>
           </div>
@@ -149,8 +150,8 @@ export default function ContactPage() {
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-32 items-start max-w-7xl px-4">
             <div className="space-y-16 md:space-y-24">
               <div>
-                <h2 className="text-3xl md:text-5xl lg:text-6xl font-black text-primary tracking-tight leading-tight break-words hyphens-auto">Get in Touch</h2>
-                <p className="mt-8 text-lg md:text-2xl lg:text-3xl text-muted-foreground font-medium leading-relaxed">Reach out via email or phone for any assistance.</p>
+                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight break-words hyphens-auto">Get in Touch</h2>
+                <p className="mt-8 text-lg md:text-xl lg:text-2xl text-muted-foreground font-medium leading-relaxed">Reach out via email or phone for any assistance.</p>
               </div>
               <div className="space-y-12 md:space-y-20">
                   <div className="flex items-start gap-10">
@@ -159,7 +160,7 @@ export default function ContactPage() {
                       </div>
                       <div className="space-y-2">
                           <h3 className="font-black text-xs md:text-sm lg:text-base text-slate-400 uppercase tracking-widest">Email</h3>
-                          <a href="mailto:kramera613@gmail.com" className="text-xl md:text-3xl lg:text-4xl text-primary font-black hover:underline transition-all break-all leading-tight">kramera613@gmail.com</a>
+                          <a href="mailto:kramera613@gmail.com" className="text-xl md:text-2xl lg:text-3xl text-primary font-black hover:underline transition-all break-all leading-tight">kramera613@gmail.com</a>
                       </div>
                   </div>
                   
@@ -169,7 +170,7 @@ export default function ContactPage() {
                       </div>
                       <div className="space-y-2">
                           <h3 className="font-black text-xs md:text-sm lg:text-base text-slate-400 uppercase tracking-widest">Phone</h3>
-                          <a href="tel:+19179156106" className="text-xl md:text-3xl lg:text-4xl text-primary font-black hover:underline transition-all leading-tight">(+917) 915 - 6106</a>
+                          <a href="tel:+19179156106" className="text-xl md:text-2xl lg:text-3xl text-primary font-black hover:underline transition-all leading-tight">(+917) 915 - 6106</a>
                       </div>
                   </div>
               </div>
@@ -177,7 +178,7 @@ export default function ContactPage() {
 
             <Card className="p-10 md:p-16 lg:p-20 shadow-2xl bg-white border-0 rounded-[48px] overflow-hidden">
                 <CardHeader className="p-0 mb-12">
-                    <CardTitle className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight luxury-gradient-text break-words hyphens-auto">Send a Message</CardTitle>
+                    <CardTitle className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight luxury-gradient-text break-words hyphens-auto">Send a Message</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     <Form {...form}>
@@ -187,7 +188,7 @@ export default function ContactPage() {
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-xs md:text-sm lg:text-base font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Full Name</FormLabel>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Full Name</FormLabel>
                                 <FormControl>
                                   <Input placeholder="John Doe" {...field} className="h-16 md:h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 text-lg md:text-xl lg:text-2xl"/>
                                 </FormControl>
@@ -200,7 +201,7 @@ export default function ContactPage() {
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-xs md:text-sm lg:text-base font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Email</FormLabel>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Email</FormLabel>
                                 <FormControl>
                                   <Input placeholder="name@example.com" {...field} className="h-16 md:h-20 bg-slate-50/50 rounded-2xl border-0 px-8 font-bold focus:ring-4 focus:ring-primary/10 text-lg md:text-xl lg:text-2xl"/>
                                 </FormControl>
@@ -213,7 +214,7 @@ export default function ContactPage() {
                             name="message"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel className="text-xs md:text-sm lg:text-base font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Message</FormLabel>
+                                <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block px-2">Message</FormLabel>
                                 <FormControl>
                                   <Textarea
                                     placeholder="How can we help?"

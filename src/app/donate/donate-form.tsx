@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +75,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
   async function handleOnApprove(data: OnApproveData, actions: any) {
     try {
-      // 1. Capture the order
+      // 1. Capture the order (Essential for actually getting the money)
       const captureResult = await actions.order.capture();
       const transactionId = captureResult.id || data.orderID;
       
@@ -128,31 +129,43 @@ export default function DonateForm({ cause }: { cause?: string }) {
   }
 
   const createOrder = async (data: any, actions: any) => {
-    const isValid = await form.trigger();
-    if (!isValid) return Promise.reject(new Error("Form is invalid"));
-      
-    return actions.order.create({
-      intent: "CAPTURE",
-      purchase_units: [
-        {
-          custom_id: user?.uid || 'guest',
-          description: `Donation for ${cause || 'Chaya Israel'}`,
-          amount: {
-            value: parseFloat(donationTotal).toFixed(2),
-            currency_code: 'USD',
-          }
-        },
-      ],
-      payment_source: {
-        card: {
-          attributes: {
-            verification: {
-              method: "SCA_ALWAYS"
+    try {
+      const isValid = await form.trigger();
+      if (!isValid) {
+        toast({
+          variant: "destructive",
+          title: "Missing Information",
+          description: "Please fill in all required donor details first.",
+        });
+        return Promise.reject(new Error("Form is invalid"));
+      }
+        
+      return actions.order.create({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            custom_id: user?.uid || 'guest',
+            description: `Donation for ${cause || 'Chaya Israel'}`,
+            amount: {
+              value: parseFloat(donationTotal).toFixed(2),
+              currency_code: 'USD',
+            }
+          },
+        ],
+        payment_source: {
+          card: {
+            attributes: {
+              verification: {
+                method: "SCA_ALWAYS" // Forces 3D Secure to prevent card declines
+              }
             }
           }
         }
-      }
-    });
+      });
+    } catch (err) {
+      console.error("Create order error:", err);
+      throw err;
+    }
   };
 
   const createSubscription = async (data: any, actions: any) => {
@@ -181,10 +194,10 @@ export default function DonateForm({ cause }: { cause?: string }) {
             <div className="bg-green-100 p-6 rounded-full w-fit mx-auto mb-8">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 break-words hyphens-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-4 break-words hyphens-auto">
               Thank you!
             </h1>
-            <p className="text-lg md:text-2xl text-slate-500 font-bold mb-8 leading-relaxed">
+            <p className="text-lg md:text-xl lg:text-2xl text-slate-500 font-bold mb-8 leading-relaxed">
               Your contribution will make a significant impact in Israel.
             </p>
             {!user && lastEmail && (
@@ -212,16 +225,16 @@ export default function DonateForm({ cause }: { cause?: string }) {
   return (
     <div className="pt-24 pb-16 px-4 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-xl">
-        <header className="text-center mb-10">
+        <header className="text-center mb-10 px-4">
           <div className="inline-flex bg-primary/10 p-4 rounded-full mb-4">
             <Heart className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight text-slate-900 mb-2 break-words hyphens-auto">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-900 mb-2 break-words hyphens-auto">
             Donate to Chaya Israel
           </h1>
           {cause && !isOtherCause && (
             <div className="bg-primary/5 py-1 px-4 rounded-full inline-block mt-2">
-              <p className="text-primary text-sm font-black uppercase">Cause: {cause}</p>
+              <p className="text-primary text-xs sm:text-sm font-black uppercase">Cause: {cause}</p>
             </div>
           )}
         </header>
@@ -230,7 +243,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <Card className="rounded-[32px] overflow-hidden border-0 shadow-sm bg-white">
               <CardHeader className="bg-slate-50/50 py-4 border-b px-6">
-                <CardTitle className="text-lg font-black flex items-center gap-2 text-primary">
+                <CardTitle className="text-base sm:text-lg font-black flex items-center gap-2 text-primary">
                   <CreditCard className="h-5 w-5" /> Donation Type
                 </CardTitle>
               </CardHeader>
@@ -251,14 +264,14 @@ export default function DonateForm({ cause }: { cause?: string }) {
                             !field.value ? "border-primary bg-primary/5" : "border-slate-100"
                           )} onClick={() => field.onChange(false)}>
                             <RadioGroupItem value="one-time" id="one-time" className="sr-only" />
-                            <p className={cn("text-lg font-black", !field.value ? "text-primary" : "text-slate-600")}>One-Time Donation</p>
+                            <p className={cn("text-base sm:text-lg font-black", !field.value ? "text-primary" : "text-slate-600")}>One-Time Donation</p>
                           </div>
                           <div className={cn(
                             "flex items-center p-4 rounded-2xl border-2 cursor-pointer transition-all",
                             field.value ? "border-primary bg-primary/5" : "border-slate-100"
                           )} onClick={() => field.onChange(true)}>
                             <RadioGroupItem value="monthly" id="monthly" className="sr-only" />
-                            <p className={cn("text-lg font-black", field.value ? "text-primary" : "text-slate-600")}>Monthly Support</p>
+                            <p className={cn("text-base sm:text-lg font-black", field.value ? "text-primary" : "text-slate-600")}>Monthly Support</p>
                           </div>
                         </RadioGroup>
                       </FormControl>
@@ -270,7 +283,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
             <Card className="rounded-[32px] overflow-hidden border-0 shadow-sm bg-white">
               <CardHeader className="bg-slate-50/50 py-4 border-b px-6">
-                <CardTitle className="text-lg font-black flex items-center gap-2 text-primary">
+                <CardTitle className="text-base sm:text-lg font-black flex items-center gap-2 text-primary">
                   <DollarSign className="h-5 w-5" /> Amount (USD)
                 </CardTitle>
               </CardHeader>
@@ -285,7 +298,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
                           type="number" 
                           placeholder="0.00" 
                           {...field} 
-                          className="h-16 text-3xl font-black bg-slate-50/50 rounded-2xl border-0 focus:ring-4 focus:ring-primary/10"
+                          className="h-14 sm:h-16 text-2xl sm:text-3xl font-black bg-slate-50/50 rounded-2xl border-0 focus:ring-4 focus:ring-primary/10"
                         />
                       </FormControl>
                       <FormMessage />
@@ -297,7 +310,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
             <Card className="rounded-[32px] overflow-hidden border-0 shadow-sm bg-white">
               <CardHeader className="bg-slate-50/50 py-4 border-b px-6">
-                <CardTitle className="text-lg font-black flex items-center gap-2 text-primary">
+                <CardTitle className="text-base sm:text-lg font-black flex items-center gap-2 text-primary">
                   <User className="h-5 w-5" /> Donor Details
                 </CardTitle>
               </CardHeader>
@@ -305,23 +318,23 @@ export default function DonateForm({ cause }: { cause?: string }) {
                 <div className="grid grid-cols-2 gap-4">
                   <FormField control={form.control} name="firstName" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-black uppercase text-slate-400">First name</FormLabel>
-                      <FormControl><Input {...field} className="h-12 bg-slate-50/50 rounded-xl border-0 font-bold" /></FormControl>
+                      <FormLabel className="text-[10px] font-black uppercase text-slate-400">First name</FormLabel>
+                      <FormControl><Input {...field} className="h-11 bg-slate-50/50 rounded-xl border-0 font-bold" /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}/>
                   <FormField control={form.control} name="lastName" render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-black uppercase text-slate-400">Last name</FormLabel>
-                      <FormControl><Input {...field} className="h-12 bg-slate-50/50 rounded-xl border-0 font-bold" /></FormControl>
+                      <FormLabel className="text-[10px] font-black uppercase text-slate-400">Last name</FormLabel>
+                      <FormControl><Input {...field} className="h-11 bg-slate-50/50 rounded-xl border-0 font-bold" /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )}/>
                 </div>
                 <FormField control={form.control} name="email" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs font-black uppercase text-slate-400">Email address</FormLabel>
-                    <FormControl><Input type="email" {...field} className="h-12 bg-slate-50/50 rounded-xl border-0 font-bold" /></FormControl>
+                    <FormLabel className="text-[10px] font-black uppercase text-slate-400">Email address</FormLabel>
+                    <FormControl><Input type="email" {...field} className="h-11 bg-slate-50/50 rounded-xl border-0 font-bold" /></FormControl>
                     <FormMessage />
                   </FormItem>
                 )}/>
@@ -330,7 +343,7 @@ export default function DonateForm({ cause }: { cause?: string }) {
 
             <div className="mt-8">
               {isClient && (
-                <div key={watchIsRecurring ? 'sub' : 'one'} className="bg-white p-6 rounded-[32px] shadow-lg border border-slate-100">
+                <div className="bg-white p-6 rounded-[32px] shadow-lg border border-slate-100">
                   <PayPalScriptProvider options={{ 
                     clientId: PAYPAL_CLIENT_ID, 
                     currency: "USD",
@@ -340,13 +353,27 @@ export default function DonateForm({ cause }: { cause?: string }) {
                     enableFunding: "applepay"
                   }}>
                     <PayPalButtons 
-                      style={{ layout: "vertical", color: 'blue', shape: 'pill', label: watchIsRecurring ? 'subscribe' : 'donate', height: 55 }}
+                      style={{ 
+                        layout: "vertical", 
+                        color: 'blue', 
+                        shape: 'pill', 
+                        label: watchIsRecurring ? 'subscribe' : 'donate', 
+                        height: 55 
+                      }}
                       createOrder={!watchIsRecurring ? createOrder : undefined}
                       createSubscription={watchIsRecurring ? createSubscription : undefined}
                       onApprove={handleOnApprove}
+                      onError={(err) => {
+                        console.error("PayPal Button Error:", err);
+                        toast({
+                          variant: "destructive",
+                          title: "Payment Error",
+                          description: "An error occurred while loading the payment buttons. Please try again.",
+                        });
+                      }}
                     />
                   </PayPalScriptProvider>
-                  <p className="text-center text-[10px] font-black text-slate-300 uppercase tracking-widest mt-4">Secure Payment • Apple Pay Enabled</p>
+                  <p className="text-center text-[9px] font-black text-slate-300 uppercase tracking-widest mt-4">Secure Payment • Apple Pay Enabled</p>
                 </div>
               )}
             </div>
@@ -356,3 +383,4 @@ export default function DonateForm({ cause }: { cause?: string }) {
     </div>
   );
 }
+
