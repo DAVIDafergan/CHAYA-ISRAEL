@@ -4,7 +4,7 @@ import { useParams, useSearchParams } from 'next/navigation';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Printer, CheckCircle2, ShieldCheck, Heart, Mail, User, CreditCard as CardIcon, DollarSign } from 'lucide-react';
+import { Printer, CheckCircle2, ShieldCheck, Heart, Mail, User, CreditCard as CardIcon, DollarSign, ChevronLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -26,7 +26,6 @@ export default function ReceiptPage() {
 
   useEffect(() => {
     if (!isLoading && donation && shouldPrint) {
-      // Small delay to ensure images/layout are ready for print
       const timer = setTimeout(() => {
         window.print();
       }, 500);
@@ -54,20 +53,20 @@ export default function ReceiptPage() {
   const receiptNumber = donation.transactionId?.substring(0, 8).toUpperCase() || donation.id.substring(0, 8).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-slate-50 py-16 px-4 print:bg-white print:py-0">
+    <div className="min-h-screen bg-slate-50 pt-28 pb-16 px-4 print:bg-white print:py-0">
       <div className="max-w-2xl mx-auto space-y-6">
-        <div className="flex justify-between items-center print:hidden">
-          <Button variant="ghost" onClick={() => window.history.back()} className="rounded-full font-bold">
-            Back
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 print:hidden">
+          <Button variant="ghost" onClick={() => window.history.back()} className="rounded-full font-bold h-11 px-6 bg-white/50 hover:bg-white shadow-sm">
+            <ChevronLeft className="h-4 w-4 mr-1" /> Back to Account
           </Button>
-          <Button onClick={() => window.print()} className="rounded-full h-11 px-6 font-black shadow-lg bg-primary hover:bg-primary/90">
-            <Printer className="h-4 w-4 mr-2" /> Print Receipt
+          <Button onClick={() => window.print()} className="rounded-full h-12 px-8 font-black shadow-xl bg-primary hover:bg-primary/90 text-white w-full sm:w-auto">
+            <Printer className="h-5 w-5 mr-2" /> Download / Print Receipt
           </Button>
         </div>
 
         <div className="bg-white rounded-[40px] shadow-2xl overflow-hidden border border-slate-100 print:shadow-none print:border-0 print:rounded-none">
           {/* Header with Logo */}
-          <div className="p-12 border-b border-slate-50 flex flex-col items-center text-center space-y-6">
+          <div className="p-8 md:p-12 border-b border-slate-50 flex flex-col items-center text-center space-y-6">
             <div className="relative w-48 h-16 mb-4">
               <Image 
                 src="/Logo.png" 
@@ -87,9 +86,9 @@ export default function ReceiptPage() {
             </div>
           </div>
 
-          <div className="p-12 space-y-12">
+          <div className="p-8 md:p-12 space-y-10">
             {/* Donor Information Section */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
               <div className="space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-wider">
@@ -102,7 +101,7 @@ export default function ReceiptPage() {
                   <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground uppercase tracking-wider">
                     <Mail className="h-3 w-3" /> Email Address
                   </div>
-                  <p className="text-base font-medium text-slate-600">{donation.payerEmail}</p>
+                  <p className="text-base font-medium text-slate-600 truncate">{donation.payerEmail}</p>
                 </div>
               </div>
 
@@ -128,14 +127,14 @@ export default function ReceiptPage() {
             </div>
 
             {/* Financial Summary Section */}
-            <div className="bg-slate-50 rounded-3xl p-8 space-y-4">
+            <div className="bg-slate-50 rounded-3xl p-6 md:p-8 space-y-4">
               <div className="flex justify-between items-center text-sm font-bold text-slate-500">
                 <span>Donation Amount</span>
                 <span className="text-slate-900">${donation.amount?.toFixed(2)}</span>
               </div>
               <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
                 <span className="text-lg font-black text-slate-900">Donation Total</span>
-                <span className="text-3xl font-black text-primary">${donation.amount?.toFixed(2)}</span>
+                <span className="text-2xl md:text-3xl font-black text-primary">${donation.amount?.toFixed(2)}</span>
               </div>
             </div>
 
@@ -147,7 +146,7 @@ export default function ReceiptPage() {
                   <p className="text-[11px] leading-relaxed text-slate-600 font-medium">
                     Chaya Israel Foundation is a registered 501(c)(3) non-profit organization. Your contribution is tax-deductible to the extent allowed by law. No goods or services were provided in exchange for this donation.
                   </p>
-                  <p className="text-[10px] font-bold text-slate-400 italic">
+                  <p className="text-[10px] font-bold text-slate-400 italic break-all">
                     Transaction ID: {donation.transactionId}
                   </p>
                 </div>
