@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
@@ -29,6 +30,11 @@ export const metadata: Metadata = {
   },
   description: 'Chaya Israel Foundation provides essential support for widows, orphans, IDF soldiers, and families in need across Israel. Established by Rabbi Avraham Kramer in 2004.',
   keywords: ['Chaya Israel', 'charity Israel', 'support IDF', 'widows and orphans', 'Rabbi Avraham Kramer', 'donation Israel', 'Jewish charity', 'Israel relief'],
+  icons: {
+    icon: '/Logo.png',
+    shortcut: '/Logo.png',
+    apple: '/Logo.png',
+  },
   authors: [{ name: 'Rabbi Avraham Kramer' }],
   creator: 'Chaya Israel Foundation',
   publisher: 'Chaya Israel Foundation',
