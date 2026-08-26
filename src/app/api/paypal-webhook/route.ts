@@ -3,6 +3,26 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import nodemailer from 'nodemailer';
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+const emailPort = Number(process.env.EMAIL_PORT) || 587;
+const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: emailPort,
+  secure: emailPort === 465,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
@@ -66,30 +86,20 @@ export async function POST(request: Request) {
 
       // Send notification email
       try {
-        const transporter = nodemailer.createTransport({
-          host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-          port: Number(process.env.EMAIL_PORT) || 587,
-          secure: false,
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
-
         await transporter.sendMail({
           from: process.env.EMAIL_USER,
           to: 'shilokramerdo@gmail.com',
-          subject: `תרומה חדשה התקבלה - ${payerName}`,
+          subject: `תרומה חדשה התקבלה - ${escapeHtml(payerName)}`,
           html: `
             <div dir="rtl" style="font-family: Arial, sans-serif;">
               <h2>תרומה חדשה התקבלה!</h2>
-              <p><strong>שם התורם:</strong> ${payerName}</p>
-              <p><strong>אימייל:</strong> ${payerEmail}</p>
-              <p><strong>סכום:</strong> ${amount} ${currency}</p>
-              <p><strong>מטרה:</strong> ${cause}</p>
-              <p><strong>מזהה עסקה:</strong> ${transactionId}</p>
-              <p><strong>סטטוס:</strong> ${status}</p>
-              ${note ? `<p><strong>הערה:</strong> ${note}</p>` : ''}
+              <p><strong>שם התורם:</strong> ${escapeHtml(payerName)}</p>
+              <p><strong>אימייל:</strong> ${escapeHtml(payerEmail)}</p>
+              <p><strong>סכום:</strong> ${amount} ${escapeHtml(currency)}</p>
+              <p><strong>מטרה:</strong> ${escapeHtml(cause)}</p>
+              <p><strong>מזהה עסקה:</strong> ${escapeHtml(transactionId)}</p>
+              <p><strong>סטטוס:</strong> ${escapeHtml(status)}</p>
+              ${note ? `<p><strong>הערה:</strong> ${escapeHtml(note)}</p>` : ''}
             </div>
           `,
         });
