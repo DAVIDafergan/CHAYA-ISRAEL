@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import nodemailer from 'nodemailer';
 
 export async function POST(request: Request) {
   try {
@@ -62,6 +63,39 @@ export async function POST(request: Request) {
           userId,
         },
       });
+
+      // Send notification email
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+          port: Number(process.env.EMAIL_PORT) || 587,
+          secure: false,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: 'shilokramerdo@gmail.com',
+          subject: `תרומה חדשה התקבלה - ${payerName}`,
+          html: `
+            <div dir="rtl" style="font-family: Arial, sans-serif;">
+              <h2>תרומה חדשה התקבלה!</h2>
+              <p><strong>שם התורם:</strong> ${payerName}</p>
+              <p><strong>אימייל:</strong> ${payerEmail}</p>
+              <p><strong>סכום:</strong> ${amount} ${currency}</p>
+              <p><strong>מטרה:</strong> ${cause}</p>
+              <p><strong>מזהה עסקה:</strong> ${transactionId}</p>
+              <p><strong>סטטוס:</strong> ${status}</p>
+              ${note ? `<p><strong>הערה:</strong> ${note}</p>` : ''}
+            </div>
+          `,
+        });
+      } catch (emailError) {
+        console.error('Failed to send donation notification email:', emailError);
+      }
     }
 
     return new Response('OK', { status: 200 });
