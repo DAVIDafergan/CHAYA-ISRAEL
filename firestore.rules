@@ -1,10 +1,85 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Open permissions for development to resolve Missing permissions errors.
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      // No custom claims are issued today (see src/app/admin/dashboard/page.tsx) —
+      // admin status is this one hardcoded account email, matching the app's own check.
+      return isSignedIn() && request.auth.token.email == 'chaya123@chayaisrael.com';
+    }
+
+    // Donor accounts. Doc ID == Firebase Auth uid (see src/app/signup/page.tsx).
+    match /users/{userId} {
+      allow get: if isSignedIn() && request.auth.uid == userId;
+      allow list: if false;
+      allow create: if isSignedIn()
+                    && request.auth.uid == userId
+                    && request.resource.data.keys().hasOnly(['fullName', 'email', 'createdAt'])
+                    && request.resource.data.email is string;
+      allow update, delete: if false;
+    }
+
+    // Donation ledger — the sole source of truth for tax receipts.
+    // Writes happen server-side only, via the Admin SDK, from the
+    // signature-verified PayPal webhook (and the admin "send receipt" route).
+    // See src/app/api/paypal-webhook/route.ts.
+    match /donations/{donationId} {
+      // Public by-ID lookup for the receipt page (src/app/receipt/[id]/page.tsx) —
+      // donors, including anonymous/guest ones, need to open a shared receipt link
+      // without logging in. A "get" requires already knowing the ID; it does not
+      // allow enumerating the collection.
+      allow get: if true;
+
+      // Listing (queries) is where enumeration risk actually lives: an admin may
+      // list everything, and a signed-in donor may list only rows matching their
+      // own email — mirrors the exact query shapes used by the app today
+      // (admin/dashboard/page.tsx and account/page.tsx).
+      allow list: if isAdmin()
+                  || (isSignedIn() && resource.data.payerEmail == request.auth.token.email.lower());
+
+      allow create, update, delete: if false;
+    }
+
+    // Feeds the `firebase/firestore-send-email` extension. A write here sends a
+    // real email through the org's mail infrastructure, so client writes are
+    // constrained to the one fixed contact-form target; donation receipts
+    // (manual "Send Receipt" and the auto-receipt trigger) write here
+    // server-side via the Admin SDK, which bypasses these rules entirely.
+    match /mail/{mailId} {
+      allow get, list: if false;
+      allow create: if request.resource.data.to == 'kramera613@gmail.com'
+                    && request.resource.data.message is map
+                    && request.resource.data.message.subject is string
+                    && request.resource.data.message.subject.size() < 300
+                    && request.resource.data.message.text is string
+                    && request.resource.data.message.text.size() < 5000
+                    && request.resource.data.message.html is string
+                    && request.resource.data.message.html.size() < 20000;
+      allow update, delete: if false;
+    }
+
+    // Contact-form backup log — written server-side only (api/contact/route.ts).
+    match /contacts/{contactId} {
+      allow read, write: if false;
+    }
+
+    // App-wide feature flags. Right now this is just receiptConfig
+    // (autoReceiptEnabled) for the admin dashboard toggle. The
+    // onDocumentCreated Cloud Function that reads this uses the Admin SDK
+    // and bypasses these rules entirely; this only governs the client-side
+    // toggle read/write from the dashboard.
+    match /settings/{settingId} {
+      allow get: if isAdmin();
+      allow list: if false;
+      allow write: if isAdmin();
+    }
+
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

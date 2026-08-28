@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser, useFirestore, useCollection, useAuth, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { useUser, useFirestore, useCollection, useDoc, useAuth, useMemoFirebase } from '@/firebase';
+import { collection, query, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
+import { Switch } from '@/components/ui/switch';
 import { 
   Table, 
   TableBody, 
@@ -17,43 +18,132 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
-import { 
-  LogOut, 
-  LayoutDashboard, 
-  CreditCard, 
-  Search, 
-  ChevronLeft, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import {
+  LogOut,
+  LayoutDashboard,
+  CreditCard,
+  Search,
+  ChevronLeft,
   ChevronRight,
   TrendingUp,
   Users,
   Home,
-  FileText
+  FileText,
+  Send,
+  CheckCircle2,
+  Mail,
+  ShieldAlert,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 25;
 
+// Flip to true only once Deploy 2 (the signature-verified PayPal webhook,
+// with the client-side direct-write removed) is actually live in
+// production. Until then, every donation doc — including forged ones from
+// the browser console — can trigger an automatic receipt if this toggle is
+// on, so the UI keeps it disabled regardless of the Firestore flag's value.
+const IS_VERIFIED_WEBHOOK_LIVE = false;
+
 export default function AdminDashboard() {
   const { user, isUserLoading } = useUser();
   const { auth } = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
+  const [sendingReceiptId, setSendingReceiptId] = useState<string | null>(null);
+  const [sentReceipts, setSentReceipts] = useState<Record<string, string>>({});
+  const [isTogglingAutoReceipt, setIsTogglingAutoReceipt] = useState(false);
 
   // Exclusive admin check
   const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
+
+  const receiptConfigRef = useMemoFirebase(() => {
+    if (!firestore || !user || !isAdmin) return null;
+    return doc(firestore, 'settings', 'receiptConfig');
+  }, [firestore, user, isAdmin]);
+  const { data: receiptConfig } = useDoc(receiptConfigRef);
+  const autoReceiptEnabled = receiptConfig?.autoReceiptEnabled === true;
+
+  async function handleToggleAutoReceipt(nextValue: boolean) {
+    if (!receiptConfigRef) return;
+    setIsTogglingAutoReceipt(true);
+    try {
+      if (nextValue) {
+        await setDoc(receiptConfigRef, { autoReceiptEnabled: true });
+      } else {
+        await deleteDoc(receiptConfigRef);
+      }
+      toast({
+        title: nextValue ? 'Automatic receipts enabled' : 'Automatic receipts disabled',
+      });
+    } catch (err: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to update setting',
+        description: err?.message || 'Please try again.',
+      });
+    } finally {
+      setIsTogglingAutoReceipt(false);
+    }
+  }
+
+  async function handleSendReceipt(donation: any) {
+    if (!user) return;
+    setSendingReceiptId(donation.id);
+    try {
+      const idToken = await user.getIdToken();
+      // Token is sent both ways: the Authorization header is the normal
+      // path, and the body is a fallback in case a header gets dropped
+      // somewhere between the browser and the function (see the route's own
+      // comment on why — Firebase Hosting's Next.js integration is an early
+      // preview).
+      const res = await fetch(`/api/admin/donations/${donation.id}/send-receipt`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${idToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to send receipt');
+      }
+      setSentReceipts((prev) => ({ ...prev, [donation.id]: data.receiptSentAt }));
+      toast({ title: 'Receipt sent', description: `Emailed to ${donation.payerEmail}.` });
+    } catch (err: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to send receipt',
+        description: err?.message || 'Please try again.',
+      });
+    } finally {
+      setSendingReceiptId(null);
+    }
+  }
 
   useEffect(() => {
     if (!isUserLoading) {
@@ -152,6 +242,34 @@ export default function AdminDashboard() {
             </Button>
           </div>
         </header>
+
+        <Card className="rounded-[32px] border-0 shadow-sm bg-white mb-8 overflow-hidden">
+          <CardContent className="p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className={`p-3 rounded-2xl shrink-0 ${autoReceiptEnabled ? 'bg-primary/10' : 'bg-slate-100'}`}>
+                <Mail className={`h-6 w-6 ${autoReceiptEnabled ? 'text-primary' : 'text-slate-400'}`} />
+              </div>
+              <div>
+                <p className="font-bold text-slate-900">Automatic receipt sending</p>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  When on, every new donation gets a tax receipt PDF emailed automatically — no manual click needed.
+                </p>
+                {!IS_VERIFIED_WEBHOOK_LIVE && (
+                  <p className="mt-3 flex items-start gap-2 text-xs font-bold text-orange-600 bg-orange-50 rounded-xl px-3 py-2 max-w-md">
+                    <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
+                    התרומה עדיין נכתבת ללא אימות שרת-לשרת מול PayPal; הפעלת שליחה אוטומטית כרגע חושפת לשליחת קבלות מס על תרומות מזויפות.
+                  </p>
+                )}
+              </div>
+            </div>
+            <Switch
+              checked={autoReceiptEnabled}
+              disabled={!IS_VERIFIED_WEBHOOK_LIVE || isTogglingAutoReceipt}
+              onCheckedChange={handleToggleAutoReceipt}
+              aria-label="Toggle automatic receipt sending"
+            />
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card className="rounded-[32px] border-0 shadow-sm bg-white overflow-hidden">
@@ -269,16 +387,55 @@ export default function AdminDashboard() {
                           </span>
                         </TableCell>
                         <TableCell className="pr-8 text-right">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            asChild
-                            className="h-9 px-3 rounded-full text-primary hover:bg-primary/5 font-bold text-[11px]"
-                          >
-                            <Link href={`/receipt/${donation.id}`}>
-                               <FileText className="h-3.5 w-3.5 mr-1.5" /> View
-                            </Link>
-                          </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              asChild
+                              className="h-9 px-3 rounded-full text-primary hover:bg-primary/5 font-bold text-[11px]"
+                            >
+                              <Link href={`/receipt/${donation.id}`}>
+                                 <FileText className="h-3.5 w-3.5 mr-1.5" /> View
+                              </Link>
+                            </Button>
+
+                            {(donation.receiptSentAt || sentReceipts[donation.id]) ? (
+                              <span
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600"
+                                title={`Sent ${format(new Date(sentReceipts[donation.id] || donation.receiptSentAt), 'MMM dd, yyyy HH:mm')}`}
+                              >
+                                <CheckCircle2 className="h-3 w-3" /> Sent
+                              </span>
+                            ) : (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 rounded-full px-3 border-primary/20 text-primary font-bold text-[11px]"
+                                    disabled={sendingReceiptId === donation.id}
+                                  >
+                                    <Send className="h-3.5 w-3.5 mr-1.5" />
+                                    {sendingReceiptId === donation.id ? 'Sending…' : 'Send Receipt'}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Send tax receipt?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Send tax receipt to {donation.payerEmail}? This cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleSendReceipt(donation)}>
+                                      Send receipt
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

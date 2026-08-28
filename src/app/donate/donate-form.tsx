@@ -22,8 +22,7 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser, useFirestore } from "@/firebase";
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { useUser } from "@/firebase";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +38,6 @@ const formSchema = z.object({
 export default function DonateForm({ cause }: { cause?: string }) {
   const { toast } = useToast();
   const { user, isUserLoading } = useUser();
-  const firestore = useFirestore();
   const [isClient, setIsClient] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastEmail, setLastEmail] = useState("");
@@ -80,32 +78,16 @@ export default function DonateForm({ cause }: { cause?: string }) {
       const transactionId = captureResult.id || data.orderID;
       
       // 2. Determine status
-      const isCompleted = captureResult.status === 'COMPLETED' || 
+      const isCompleted = captureResult.status === 'COMPLETED' ||
                          captureResult.purchase_units?.[0]?.payments?.captures?.[0]?.status === 'COMPLETED';
 
       const payerEmail = form.getValues('email').trim().toLowerCase();
-      const donorName = `${form.getValues('firstName')} ${form.getValues('lastName')}`;
 
-      const donationData = {
-        transactionId: transactionId,
-        amount: parseFloat(donationTotal),
-        currency: 'USD',
-        userId: user?.uid || 'guest',
-        payerEmail: payerEmail,
-        payerName: donorName,
-        status: isCompleted ? 'COMPLETED' : 'FAILED',
-        timestamp: new Date().toISOString(),
-        cause: cause || 'General',
-        note: form.getValues('note') || '',
-        createdAt: serverTimestamp(),
-        paymentType: watchIsRecurring ? 'RECURRING' : 'ONE_TIME',
-        paypalDetails: captureResult
-      };
-
-      // 3. Save to Firestore (donations collection) using PayPal ID as Doc ID
-      if (firestore) {
-        await setDoc(doc(firestore, 'donations', transactionId), donationData, { merge: true });
-      }
+      // The donation record itself is written server-side only, by the
+      // signature-verified PayPal webhook (src/app/api/paypal-webhook/route.ts)
+      // — never trust a client-reported "COMPLETED" status for a financial
+      // ledger / tax receipt. This capture call still actually charges the
+      // card; the webhook fires from PayPal moments later and records it.
 
       if (isCompleted) {
         setLastEmail(payerEmail);

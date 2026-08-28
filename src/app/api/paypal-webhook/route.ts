@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, limit } from 'firebase/firestore';
-import { firebaseConfig } from '@/firebase/config';
+import { verifyPaypalWebhookSignature } from '@/lib/paypal';
+import { processPaypalWebhookEvent } from '@/lib/process-paypal-webhook';
 
-/**
- * Singleton Firebase initialization for API routes.
- */
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const db = getFirestore(app);
-
+// This is the SOLE writer of the `donations` collection (see firestore.rules:
+// create/update on `donations` is server-only). The old client-side write in
+// src/app/donate/donate-form.tsx let anyone forge a "completed" donation from
+// the browser console with no real PayPal charge — removed for that reason.
+// This route uses the Admin SDK (bypasses Firestore rules) and only trusts a
+// request after its PayPal signature verifies.
 export async function POST(request: Request) {
   try {
     const rawBody = await request.text();
@@ -17,94 +16,27 @@ export async function POST(request: Request) {
     }
 
     const body = JSON.parse(rawBody);
-    const eventType = body.event_type;
-    
-    console.log(`Processing PayPal Webhook Event: ${eventType}`);
 
-    const handledEvents = [
-      'PAYMENT.CAPTURE.COMPLETED',
-      'CHECKOUT.ORDER.APPROVED',
-      'CHECKOUT.ORDER.COMPLETED',
-      'PAYMENT.SALE.COMPLETED',
-      'BILLING.SUBSCRIPTION.CREATED',
-      'BILLING.SUBSCRIPTION.ACTIVATED',
-      'BILLING.SUBSCRIPTION.UPDATED'
-    ];
+    // Reject anything that isn't a genuine, signed notification from PayPal
+    // before touching Firestore or sending any email.
+    const isVerified = await verifyPaypalWebhookSignature(
+      {
+        transmissionId: request.headers.get('paypal-transmission-id'),
+        transmissionTime: request.headers.get('paypal-transmission-time'),
+        certUrl: request.headers.get('paypal-cert-url'),
+        authAlgo: request.headers.get('paypal-auth-algo'),
+        transmissionSig: request.headers.get('paypal-transmission-sig'),
+      },
+      body,
+    );
 
-    if (handledEvents.includes(eventType)) {
-      const resource = body.resource;
-      
-      const amountValue = resource.amount?.value || 
-                         resource.seller_receivable_breakdown?.gross_amount?.value || 
-                         resource.billing_info?.last_payment?.amount?.value || 
-                         resource.plan_overide?.amount?.value || "0";
-
-      const currencyCode = resource.amount?.currency_code || 
-                          resource.billing_info?.last_payment?.amount?.currency_code || "USD";
-
-      const subscriberEmail = resource.subscriber?.email_address;
-      const payerEmailRaw = resource.payer?.email_address || resource.payer?.email || subscriberEmail || "unknown@paypal.com";
-      const payerEmail = payerEmailRaw.toLowerCase().trim();
-
-      const nameData = resource.subscriber?.name || resource.payer?.name || {};
-      const payerName = `${nameData.given_name || ""} ${nameData.surname || ""}`.trim() || "PayPal Donor";
-
-      const transactionId = resource.id || resource.subscription_id || body.id || `tr-${Date.now()}`;
-
-      const note = resource.custom_description || resource.description || body.summary || "";
-      let cause = "General";
-      if (note.toLowerCase().includes('donation for ')) {
-        const parts = note.split(/donation for /i);
-        if (parts[1]) cause = parts[1].split(' - ')[0].trim();
-      }
-
-      const isSubscriptionEvent = eventType.startsWith('BILLING.SUBSCRIPTION');
-      const paymentType = isSubscriptionEvent ? 'RECURRING' : 'ONE_TIME';
-
-      let userId = 'guest';
-      try {
-        const usersQuery = query(
-          collection(db, 'users'), 
-          where('email', '==', payerEmail),
-          limit(1)
-        );
-        const userSnapshot = await getDocs(usersQuery);
-        if (!userSnapshot.empty) {
-          userId = userSnapshot.docs[0].id;
-        }
-      } catch (err) {
-        console.error("Error searching for user in webhook:", err);
-      }
-
-      const donationData = {
-        transactionId,
-        amount: parseFloat(amountValue),
-        currency: currencyCode,
-        userId,
-        payerEmail,
-        payerName,
-        status: 'COMPLETED',
-        timestamp: resource.create_time || resource.update_time || resource.start_time || new Date().toISOString(),
-        note,
-        cause,
-        createdAt: serverTimestamp(),
-        source: 'webhook',
-        paymentType,
-        webhookEventType: eventType
-      };
-
-      const existingQuery = query(
-        collection(db, 'donations'),
-        where('transactionId', '==', transactionId),
-        limit(1)
-      );
-      const existingSnapshot = await getDocs(existingQuery);
-
-      if (existingSnapshot.empty) {
-        await addDoc(collection(db, 'donations'), donationData);
-        console.log(`Donation SAVED: ${transactionId} for ${payerEmail}`);
-      }
+    if (!isVerified) {
+      console.error('[paypal-webhook] Rejected webhook with invalid or missing signature.');
+      return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 401 });
     }
+
+    console.log(`Processing PayPal Webhook Event: ${body.event_type}`);
+    await processPaypalWebhookEvent(body);
 
     return new Response('OK', { status: 200 });
   } catch (error: any) {

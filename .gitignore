@@ -24,3 +24,12 @@ Thumbs.db
 
 # Vercel
 .vercel
+rules-test.mjs
+e2e-test.ts
+*.tsbuildinfo
+rules-test-deploy1.mjs
+send-receipt-test.ts
+auto-receipt-test.ts
+e2e-test.ts
+test-hebrew-pdf.ts
+test-receipt-hebrew.pdf
