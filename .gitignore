@@ -24,3 +24,6 @@ Thumbs.db
 
 # Vercel
 .vercel
+rules-test.mjs
+e2e-test.ts
+*.tsbuildinfo

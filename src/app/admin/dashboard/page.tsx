@@ -17,24 +17,38 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select';
-import { 
-  LogOut, 
-  LayoutDashboard, 
-  CreditCard, 
-  Search, 
-  ChevronLeft, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import {
+  LogOut,
+  LayoutDashboard,
+  CreditCard,
+  Search,
+  ChevronLeft,
   ChevronRight,
   TrendingUp,
   Users,
   Home,
-  FileText
+  FileText,
+  Send,
+  CheckCircle2,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -46,14 +60,43 @@ export default function AdminDashboard() {
   const { auth } = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [causeFilter, setCauseFilter] = useState('ALL');
   const [currentPage, setCurrentPage] = useState(1);
+  const [sendingReceiptId, setSendingReceiptId] = useState<string | null>(null);
+  const [sentReceipts, setSentReceipts] = useState<Record<string, string>>({});
 
   // Exclusive admin check
   const isAdmin = user?.email?.toLowerCase() === 'chaya123@chayaisrael.com';
+
+  async function handleSendReceipt(donation: any) {
+    if (!user) return;
+    setSendingReceiptId(donation.id);
+    try {
+      const idToken = await user.getIdToken();
+      const res = await fetch(`/api/admin/donations/${donation.id}/send-receipt`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data?.error || 'Failed to send receipt');
+      }
+      setSentReceipts((prev) => ({ ...prev, [donation.id]: data.receiptSentAt }));
+      toast({ title: 'Receipt sent', description: `Emailed to ${donation.payerEmail}.` });
+    } catch (err: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Failed to send receipt',
+        description: err?.message || 'Please try again.',
+      });
+    } finally {
+      setSendingReceiptId(null);
+    }
+  }
 
   useEffect(() => {
     if (!isUserLoading) {
@@ -269,16 +312,55 @@ export default function AdminDashboard() {
                           </span>
                         </TableCell>
                         <TableCell className="pr-8 text-right">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            asChild
-                            className="h-9 px-3 rounded-full text-primary hover:bg-primary/5 font-bold text-[11px]"
-                          >
-                            <Link href={`/receipt/${donation.id}`}>
-                               <FileText className="h-3.5 w-3.5 mr-1.5" /> View
-                            </Link>
-                          </Button>
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              asChild
+                              className="h-9 px-3 rounded-full text-primary hover:bg-primary/5 font-bold text-[11px]"
+                            >
+                              <Link href={`/receipt/${donation.id}`}>
+                                 <FileText className="h-3.5 w-3.5 mr-1.5" /> View
+                              </Link>
+                            </Button>
+
+                            {(donation.receiptSentAt || sentReceipts[donation.id]) ? (
+                              <span
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600"
+                                title={`Sent ${format(new Date(sentReceipts[donation.id] || donation.receiptSentAt), 'MMM dd, yyyy HH:mm')}`}
+                              >
+                                <CheckCircle2 className="h-3 w-3" /> Sent
+                              </span>
+                            ) : (
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-9 rounded-full px-3 border-primary/20 text-primary font-bold text-[11px]"
+                                    disabled={sendingReceiptId === donation.id}
+                                  >
+                                    <Send className="h-3.5 w-3.5 mr-1.5" />
+                                    {sendingReceiptId === donation.id ? 'Sending…' : 'Send Receipt'}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Send tax receipt?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Send tax receipt to {donation.payerEmail}? This cannot be undone.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => handleSendReceipt(donation)}>
+                                      Send receipt
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
