@@ -58,12 +58,13 @@ import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 25;
 
-// Flip to true only once Deploy 2 (the signature-verified PayPal webhook,
-// with the client-side direct-write removed) is actually live in
-// production. Until then, every donation doc — including forged ones from
-// the browser console — can trigger an automatic receipt if this toggle is
-// on, so the UI keeps it disabled regardless of the Firestore flag's value.
-const IS_VERIFIED_WEBHOOK_LIVE = false;
+// Deploy 2 (the signature-verified PayPal webhook, with the client-side
+// direct-write removed) is live: src/app/api/paypal-webhook/route.ts rejects
+// any request whose PayPal signature doesn't verify, and donate-form.tsx no
+// longer writes to `donations` directly. This only makes the toggle
+// clickable — the Firestore flag itself (settings/receiptConfig
+// .autoReceiptEnabled) stays whatever an admin has explicitly set it to.
+const IS_VERIFIED_WEBHOOK_LIVE = true;
 
 export default function AdminDashboard() {
   const { user, isUserLoading } = useUser();

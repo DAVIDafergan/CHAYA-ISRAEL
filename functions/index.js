@@ -27,9 +27,6 @@ if (admin.apps.length === 0) {
  * @return {boolean} True if the donation looks like a real completed PayPal capture.
  */
 function isTrustworthyCompletedDonation(donation) {
-  if (donation.paypalDetails?.status !== "COMPLETED") {
-    return false;
-  }
   const transactionId = donation.transactionId;
   if (typeof transactionId !== "string" || transactionId.length < 8) {
     return false;
@@ -39,7 +36,23 @@ function isTrustworthyCompletedDonation(donation) {
   if (transactionId.startsWith("tr-")) {
     return false;
   }
-  return true;
+  // A completed donation always has a real, positive charge. Rejecting
+  // amount <= 0 here is what actually catches the CHECKOUT.ORDER.APPROVED
+  // shaped records (see process-paypal-webhook.ts) — their Order resource
+  // has no top-level amount, so they land in Firestore as amount: 0.
+  if (!(typeof donation.amount === "number" && donation.amount > 0)) {
+    return false;
+  }
+  // Legacy shape: written by the old client-side donate-form flow.
+  if (donation.paypalDetails?.status === "COMPLETED") {
+    return true;
+  }
+  // Current shape: written by the signature-verified PayPal webhook
+  // (src/app/api/paypal-webhook/route.ts) — no nested paypalDetails.
+  if (donation.source === "webhook" && donation.status === "COMPLETED") {
+    return true;
+  }
+  return false;
 }
 
 /**

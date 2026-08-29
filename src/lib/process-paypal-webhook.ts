@@ -2,10 +2,16 @@ import { adminDb } from '@/lib/firebase-admin';
 import { generateReceiptPdf } from '@/lib/receipt-pdf';
 import { sendDonationNotificationEmail, sendDonorReceiptEmail } from '@/lib/mail';
 
+// CHECKOUT.ORDER.APPROVED/COMPLETED are deliberately excluded: their
+// `resource` is the Order object, which has no top-level `amount` (the real
+// amount lives under purchase_units[].amount), so handling them here always
+// records a $0 donation and — worse — permanently blocks the real amount
+// from ever being saved, since the transactionId dedup check below treats
+// that $0 record as "already recorded" once the genuine capture event
+// arrives. PAYMENT.CAPTURE.COMPLETED is the actual money-received event for
+// one-time donations and is the only one with a trustworthy resource.amount.
 const HANDLED_EVENTS = [
   'PAYMENT.CAPTURE.COMPLETED',
-  'CHECKOUT.ORDER.APPROVED',
-  'CHECKOUT.ORDER.COMPLETED',
   'PAYMENT.SALE.COMPLETED',
   'BILLING.SUBSCRIPTION.CREATED',
   'BILLING.SUBSCRIPTION.ACTIVATED',
